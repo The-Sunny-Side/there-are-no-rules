@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 0b39a1ccd21b44341b711ea6697cf7bb
+  productGUID: c33c7fe92e15a0743a0e8c178746a3a6
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -922,11 +922,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: f009fd2c-b21f-46a0-99a0-59bf54a5e417
+  cloudProjectId: 60873457-4d31-4cf7-b16f-79aa916be647
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: ThereAreNoRules
-  organizationId: unity_3e74338686f1acb01324
+  organizationId: the-sunny-side
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
