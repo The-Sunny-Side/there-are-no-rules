@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5a8861b78909dff46a4fb22a7789beb6
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Skinned/Character/Materials/M_Armature_Legs.mat
+  uploadId: 811364

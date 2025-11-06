@@ -1,0 +1,1 @@
+The character included in this sample is from Unity's Starter Assets - ThirdPerson, which can be found on the Unity Asset Store: http://u3d.as/2z1r

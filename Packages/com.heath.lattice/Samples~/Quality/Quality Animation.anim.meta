@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c0c62cbe74508fe409c53bc08820602e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Quality/Quality Animation.anim
+  uploadId: 811364

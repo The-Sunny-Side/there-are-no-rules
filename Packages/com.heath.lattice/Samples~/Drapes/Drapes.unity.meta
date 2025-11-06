@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3bfa8f8219a1f50429d34469df543e62
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Drapes/Drapes.unity
+  uploadId: 811364

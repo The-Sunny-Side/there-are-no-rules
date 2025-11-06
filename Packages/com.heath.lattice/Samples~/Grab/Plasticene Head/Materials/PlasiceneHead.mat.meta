@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 484c97b99633f4c8091f682c285f1fc1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Grab/Plasticene Head/Materials/PlasiceneHead.mat
+  uploadId: 811364

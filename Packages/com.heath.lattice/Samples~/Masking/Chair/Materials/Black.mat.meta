@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: de18812c78109bc4c84bc6f8876ed0f8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Masking/Chair/Materials/Black.mat
+  uploadId: 811364

@@ -1,0 +1,68 @@
+{
+  "name": "com.heath.lattice",
+  "version": "1.3.1",
+  "description": "Adds Lattice Modifiers to Unity.\nUsing the project panel, take a look at the README within 'Packages/Lattice Modifier' to view the included documentation.",
+  "displayName": "Lattice Modifier",
+  "unity": "2021.3",
+  "documentationUrl": "https://harryheath.com/lattice",
+  "changelogUrl": "https://harryheath.com/lattice#changelog",
+  "type": "tool",
+  "samples": [
+    {
+      "displayName": "Pipes (URP)",
+      "description": "A rubber duck going through a pipe.",
+      "path": "Samples~/Pipes"
+    },
+    {
+      "displayName": "Skinned (URP)",
+      "description": "An example of a skinned lattice modifier and the difference between applying before skinning and after.",
+      "path": "Samples~/Skinned"
+    },
+    {
+      "displayName": "Squished (URP)",
+      "description": "A cardboard box being squashed by a cash register.",
+      "path": "Samples~/Squished"
+    },
+    {
+      "displayName": "Quality (URP)",
+      "description": "An example of the visual difference between interpolations types.",
+      "path": "Samples~/Quality"
+    },
+    {
+      "displayName": "Global (URP)",
+      "description": "An example between global and non-global deformation.",
+      "path": "Samples~/Global"
+    },
+    {
+      "displayName": "Drapes (URP)",
+      "description": "Some cloth swaying in the wind, with a sphere pushing it around. Contains an example for controlling lattices from script.",
+      "path": "Samples~/Drapes"
+    },
+    {
+      "displayName": "Mode (URP)",
+      "description": "An example of the different UpdateModes of a modifier and an example of controlling them from scripts.",
+      "path": "Samples~/Mode"
+    },
+    {
+      "displayName": "Transform (URP)",
+      "description": "An example of using a transform lattice modifier to control a light source.",
+      "path": "Samples~/Transform"
+    },
+    {
+      "displayName": "Grab (URP)",
+      "description": "An interactive demo of deforming a face with blend shapes using spring physics.",
+      "path": "Samples~/Grab"
+    },
+    {
+      "displayName": "Masking (URP)",
+      "description": "An example of using vertex color masks.",
+      "path": "Samples~/Masking"
+    },
+    {
+      "displayName": "Wiggle (URP)",
+      "description": "A wiggly elephant with a vase on it.",
+      "path": "Samples~/Wiggle"
+    }
+  ],
+  "hideInEditor": false
+}

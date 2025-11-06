@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f0782a417797f8540b97fa573f9db59f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Wiggle/Elephant/Materials/carved_wooden_elephant.mat
+  uploadId: 811364

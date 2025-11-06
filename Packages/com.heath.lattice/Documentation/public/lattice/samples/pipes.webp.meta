@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 89baf3467bb13854ca8f4a898b6e55be
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Documentation/public/lattice/samples/pipes.webp
+  uploadId: 811364

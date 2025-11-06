@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2897a5435dcda49428b59db539a48c5a
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Editor/Lattice.Editor.asmdef
+  uploadId: 811364

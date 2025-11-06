@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="./public/favicon.webp" />
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/katorlys/prism-theme-github/themes/prism-theme-github-light.css">
+		<link rel="stylesheet" href="./public/style.css?v=3">
+		<meta name="viewport" content="width=device-width" />
+		<meta name="color-scheme" content="only light">
+		
+	<style>html{scroll-behavior:smooth}@media screen and (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}.sidebar{width:100%;padding-bottom:16px;background-color:#aaa}.sidebar .h1{font-weight:700;display:inline-block;padding-top:14px}.sidebar .h1:first-of-type{padding-top:0}.sidebar .h2{font-size:14px;padding-left:16px;display:inline-block}.sidebar .h3{font-size:14px;padding-left:32px;display:inline-block}.markdown-body a{color:#007acc}.markdown-body a:hover{color:#000;text-decoration:underline}.markdown-body h1{border-bottom:4px #edeff6 solid;font-weight:700;color:#000}.markdown-body h2{border-bottom:4px #edeff6 solid;margin-top:24px;color:#000}.markdown-body h1 a,.markdown-body h2 a,.markdown-body h3 a,.markdown-body h4 a{color:#000}.markdown-body h1:before,.markdown-body h2:before,.markdown-body h3:before,.markdown-body h4:before{content:"";display:block;position:relative;z-index:-100;width:0;height:42px;margin-top:-42px}.docs{width:100%;box-sizing:border-box}.markdown-body{background-color:inherit;font-family:Roboto}@media (min-width: 800px){.sidebar{position:sticky;top:48px;float:left;width:208px;padding-top:0;overflow-y:auto;max-height:calc(100dvh - 128px)}.docs{padding-left:232px}}.markdown-body .language-cs{white-space:pre-wrap}.markdown-body table{width:100%}:root{--github-alert-default-color: rgb(208, 215, 222);--github-alert-note-color: rgb(9, 105, 218);--github-alert-tip-color: rgb(26, 127, 55);--github-alert-important-color: rgb(130, 80, 223);--github-alert-warning-color: rgb(191, 135, 0);--github-alert-caution-color: rgb(207, 34, 46)}@media (prefers-color-scheme: dark){:root{--github-alert-default-color: rgb(48, 54, 61);--github-alert-note-color: rgb(31, 111, 235);--github-alert-tip-color: rgb(35, 134, 54);--github-alert-important-color: rgb(137, 87, 229);--github-alert-warning-color: rgb(158, 106, 3);--github-alert-caution-color: rgb(248, 81, 73)}}.markdown-alert{padding:.5rem 1rem;margin-bottom:16px;border-left:.25em solid var(--github-alert-default-color)}.markdown-alert>:first-child{margin-top:0}.markdown-alert>:last-child{margin-bottom:0}.markdown-alert-note{border-left-color:var(--github-alert-note-color)}.markdown-alert-tip{border-left-color:var(--github-alert-tip-color)}.markdown-alert-important{border-left-color:var(--github-alert-important-color)}.markdown-alert-warning{border-left-color:var(--github-alert-warning-color)}.markdown-alert-caution{border-left-color:var(--github-alert-caution-color)}.markdown-alert-title{display:flex;margin-bottom:4px;align-items:center}.markdown-alert-title>svg{margin-right:8px}.markdown-alert-note .markdown-alert-title{color:var(--github-alert-note-color)}.markdown-alert-tip .markdown-alert-title{color:var(--github-alert-tip-color)}.markdown-alert-important .markdown-alert-title{color:var(--github-alert-important-color)}.markdown-alert-warning .markdown-alert-title{color:var(--github-alert-warning-color)}.markdown-alert-caution .markdown-alert-title{color:var(--github-alert-caution-color)}.markdown-body{color-scheme:light;--focus-outlineColor: #0969da;--fgColor-default: #1f2328;--fgColor-muted: #636c76;--fgColor-accent: #0969da;--fgColor-success: #1a7f37;--fgColor-attention: #9a6700;--fgColor-danger: #d1242f;--fgColor-done: #8250df;--bgColor-default: #ffffff;--bgColor-muted: #f6f8fa;--bgColor-neutral-muted: #afb8c133;--bgColor-attention-muted: #fff8c5;--borderColor-default: #d0d7de;--borderColor-muted: #d0d7deb3;--borderColor-neutral-muted: #afb8c133;--borderColor-accent-emphasis: #0969da;--borderColor-success-emphasis: #1a7f37;--borderColor-attention-emphasis: #bf8700;--borderColor-danger-emphasis: #cf222e;--borderColor-done-emphasis: #8250df;--color-prettylights-syntax-comment: #57606a;--color-prettylights-syntax-constant: #0550ae;--color-prettylights-syntax-constant-other-reference-link: #0a3069;--color-prettylights-syntax-entity: #6639ba;--color-prettylights-syntax-storage-modifier-import: #24292f;--color-prettylights-syntax-entity-tag: #0550ae;--color-prettylights-syntax-keyword: #cf222e;--color-prettylights-syntax-string: #0a3069;--color-prettylights-syntax-variable: #953800;--color-prettylights-syntax-brackethighlighter-unmatched: #82071e;--color-prettylights-syntax-brackethighlighter-angle: #57606a;--color-prettylights-syntax-invalid-illegal-text: #f6f8fa;--color-prettylights-syntax-invalid-illegal-bg: #82071e;--color-prettylights-syntax-carriage-return-text: #f6f8fa;--color-prettylights-syntax-carriage-return-bg: #cf222e;--color-prettylights-syntax-string-regexp: #116329;--color-prettylights-syntax-markup-list: #3b2300;--color-prettylights-syntax-markup-heading: #0550ae;--color-prettylights-syntax-markup-italic: #24292f;--color-prettylights-syntax-markup-bold: #24292f;--color-prettylights-syntax-markup-deleted-text: #82071e;--color-prettylights-syntax-markup-deleted-bg: #ffebe9;--color-prettylights-syntax-markup-inserted-text: #116329;--color-prettylights-syntax-markup-inserted-bg: #dafbe1;--color-prettylights-syntax-markup-changed-text: #953800;--color-prettylights-syntax-markup-changed-bg: #ffd8b5;--color-prettylights-syntax-markup-ignored-text: #eaeef2;--color-prettylights-syntax-markup-ignored-bg: #0550ae;--color-prettylights-syntax-meta-diff-range: #8250df;--color-prettylights-syntax-sublimelinter-gutter-mark: #8c959f }
+</style>
+		<link href="./_app/immutable/assets/4.6fb6daec.css" rel="stylesheet" disabled media="(max-width: 0)"><title>Lattice Modifier for Unity</title><!-- HEAD_svelte-3ezosi_START --><!-- HEAD_svelte-3ezosi_END -->
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">  <main id="test"> <div id="web">   <div id="content">  <div class="content"><div class="sidebar markdown-body"><p><a href="#lattice-modifier-for-unity" class="h1">Lattice Modifier for Unity</a><br><a href="#changelog" class="h2">Changelog</a><br><a href="#v131" class="h3">v1.3.1</a><br><a href="#v130" class="h3">v1.3.0</a><br><a href="#v120" class="h3">v1.2.0</a><br><a href="#v110" class="h3">v1.1.0</a><br><a href="#v100" class="h3">v1.0.0</a><br><a href="#getting-started" class="h1">Getting Started</a><br><a href="#create-a-lattice" class="h2">Create a Lattice</a><br><a href="#add-a-modifier" class="h2">Add a Modifier</a><br><a href="#add-a-skinned-modifier" class="h2">Add a Skinned Modifier</a><br><a href="#blend-shapes" class="h3">Blend Shapes</a><br><a href="#using-lattices" class="h1">Using Lattices</a><br><a href="#lattice-editor" class="h2">Lattice Editor</a><br><a href="#preferences" class="h3">Preferences</a><br><a href="#animating" class="h2">Animating</a><br><a href="#scripting" class="h2">Scripting</a><br><a href="#example" class="h3">Example</a><br><a href="#components" class="h1">Components</a><br><a href="#lattice" class="h2">Lattice</a><br><a href="#per-modifier-properties" class="h3">Per-Modifier Properties</a><br><a href="#masking-options" class="h3">Masking Options</a><br><a href="#lattice-modifier" class="h2">Lattice Modifier</a><br><a href="#skinned-lattice-modifier" class="h2">Skinned Lattice Modifier</a><br><a href="#transform-lattice-modifier" class="h2">Transform Lattice Modifier</a><br><a href="#roadmap" class="h1">Roadmap</a><br><a href="#planned" class="h2">Planned</a><br><a href="#under-consideration" class="h2">Under Consideration</a><br><a href="#suggestions" class="h2">Suggestions</a><br><a href="#included-samples" class="h1">Included Samples</a><br><a href="#pipes" class="h2">Pipes</a><br><a href="#skinned" class="h2">Skinned</a><br><a href="#squished" class="h2">Squished</a><br><a href="#quality" class="h2">Quality</a><br><a href="#global" class="h2">Global</a><br><a href="#drapes" class="h2">Drapes</a><br><a href="#mode" class="h2">Mode</a><br><a href="#transform" class="h2">Transform</a><br><a href="#grab" class="h2">Grab</a><br><a href="#masking" class="h2">Masking</a><br><a href="#wiggle" class="h2">Wiggle</a><br></p></div> <div class="docs markdown-body"><!-- HTML_TAG_START -->
+<h1 id="lattice-modifier-for-unity"><a href="#lattice-modifier-for-unity">Lattice Modifier for Unity</a></h1>
+<p><img
+  src="./public/lattice/example.webp"
+  alt="A character being deformed using a lattice"
+></p>
+<p>The asset can be found on the <a
+  href="https://u3d.as/3mDH"
+  rel="nofollow"
+>Unity Asset Store</a>.<br>
+For a quick overview, check out the <a href="#getting-started">Getting Started</a>.  </p>
+
+<p>For up-to-date documentation please visit the
+<a
+  href="https://harryheath.com/lattice"
+  rel="nofollow"
+>online documentation</a>.</p>
+
+<p>And check out the <a
+  href="https://discord.gg/q4F9YbtB6V"
+  rel="nofollow"
+>Discord server</a>, for a place
+to discuss, ask questions, and share your work with lattices.</p>
+<h2 id="changelog"><a href="#changelog">Changelog</a></h2>
+<h3 id="v131"><a href="#v131">v1.3.1</a></h3>
+<p>2025/10/26</p>
+<ul>
+<li>Added <code>TargetMesh</code>, <code>ApplyMethod</code> and <code>StretchChannel</code> as C# properties</li>
+<li>Added <code>Save Deformed Mesh...</code> to the component header context menu</li>
+<li>Fixed inspector previews of prefabs using modifiers</li>
+</ul>
+<h3 id="v130"><a href="#v130">v1.3.0</a></h3>
+<p>2025/03/17  </p>
+<ul>
+<li>Improved compute shader performance</li>
+<li>Added <code>Masking</code> options to Lattices</li>
+<li>Added <code>Selection Falloff</code></li>
+<li>Added <code>Fit to Renderer</code></li>
+<li>Added <code>Save Deformed Mesh...</code></li>
+<li>Added <code>Interpolation</code> option for Lattices
+<ul>
+<li>Renamed <code>High Quality</code> to interpolation type <code>Cubic</code></li>
+<li>Renamed <code>Low Quality</code> to interpolation type <code>Linear Smooth</code></li>
+<li>Added interpolation type <code>Linear Sharp</code></li>
+<li>Updated <code>Quality</code> sample with new interpolation types</li>
+</ul>
+</li>
+<li>Added <code>TransformLatticeModifier</code> component</li>
+<li>Added a C# lattice solver API <code>LatticeSolver</code></li>
+<li>Added new samples:
+<ul>
+<li><code>Global</code></li>
+<li><code>Masking</code></li>
+<li><code>Transform</code></li>
+<li><code>Wiggle</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="v120"><a href="#v120">v1.2.0</a></h3>
+<p>2024/12/11  </p>
+<ul>
+<li>Added <code>Apply Method</code> option to modifiers</li>
+<li>Added support for <code>Skinned Motion Vectors</code></li>
+<li>Added <code>Grab</code> sample</li>
+<li>Fixed skinned mesh scaling issues with odd transforms </li>
+</ul>
+<h3 id="v110"><a href="#v110">v1.1.0</a></h3>
+<p>2024/10/04  </p>
+<ul>
+<li>Fixed blend shapes flickering while animating  </li>
+<li>Fixed blend shapes without bone weights not deforming  </li>
+<li>Added utility component <code>RebindOnStart</code>  </li>
+<li>Improved normal and tangent calculation</li>
+<li>Miscellaneous minor bugfixes</li>
+</ul>
+<h3 id="v100"><a href="#v100">v1.0.0</a></h3>
+<p>2024/09/23  </p>
+<ul>
+<li>Initial Release</li>
+</ul>
+<br/>
+<h1 id="getting-started"><a href="#getting-started">Getting Started</a></h1>
+<p>Make sure to check out the <a href="#included-samples">included samples</a> for examples
+and demo animations.</p>
+<h2 id="create-a-lattice"><a href="#create-a-lattice">Create a Lattice</a></h2>
+<p>To start using Lattice Modifiers, create a new GameObject and add the <code>Lattice</code>
+component. In the inspector, you can change the Lattice <code>Resolution</code> to add more
+handles if needed.</p>
+<p>You can edit the Lattice by clicking on handles and moving them with the move,
+rotate and scale tool. Hold shift to select multiple at a time, and drag click
+to use a box selection.</p>
+<p>For more details on using Lattices take a look at the
+<a
+  href="#using-lattices"
+>using Lattices</a>.</p>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path><path
+  d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"
+></path></svg>Note</p>
+<p>
+If no handles are selected, the transform tools will move the GameObject
+itself, not the lattice handles.</p>
+</div>
+<p><img src="./public/lattice/getting-started/create-lattice.webp"></p>
+<h2 id="add-a-modifier"><a href="#add-a-modifier">Add a Modifier</a></h2>
+<div class="markdown-alert markdown-alert-important"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path
+  d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"
+></path><path
+  d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"
+></path></svg>Important</p>
+<p>
+Make sure your model has <code>Read/Write</code> enabled in the model import settings,
+otherwise the modifier cannot be used.</p>
+</div>
+<p>Select your model, the GameObject with a <code>Mesh Filter</code> and <code>Mesh Renderer</code>, and
+add the <code>Lattice Modifier</code> component.</p>
+<p>In the inspector, add the Lattice we previously made. Set <code>Interpolation</code> to
+<code>Cubic</code> to improve deformation quality, and <code>Global</code> if you want the lattice
+to apply outside of its bounds. Take a look at the
+<a
+  href="#quality"
+>included Quality sample</a> for an example of each of these
+properties.</p>
+<p>If you now select the Lattice again and move around the handles, you should see
+the model deforming along with the Lattice.</p>
+<p>For more details on the Lattice Modifier, take a look at the
+<a
+  href="#lattice-modifier"
+>Lattice Modifier documentation</a>.</p>
+<p><img src="./public/lattice/getting-started/create-lattice-modifier.webp"></p>
+<h2 id="add-a-skinned-modifier"><a href="#add-a-skinned-modifier">Add a Skinned Modifier</a></h2>
+<div class="markdown-alert markdown-alert-important"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path
+  d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"
+></path><path
+  d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"
+></path></svg>Important</p>
+<p>
+If you intend to use Skinned Lattice Modifiers in your project, make sure GPU
+skinning is enabled in the project settings:
+<code>Project Settings &gt; Player &gt; Other Settings &gt; GPU Skinning</code>.</p>
+</div>
+<div class="markdown-alert markdown-alert-important"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path
+  d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"
+></path><path
+  d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"
+></path></svg>Important</p>
+<p>
+Make sure your model has <code>Read/Write</code> enabled in the model import settings,
+otherwise the modifier cannot be used.</p>
+</div>
+<p>Select your model, the GameObject with a <code>Skinned Mesh Renderer</code>, and add the
+<code>Skinned Lattice Modifier</code> component.</p>
+<p>In the inspector, add the Lattice we previously made, either to the the
+<code>Lattices</code> list (which are applied <strong>before</strong> skinning), or the
+<code>Skinned lattices</code> list (which are applied <strong>after</strong> skinning). Take a look at
+the <a href="#skinned">included Skinned sample</a> for an example of the Skinned
+Lattice Modifier. </p>
+<p>If you now select the Lattice again and move around the handles, you should the
+character deforming along with the lattice.</p>
+<p>For more details on the Skinned Lattice Modifier, take a look at the
+<a
+  href="#skinned-lattice-modifier"
+>Skinned Lattice Modifier documentation</a>.</p>
+<p><img
+  src="./public/lattice/getting-started/create-skinned-lattice-modifier.webp"
+></p>
+<div class="markdown-alert markdown-alert-tip"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path
+  d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6m6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1"
+></path></svg>Tip</p>
+<p>
+It can be hard to determine how Lattices applied <strong>before</strong> skinning affect
+your character, especially if their rig has moved from their bind pose (the
+T-pose or A-pose).  </p>
+<p>A quick way to get a reference of their pre-skinning position is to create a
+child GameObject under your <code>Skinned Mesh Renderer</code>, add a <code>Mesh Filter</code> and
+<code>Mesh Renderer</code>, and copy the target mesh and materials across. This will
+display your character in their bind pose which you can use as reference.</p>
+</div>
+<h3 id="blend-shapes"><a href="#blend-shapes">Blend Shapes</a></h3>
+<p>If you’re animating blend shapes using an Animator, the blend shapes may not be
+correctly animated as the Animator will still be “bound” to the undeformed mesh.
+You will need to rebind the Animator, this can be done by calling
+<code>Animator.Rebind()</code> from a script. </p>
+<p>A small utility component <code>RebindOnStart</code> has been provided to achieve this.
+You can add this component next to the Animator, and it will call
+<code>Animator.Rebind()</code> for you when you start the game.</p>
+<p><img src="./public/lattice/getting-started/blend-shapes.webp"></p>
+<br/>
+<h1 id="using-lattices"><a href="#using-lattices">Using Lattices</a></h1>
+<h2 id="lattice-editor"><a href="#lattice-editor">Lattice Editor</a></h2>
+<div class="markdown-alert markdown-alert-important"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path
+  d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"
+></path><path
+  d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"
+></path></svg>Important</p>
+<p>
+To see the lattice editor, make sure
+<a
+  href="https://docs.unity3d.com/Manual/GizmosMenu.html"
+  rel="nofollow"
+>Gizmos</a> are enabled.  </p>
+</div>
+<p><img src="./public/lattice/lattices/editor-demo.webp"></p>
+<p>The editor currently supports:</p>
+<ul>
+<li>
+<p><strong>Multiselection of handles</strong><br>
+Hold <code>Shift</code> to select multiple handles at a time. Drag click to use a
+selection box (holding <code>Shift</code> will add or remove from current selection)</p>
+</li>
+<li>
+<p><strong>Selection Falloff</strong><br>
+Enable selection falloff in the context menu (right click menu). Will move
+nearby handles along with the selected ones, using a customisable falloff. </p>
+<ul>
+<li>Control the radius of the falloff using the <strong>scroll wheel</strong> when moving a
+handle or from the Lattice Preferences menu.  <br/><br>
+<img src="./public/lattice/lattices/selection-falloff.webp"></li>
+</ul>
+</li>
+<li>
+<p><strong>Focusing with <code>F</code></strong><br>
+Focuses on the currently selected handles. If no handles are selected, focuses
+on the whole Lattice</p>
+</li>
+<li>
+<p><strong>Center and Pivot Position Modes</strong><br>
+When pivot is selected the last selected handle will act as the pivot point.</p>
+</li>
+<li>
+<p><strong>Global and Local Rotation Modes</strong><br>
+Both rotation modes are supported, global will show the tool in world space,
+and local in Lattice space</p>
+</li>
+<li>
+<p><strong>Undo and Redo</strong><br>
+Supports changing handle positions and changing selected handles</p>
+</li>
+<li>
+<p><strong>Fit to Renderer or Transform</strong><br>
+Available in the context menu, automatically position and resize Lattices to
+objects or hierarchies in the scene. </p>
+<ul>
+<li>Fitting to a renderer will fit to the single renderer, while fitting to a
+transform will fit to contain all child renderers of that transform. <br/><br>
+<img src="./public/lattice/lattices/fit-to-renderer.webp"></li>
+</ul>
+</li>
+<li>
+<p><strong>Even more in the Context Menu</strong><br>
+Right click when a lattice is selected to show even more operations:</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Use Selection Falloff</td>
+<td>Enables or disables selection falloff.</td>
+</tr>
+<tr>
+<td>Invert Selection</td>
+<td>Inverts the current selection.</td>
+</tr>
+<tr>
+<td>Select All Handles</td>
+<td>Selects all handles.</td>
+</tr>
+<tr>
+<td>Select Exterior Handles</td>
+<td>Selects the outer handles, useful when using global deformation.</td>
+</tr>
+<tr>
+<td>Reset Selected Handles</td>
+<td>Resets the selection handles back to their default position.</td>
+</tr>
+<tr>
+<td>Reset All Handles</td>
+<td>Resets all handle positions back to their default position.</td>
+</tr>
+<tr>
+<td>Copy Selected Indices</td>
+<td>Copies selected handle indices so they can be pasted into a <code>Vector3Int[]</code> or <code>List&lt;Vector3Int&gt;</code> within the inspector.</td>
+</tr>
+<tr>
+<td>Fit To Renderer…</td>
+<td>Fits the lattice to a selected renderer.</td>
+</tr>
+<tr>
+<td>Fit to Transform…</td>
+<td>Fits the lattice to contain all child renderers of a transform.</td>
+</tr>
+<tr>
+<td>Lattice Preferences…</td>
+<td>Opens the <a href="#preferences">Lattice Preferences window</a>.</td>
+</tr>
+</tbody>
+</table>
+<p><img src="./public/lattice/lattices/context-menu.webp"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="preferences"><a href="#preferences">Preferences</a></h3>
+<p>You can customise the appearance of the Lattice editor within your editor
+preferences window, accessible from <code>Edit &gt; Preferences... &gt; Lattice</code> or from
+the context menu above.</p>
+<p><img src="./public/lattice/lattices/preferences.webp"></p>
+<h2 id="animating"><a href="#animating">Animating</a></h2>
+<p>You can keyframe Lattice handles using the animation timeline. The easiest way
+to do this is enable recording mode and then move the desired Lattice handles.</p>
+<p><img src="./public/lattice/lattices/animation.webp"></p>
+<h2 id="scripting"><a href="#scripting">Scripting</a></h2>
+<p>The Lattice component comes with many public methods for moving handles.
+Take a look at <code>Runtime/Components/Lattice.cs</code> for all the available methods,
+the most useful of which will be:</p>
+<pre class="language-cs"><code class="language-cs"><span class="token comment">/// Set the offset of a handle relative to its base position.</span>
+<span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">SetHandleOffset</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">int</span></span> x<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> y<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> z<span class="token punctuation">,</span> <span class="token class-name">Vector3</span> offset<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">SetHandleOffset</span><span class="token punctuation">(</span><span class="token class-name">Vector3Int</span> coords<span class="token punctuation">,</span> <span class="token class-name">Vector3</span> offset<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">/// Set the position of a handle in local space.</span>
+<span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">SetHandlePosition</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">int</span></span> x<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> y<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> z<span class="token punctuation">,</span> <span class="token class-name">Vector3</span> position<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">SetHandlePosition</span><span class="token punctuation">(</span><span class="token class-name">Vector3Int</span> coords<span class="token punctuation">,</span> <span class="token class-name">Vector3</span> position<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">/// Set the position of a handle in world space.</span>
+<span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">SetHandleWorldPosition</span><span class="token punctuation">(</span><span class="token class-name"><span class="token keyword">int</span></span> x<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> y<span class="token punctuation">,</span> <span class="token class-name"><span class="token keyword">int</span></span> z<span class="token punctuation">,</span> <span class="token class-name">Vector3</span> position<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">SetHandleWorldPosition</span><span class="token punctuation">(</span><span class="token class-name">Vector3Int</span> coords<span class="token punctuation">,</span> <span class="token class-name">Vector3</span> position<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<h3 id="example"><a href="#example">Example</a></h3>
+<p>This script controls a Lattice to follow a sine wave, simulating cloth waving
+in the wind. This code is used in <a
+  href="#drapes"
+>the Drapes sample</a>.</p>
+<pre class="language-cs"><code class="language-cs"><span class="token punctuation">[</span><span class="token attribute"><span class="token class-name">SerializeField</span></span><span class="token punctuation">]</span> <span class="token keyword">private</span> <span class="token class-name"><span class="token keyword">float</span></span> _speed<span class="token punctuation">;</span>
+<span class="token punctuation">[</span><span class="token attribute"><span class="token class-name">SerializeField</span></span><span class="token punctuation">]</span> <span class="token keyword">private</span> <span class="token class-name"><span class="token keyword">float</span></span> _scale<span class="token punctuation">;</span>
+<span class="token punctuation">[</span><span class="token attribute"><span class="token class-name">SerializeField</span></span><span class="token punctuation">]</span> <span class="token keyword">private</span> <span class="token class-name"><span class="token keyword">float</span></span> _distance<span class="token punctuation">;</span>
+<span class="token punctuation">[</span><span class="token attribute"><span class="token class-name">SerializeField</span></span><span class="token punctuation">]</span> <span class="token keyword">private</span> <span class="token class-name">Lattice</span> _lattice<span class="token punctuation">;</span>
+
+<span class="token keyword">private</span> <span class="token return-type class-name"><span class="token keyword">void</span></span> <span class="token function">Update</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token comment">// To help iterate over all handles you can use the Lattice.GetHandles() </span>
+    <span class="token comment">// extension method, rather than 3 nested for loops for each axis</span>
+    <span class="token keyword">foreach</span> <span class="token punctuation">(</span><span class="token class-name">Vector3Int</span> handle <span class="token keyword">in</span> _lattice<span class="token punctuation">.</span><span class="token function">GetHandles</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token comment">// Determine offset amount</span>
+        <span class="token class-name"><span class="token keyword">float</span></span> position <span class="token operator">=</span> _scale <span class="token operator">*</span> handle<span class="token punctuation">.</span>x<span class="token punctuation">;</span>
+        <span class="token class-name"><span class="token keyword">float</span></span> wind <span class="token operator">=</span> Mathf<span class="token punctuation">.</span><span class="token function">Sin</span><span class="token punctuation">(</span>_speed <span class="token operator">*</span> Time<span class="token punctuation">.</span>timeSinceLevelLoad <span class="token operator">+</span> position<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name"><span class="token keyword">float</span></span> offset <span class="token operator">=</span> _distance <span class="token operator">*</span> handle<span class="token punctuation">.</span>y <span class="token operator">*</span> wind<span class="token punctuation">;</span>
+
+        <span class="token comment">// Set handle offset</span>
+        _lattice<span class="token punctuation">.</span><span class="token function">SetHandleOffset</span><span class="token punctuation">(</span>handle<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token constructor-invocation class-name">Vector3</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> offset<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+<br/>
+<h1 id="components"><a href="#components">Components</a></h1>
+<h2 id="lattice"><a href="#lattice">Lattice</a></h2>
+<p>Lattices are the 3d grid used to control deformations. Take a look at
+<a
+  href="#using-lattices"
+>using Lattices</a> for guides on editing, animating and scripting
+Lattices.</p>
+<p><img src="./public/lattice/components/lattice.webp"></p>
+<p>Lattices have the following properties:</p>
+<ul>
+<li><strong>Resolution</strong><br>
+The number of handles across each axis.</li>
+</ul>
+<h3 id="per-modifier-properties"><a href="#per-modifier-properties">Per-Modifier Properties</a></h3>
+<p>When adding Lattices to a modifier component, each Lattice has additional
+per-modifier properties:</p>
+<ul>
+<li>
+<p><strong>Interpolation</strong><br>
+Various modes of interpolation:</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linear Sharp</td>
+<td>Lowest quality sampling. Is cheaper than <code>Cubic</code>, but can have obvious seams between cells.</td>
+</tr>
+<tr>
+<td>Linear Smooth</td>
+<td>Similar to <code>Linear Sharp</code>, but adds smoothing to remove obvious seams between cells. Not always ideal for extreme effects such as rotation.</td>
+</tr>
+<tr>
+<td>Cubic</td>
+<td>The highest quality of interpolation. Is more expensive, but adds smooth, continuous deformation. Better for more extreme effects such as rotation.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Global</strong><br>
+Will continue to apply deformations outside of the Lattice. If disabled,
+deformations are restrained to near the Lattice.</p>
+</li>
+<li>
+<p><strong>Mask</strong><br>
+Controls how a Lattice is applied to different parts of the mesh. Take a look at
+<a
+  href="#masking-options"
+>Masking Options</a>.</p>
+</li>
+</ul>
+<h3 id="masking-options"><a href="#masking-options">Masking Options</a></h3>
+<p>The following masking options are available when adding a Lattice to a modifier.
+The <a
+  href="#selection-mask"
+>selection settings</a> allow you to specify which vertices will be
+deformed. While the <a
+  href="#vertex-mask"
+>vertex settings</a> allow you to control how much
+each individual vertex is then deformed.</p>
+<h4 id="selection-mask"><a href="#selection-mask">Selection Mask</a></h4>
+<p>The selection mask decides which vertices will have deformation applied. This
+limits which vertices run through the compute shader, so depending on the size
+of your mesh and number of submeshes, this may also improve performance.
+However, leave it set to <code>Apply To All</code> in most cases. It has the following
+types:</p>
+<ul>
+<li>
+<p><strong>Apply To All</strong><br>
+Applies the deformation to all vertices.</p>
+</li>
+<li>
+<p><strong>Material</strong><br>
+Applies the deformation only to the vertices using a specific material.
+Has the following options:</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Index</td>
+<td>The material index, matching the materials within the renderer component.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+<div class="markdown-alert markdown-alert-note"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path><path
+  d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"
+></path></svg>Note</p>
+<p>
+A vertex can belong to one or more materials, so just be aware when applying
+multiple lattices with the <code>Material</code> mode to these shared vertices.</p>
+</div>
+<h4 id="vertex-mask"><a href="#vertex-mask">Vertex Mask</a></h4>
+<p>The vertex mask applies a scalar multiplier to the deformation of each vertex.
+For example, 0 would apply no deformation, while 2 will double the deformation.
+The vertex mask has the following types:</p>
+<ul>
+<li>
+<p><strong>None</strong><br>
+No masking is used.</p>
+</li>
+<li>
+<p><strong>Constant</strong><br>
+Uses a constant multiplier for all vertices.</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Multiplier</td>
+<td>Multiplication factor by which the Lattice is applied.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Color</strong><br>
+Uses a vertex color channel as a mask.</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Channel</td>
+<td>Color channel to use, i.e. red, green, blue or alpha.</td>
+</tr>
+<tr>
+<td>Multiplier</td>
+<td>Additional multiplication factor.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>UV</strong><br>
+Uses a vertex UV channel as a mask.</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UV</td>
+<td>Texture coordinates to use.</td>
+</tr>
+<tr>
+<td>Channel</td>
+<td>Color channel to use.</td>
+</tr>
+<tr>
+<td>Multiplier</td>
+<td>Additional multiplication factor.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Texture</strong><br>
+Uses a texture as a mask.</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UV</td>
+<td>UVs to use for texture sampling.</td>
+</tr>
+<tr>
+<td>Texture</td>
+<td>Texture to be sampled.</td>
+</tr>
+<tr>
+<td>Channel</td>
+<td>Color channel of texture to use as mask.</td>
+</tr>
+<tr>
+<td>Multiplier</td>
+<td>Additional multiplication factor.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="lattice-modifier"><a href="#lattice-modifier">Lattice Modifier</a></h2>
+<p>Lattice Modifiers allow static meshes to be affected by Lattices. Lattice
+Modifiers must be added to GameObjects with a <code>MeshFilter</code> and <code>MeshRenderer</code>.
+You can apply multiple Lattices to a Lattice Modifier.</p>
+<p><img src="./public/lattice/components/lattice-modifier.webp"></p>
+<p>Lattice Modifiers have the following properties:</p>
+<ul>
+<li>
+<p><strong>Target Mesh</strong><br>
+The mesh used on the attached <code>Mesh Filter</code> component. This field will be
+automatically filled in when added to the GameObject.</p>
+</li>
+<li>
+<p><strong>Apply Method</strong><br>
+How Lattices are applied to the mesh.</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Position Only</td>
+<td>Vertex position only. Cheaper than deforming the normal and tangent as well, but not as visually accurate.</td>
+</tr>
+<tr>
+<td>Position, Normal and Tangent</td>
+<td>Deforms vertex position, normal and tangents.</td>
+</tr>
+<tr>
+<td>Stretch</td>
+<td>Deforms position, normal and tangent, and calculates the amount of squash and stretch and stores it in the UV channel chosen in <code>Stretch Channel</code> below.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Stretch Channel</strong><br>
+The UV channel to store squish and stretch in to. Only accessible if
+<code>Apply Method</code> is set to <code>Stretch</code>.</p>
+</li>
+<li>
+<p><strong>Update Mode</strong><br>
+How often the Lattices are applied. You can change this at runtime with the
+property <code>UpdateMode</code>. Can choose from the following options:</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Manual</td>
+<td>Only applied on start, or if <code>RequestUpdate()</code> is called on the component.</td>
+</tr>
+<tr>
+<td>When Visible</td>
+<td>Updates every frame when the renderer is visible.</td>
+</tr>
+<tr>
+<td>Always</td>
+<td>Updates every frame.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Lattices</strong><br>
+The Lattices to apply to this modifier. Each lattice has additional
+<a
+  href="#per-modifier-properties"
+>per-modifier properties</a>.</p>
+</li>
+</ul>
+<div class="markdown-alert markdown-alert-tip"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path
+  d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6m6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1"
+></path></svg>Tip</p>
+<p>
+You can right click on the component and click <code>Save Deformed Mesh...</code> to
+save the mesh as an asset.</p>
+</div>
+<h2 id="skinned-lattice-modifier"><a href="#skinned-lattice-modifier">Skinned Lattice Modifier</a></h2>
+<p>Skinned Lattice Modifiers allow skinned meshes to be affected by Lattices.
+Skinned Lattice Modifiers must be added to a GameObject with a
+<code>Skinned Mesh Renderer</code>. You can apply multiple Lattices to a Skinned Lattice
+Modifier, and choose to apply them before or after skinning.</p>
+<p><img src="./public/lattice/components/skinned-lattice-modifier.webp"></p>
+<p>Skinned Lattice Modifiers have the following properties:</p>
+<ul>
+<li>
+<p><strong>Target Mesh</strong><br>
+The mesh used on the attached <code>Skinned Mesh Renderer</code> component. This field will
+be automatically filled in when added to the GameObject.</p>
+</li>
+<li>
+<p><strong>Apply Method</strong><br>
+How Lattices are applied to the mesh.</p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Position Only</td>
+<td>Vertex position only. Cheaper than deforming the normal and tangent as well, but not as visually accurate.</td>
+</tr>
+<tr>
+<td>Position, Normal and Tangent</td>
+<td>Deforms vertex position, normal and tangents.</td>
+</tr>
+<tr>
+<td>Stretch</td>
+<td>Deforms position, normal and tangent, and calculates the amount of squash and stretch and stores it in the UV channel chosen in <code>Stretch Channel</code> below.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Stretch Channel</strong><br>
+The UV channel to store squish and stretch in to. Only accessible if
+<code>Apply Method</code> is set to <code>Stretch</code>.</p>
+</li>
+<li>
+<p><strong>Update Mode</strong><br>
+How often the pre-skinning Lattices are applied. The Skinned Lattices are not
+affected by this option, and are updated whenever skinning is updated. You can
+change this at runtime with the property <code>UpdateMode</code>. Can choose from the
+following options. </p>
+<ul>
+<li>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Manual</td>
+<td>Only applied on start, or if <code>RequestUpdate()</code> is called on the component.</td>
+</tr>
+<tr>
+<td>When Visible</td>
+<td>Updates every frame when the renderer is visible.</td>
+</tr>
+<tr>
+<td>Always</td>
+<td>Updates every frame.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Lattices</strong><br>
+The Lattices to apply <strong>before</strong> skinning. Each lattice has additional
+<a
+  href="#per-modifier-properties"
+>per-modifier properties</a>.</p>
+</li>
+<li>
+<p><strong>Skinned Lattices</strong><br>
+The Lattices to apply <strong>after</strong> skinning. Each lattice has additional
+<a
+  href="#per-modifier-properties"
+>per-modifier properties</a>.</p>
+</li>
+</ul>
+<div class="markdown-alert markdown-alert-tip"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path
+  d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6m6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1"
+></path></svg>Tip</p>
+<p>
+You can right click on the component and click <code>Save Deformed Mesh...</code> or
+<code>Save Deformed Skinned Mesh...</code> to save the mesh as an asset before or after
+skinning.</p>
+</div>
+<h2 id="transform-lattice-modifier"><a href="#transform-lattice-modifier">Transform Lattice Modifier</a></h2>
+<p>Transform Lattice Modifiers allow you to apply Lattices to
+<a
+  href="https://docs.unity3d.com/Manual/class-Transform.html"
+  rel="nofollow"
+>Transform</a> components,
+which  can be used to apply deformation to non-mesh objects such as lights,
+particles emitters, transform targets, and/or any objects which don’t need
+per-vertex deformation.</p>
+<p>The Transform Lattice Modifier makes use of the <code>LatticeSolver</code> class, which
+provides a C# implementation of the Lattice deformation shader.</p>
+<p><img src="./public/lattice/components/transform-lattice-modifier.webp"></p>
+<p>Transform Lattice Modifiers have the following properties:</p>
+<ul>
+<li>
+<p><strong>Target Transform</strong><br>
+The target transform before any deformations. The component will move, rotate
+and scale to match where this transform would be once deformed.</p>
+</li>
+<li>
+<p><strong>Apply Method</strong><br>
+Which components of the transform we want to apply, including <code>Position</code>,
+<code>Rotation</code> and/or <code>Scale</code>.</p>
+</li>
+<li>
+<p><strong>Lattices</strong><br>
+The Lattices to apply. Each lattice has additional
+<a
+  href="#per-modifier-properties"
+>per-modifier properties</a>. Only mask types <code>None</code>
+and <code>Constant</code> are valid for Transform Lattice Modifiers.</p>
+</li>
+</ul>
+<br/>
+<h1 id="roadmap"><a href="#roadmap">Roadmap</a></h1>
+<h2 id="planned"><a href="#planned">Planned</a></h2>
+<ul>
+<li>
+<h4 id="interactive-samples"><a href="#interactive-samples">Interactive Samples</a></h4>
+<p>Add more samples with interactive and/or runtime functionality, rather than
+keyframed animations.</p>
+</li>
+</ul>
+<h2 id="under-consideration"><a href="#under-consideration">Under Consideration</a></h2>
+<ul>
+<li>
+<h4 id="scripting-only-lattice"><a href="#scripting-only-lattice">Scripting Only Lattice</a></h4>
+<p>The current lattice implementation has some CPU overhead to properly work with
+the animation system. A cheaper alternative could also be added, however it
+would not support keyframing handles.</p>
+</li>
+<li>
+<h4 id="cross-asset-support"><a href="#cross-asset-support">Cross Asset Support</a></h4>
+<p>Assets which also edit meshes may not always be compatible. Will
+investigate compatibility with popular assets, this will need to be achieved
+per-asset.</p>
+</li>
+</ul>
+<h2 id="suggestions"><a href="#suggestions">Suggestions</a></h2>
+<p>If there’s a core feature you think is missing,
+<a
+  href="mailto:me@harryheath.com"
+>send me an email</a> or leave a suggestion on
+<a
+  href="https://discord.gg/q4F9YbtB6V"
+  rel="nofollow"
+>the Discord server</a> and I’ll take a look.  </p>
+<br/>
+<h1 id="included-samples"><a href="#included-samples">Included Samples</a></h1>
+<p>The following samples are provided with the asset. You can import them from the
+Package Manager:</p>
+<ol>
+<li>Open the <code>In Project</code> tab</li>
+<li>Select <code>Lattice Modifier</code> under <code>Packages - Other</code></li>
+<li>Go the the <code>Samples</code> tab</li>
+<li>Import your desired sample</li>
+</ol>
+<p><img src="./public/lattice/samples/import-samples.webp"></p>
+<div class="markdown-alert markdown-alert-important"><p class="markdown-alert-title"><svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  fill="currentColor"
+  viewBox="0 0 16 16"
+><path
+  d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"
+></path><path
+  d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"
+></path></svg>Important</p>
+<p>
+These samples have been made in the Universal Render Pipeline (URP). It is
+recommended you create a URP project to open them. If you import them into a
+project using a different render pipeline you will need to swap the materials
+and/or shaders.</p>
+</div>
+<h2 id="pipes"><a href="#pipes">Pipes</a></h2>
+<p>An example animation using Lattices and Lattice Modifiers.</p>
+<p><img src="./public/lattice/samples/pipes.webp"></p>
+<h2 id="skinned"><a href="#skinned">Skinned</a></h2>
+<p>Demonstrates the use of Skinned Lattice Modifiers, and the different
+application methods. Pre-skinning vs post-skinning, and attaching Lattices to
+the skeleton.</p>
+<p><img src="./public/lattice/samples/skinned.webp"></p>
+<h2 id="squished"><a href="#squished">Squished</a></h2>
+<p>Demonstrates reading stretch and squish in custom shaders. Two shaders are
+included, one written in ShaderLab/HLSL and one created in Shader Graph.</p>
+<p><img src="./public/lattice/samples/squished.webp"></p>
+<h2 id="quality"><a href="#quality">Quality</a></h2>
+<p>Demonstrates the various <code>Interpolation</code> types: <code>Cubic</code>, <code>Linear Smooth</code> and
+<code>Linear Sharp</code>.</p>
+<p><img src="./public/lattice/samples/quality.webp"></p>
+<h2 id="global"><a href="#global">Global</a></h2>
+<p>Demonstrates the difference lattices with <code>Global</code> disabled and enabled.</p>
+<p><img src="./public/lattice/samples/global.webp"></p>
+<h2 id="drapes"><a href="#drapes">Drapes</a></h2>
+<p>An example of controlling a lattice using scripts. The Lattice is controlled
+via script to emulate wind.</p>
+<p><img src="./public/lattice/samples/drapes.webp"></p>
+<h2 id="mode"><a href="#mode">Mode</a></h2>
+<p>An example of the different UpdateModes of a modifier and an example of
+controlling them from scripts.</p>
+<p><img src="./public/lattice/samples/mode.webp"></p>
+<h2 id="transform"><a href="#transform">Transform</a></h2>
+<p>Demonstrates the <code>Transform Lattice Modifier</code>, which is used to control the
+light sources.</p>
+<p><img src="./public/lattice/samples/transform.webp"></p>
+<h2 id="grab"><a href="#grab">Grab</a></h2>
+<p>An interactive demo of deforming a face using spring physics.</p>
+<p><img src="./public/lattice/samples/grab.webp"></p>
+<h2 id="masking"><a href="#masking">Masking</a></h2>
+<p>An example of masking several deformations using materials and vertex colors.</p>
+<p><img src="./public/lattice/samples/masking.webp"></p>
+<h2 id="wiggle"><a href="#wiggle">Wiggle</a></h2>
+<p>An example script to wiggle the handles of a lattice, applied to both a mesh
+and a transform.</p>
+<p><img src="./public/lattice/samples/wiggle.webp"></p>
+<!-- HTML_TAG_END --></div></div></div></div></main>  <div id="footer"><div id="footer-content"> <div>Last edited 26/10/2025.</div> <div id="socials" data-svelte-h="svelte-a91441"> <a href="https://twitter.com/harryh___h" class="fa fa-twitter"></a>  <a href="https://www.linkedin.com/in/harry--heath/" class="fa fa-linkedin"></a>  <a href="mailto:me@harryheath.com" class="fa fa-envelope"></a></div></div></div> </div>
+	</body>
+</html>

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 91fc871c346443e43a9254374c2cc30b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Skinned/Character/Materials/M_Armature_Body.mat
+  uploadId: 811364

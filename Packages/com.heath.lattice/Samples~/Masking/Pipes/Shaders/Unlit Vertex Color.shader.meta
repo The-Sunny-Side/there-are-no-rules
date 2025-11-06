@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3be7cc65fa7abe54cb5daaf125a2a11f
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Masking/Pipes/Shaders/Unlit Vertex
+    Color.shader
+  uploadId: 811364

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c3e42ce8adfd82d4e938450d8e892a99
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Documentation/public/lattice/samples/wiggle.webp
+  uploadId: 811364

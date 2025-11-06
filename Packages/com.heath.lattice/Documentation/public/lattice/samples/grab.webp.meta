@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0a27322f4aa780e4a92c8b90c46bea32
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Documentation/public/lattice/samples/grab.webp
+  uploadId: 811364

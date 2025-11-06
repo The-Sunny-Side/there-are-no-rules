@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 39155a5830e10a94bbc9431fa28b8a2a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Transform/Lamp/Materials/desk_lamp_arm_01.mat
+  uploadId: 811364

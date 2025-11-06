@@ -1,0 +1,325 @@
+#pragma kernel Deform
+#pragma kernel Reset
+
+#pragma multi_compile_local __ LATTICE_NORMALS LATTICE_STRETCH
+#pragma multi_compile_local __ LATTICE_MULTIPLE_BUFFERS
+#pragma multi_compile_local __ LATTICE_INTRP_SMOOTH LATTICE_INTRP_CUBIC
+#pragma multi_compile_local __ LATTICE_ZERO_OUTSIDE
+#pragma multi_compile_local __ LATTICE_MASK_CONSTANT LATTICE_MASK_COLOR LATTICE_MASK_UV LATTICE_MASK_TEXTURE
+#pragma multi_compile_local __ LATTICE_USE_INDICES
+
+#if defined(LATTICE_STRETCH)
+#define LATTICE_NORMALS
+#endif
+
+#if defined(LATTICE_MASK_CONSTANT) || defined(LATTICE_MASK_COLOR) || defined(LATTICE_MASK_UV) || defined(LATTICE_MASK_TEXTURE)
+#define LATTICE_MASK
+#endif
+
+// Vertex buffer properties
+uint VertexCount;
+
+RWByteAddressBuffer VertexBuffer;
+uint BufferStride;
+uint PositionOffset;
+
+#ifdef LATTICE_NORMALS
+uint NormalOffset;
+uint TangentOffset;
+#define NUM_POSITIONS 3
+#else
+#define NUM_POSITIONS 1
+#endif
+
+#ifdef LATTICE_STRETCH
+uint StretchOffset;
+#endif
+
+#ifdef LATTICE_MULTIPLE_BUFFERS
+RWByteAddressBuffer AdditionalBuffer;
+uint AdditionalStride;
+#else
+#define AdditionalBuffer VertexBuffer
+#define AdditionalStride BufferStride
+#endif
+
+#ifdef LATTICE_MASK
+uint MaskOffset;
+uint MaskChannel;
+float MaskMultiplier;
+#endif
+
+#ifdef LATTICE_MASK_TEXTURE
+Texture2D<float4> MaskTexture;
+SamplerState sampler_MaskTexture;
+#endif
+
+#ifdef LATTICE_USE_INDICES
+StructuredBuffer<int> IndexToVertexMap;
+uint IndexCount;
+#endif
+
+// Lattice properties
+StructuredBuffer<float3> LatticeBuffer;
+float4x4 ObjectToLattice;
+float4x4 LatticeToObject;
+uint3 LatticeResolution;
+
+/// Retrieves a lattice handle's offset.
+float3 GetOffset(int3 handle)
+{
+#ifdef LATTICE_ZERO_OUTSIDE
+	if (handle.x < 0 || handle.x >= (int)LatticeResolution.x || 
+		handle.y < 0 || handle.y >= (int)LatticeResolution.y ||
+		handle.z < 0 || handle.z >= (int)LatticeResolution.z)
+		return float3(0, 0, 0);
+#endif
+	
+	handle = max(handle, int3(0, 0, 0));
+	handle = min(handle, LatticeResolution - int3(1, 1, 1));
+
+	int index = handle.x + (LatticeResolution.x * handle.y) + (LatticeResolution.x * LatticeResolution.y * handle.z);
+	return LatticeBuffer[index];
+}
+
+#ifdef LATTICE_INTRP_CUBIC /* Cubic Interpolation */
+
+#define NUM_SAMPLES 4
+
+struct Coefficients
+{
+	float4 x;
+	float4 y;
+	float4 z;
+};
+
+float3 aa0(float3 t)
+{
+	return 1.5f * t * t * t - 2.5f * t * t + 1.0f;
+}
+
+float3 aa1(float3 t)
+{
+	return -0.5f * t * t * t + 2.5f * t * t - 4.0f * t + 2.0f; 
+}
+
+Coefficients GetCoefficients(float3 cellPosition)
+{
+	float3 h_00 = aa1(cellPosition + 1);
+	float3 h_10 = aa0(cellPosition);
+	float3 h_01 = aa0(1 - cellPosition);
+	float3 h_11 = aa1(2 - cellPosition);
+
+	Coefficients h;
+	h.x = float4(h_00.x, h_10.x, h_01.x, h_11.x);
+	h.y = float4(h_00.y, h_10.y, h_01.y, h_11.y);
+	h.z = float4(h_00.z, h_10.z, h_01.z, h_11.z);
+	return h;
+}
+
+#else /* Linear Interpolation */
+
+#define NUM_SAMPLES 2
+
+struct Coefficients
+{
+	float2 x;
+	float2 y;
+	float2 z;
+};
+
+Coefficients GetCoefficients(float3 cellPosition)
+{
+#ifdef LATTICE_INTRP_SMOOTH
+	cellPosition = smoothstep(0, 1, cellPosition);
+#endif
+	
+	float3 h_10 = 1 - cellPosition;
+	float3 h_01 = cellPosition;
+
+	Coefficients h;
+	h.x = float2(h_10.x, h_01.x);
+	h.y = float2(h_10.y, h_01.y);
+	h.z = float2(h_10.z, h_01.z);
+	return h;
+}
+
+#endif
+
+int3 GetCell(float3 latticePosition)
+{
+	latticePosition += 0.5f;
+	
+	// Get the lattice cell which the vertex is in
+	return int3(
+		floor(latticePosition.x * (LatticeResolution.x - 1)),
+		floor(latticePosition.y * (LatticeResolution.y - 1)),
+		floor(latticePosition.z * (LatticeResolution.z - 1))
+	);
+}
+
+float3 GetCellPosition(float3 latticePosition, int3 cell)
+{
+	return (latticePosition + 0.5f) * (LatticeResolution - int3(1, 1, 1)) - cell;
+}
+
+void TransformPositions(float3 latticePosition[NUM_POSITIONS], out float3 position[NUM_POSITIONS])
+{
+	int3 cell = GetCell(latticePosition[0]);
+	
+	Coefficients h[NUM_POSITIONS];
+	
+	[unroll] 
+	for (int r = 0; r < NUM_POSITIONS; r++)
+	{
+		h[r] = GetCoefficients(GetCellPosition(latticePosition[r], cell));
+		position[r] = latticePosition[r];
+	}
+	
+	[unroll]
+	for (int i = 0; i < NUM_SAMPLES; i++)
+	{
+		[unroll] 
+		for (int j = 0; j < NUM_SAMPLES; j++)
+		{
+			[unroll] 
+			for (int k = 0; k < NUM_SAMPLES; k++)
+			{
+				int3 handle = cell + int3(i, j, k) - (NUM_SAMPLES / 2 - 1);
+				float3 handleOffset = GetOffset(handle);
+				
+				[unroll] 
+				for (int m = 0; m < NUM_POSITIONS; m++)
+				{
+					position[m] += handleOffset * (h[m].x[i] * h[m].y[j] * h[m].z[k]);
+				}
+			}
+		}
+	}
+}
+
+#ifdef LATTICE_MASK
+/// Gets the mask
+float GetMask(uint id)
+{
+	float mask = MaskMultiplier;
+	
+#ifdef LATTICE_MASK_COLOR
+	uint rawColor = AdditionalBuffer.Load(id * AdditionalStride + MaskOffset);
+	float4 color = 0.00392157f * float4(
+		(rawColor >> 0 ) & 0xff,
+		(rawColor >> 8 ) & 0xff,
+		(rawColor >> 16) & 0xff,
+		(rawColor >> 24) & 0xff
+	);
+	mask *= color[MaskChannel];
+#endif
+	
+#ifdef LATTICE_MASK_UV
+	float4 color = asfloat(AdditionalBuffer.Load4(id * AdditionalStride + MaskOffset));
+	mask *= color[MaskChannel];
+#endif
+
+#ifdef LATTICE_MASK_TEXTURE
+	float2 uv = asfloat(AdditionalBuffer.Load2(id * AdditionalStride + MaskOffset));
+	float4 color = MaskTexture.SampleLevel(sampler_MaskTexture, uv, 0);
+	mask *= color[MaskChannel];
+#endif
+	
+	return mask;
+}
+#endif
+
+/// Kernel to apply a lattice transformation to a mesh.
+[numthreads(64, 1, 1)]
+void Deform(uint id : SV_DispatchThreadID)
+{
+#if LATTICE_USE_INDICES
+	if (id >= IndexCount)
+		return;
+	
+	id = (uint)IndexToVertexMap[id];
+#endif
+	
+	if (id >= VertexCount)
+		return;
+
+	float3 input[NUM_POSITIONS];
+	float3 output[NUM_POSITIONS];
+	
+	// Get original vertex info
+	float3 originalPosition = asfloat(VertexBuffer.Load3(id * BufferStride + PositionOffset));
+	input[0] = mul(ObjectToLattice, float4(originalPosition, 1)).xyz;
+	
+#ifdef LATTICE_NORMALS
+	// Get original vertex info
+	float3 originalNormal   = asfloat(VertexBuffer.Load3(id * BufferStride + NormalOffset));
+	float3 originalTangent  = asfloat(VertexBuffer.Load3(id * BufferStride + TangentOffset));
+	float3 originalBinormal = cross(originalNormal, originalTangent);
+
+	// Calculate new tangent and binormal points
+	// These are used to calculate the normal later
+	float3 originalTangentPosition  = originalPosition + 0.001f * originalTangent;
+	float3 originalBinormalPosition = originalPosition + 0.001f * originalBinormal;
+
+	input[1] = mul(ObjectToLattice, float4(originalTangentPosition, 1)).xyz;
+	input[2] = mul(ObjectToLattice, float4(originalBinormalPosition, 1)).xyz;
+#endif
+	
+	TransformPositions(input, output);
+	
+#ifdef LATTICE_MASK
+	float mask = GetMask(id);
+	
+	[unroll] 
+	for (int r = 0; r < NUM_POSITIONS; r++)
+	{
+		output[r] = lerp(input[r], output[r], mask);
+	}
+#endif
+	
+	// Convert points from lattice coords back to object coords
+	float3 position = mul(LatticeToObject, float4(output[0], 1)).xyz;
+	
+	// Update vertex buffer
+	VertexBuffer.Store3(id * BufferStride + PositionOffset, asuint(position));
+	
+#ifdef LATTICE_NORMALS
+	// Convert points from lattice coords back to object coords
+	float3 tangentPosition  = mul(LatticeToObject, float4(output[1], 1)).xyz;
+	float3 binormalPosition = mul(LatticeToObject, float4(output[2], 1)).xyz;
+	
+	// Calculate new tangent and normal
+	float3 tangent = normalize(tangentPosition - position);
+	float3 normal  = normalize(cross(tangent, binormalPosition - position));
+
+	// Update vertex buffer
+	VertexBuffer.Store3(id * BufferStride + NormalOffset, asuint(normal));
+	VertexBuffer.Store3(id * BufferStride + TangentOffset, asuint(tangent));
+	
+#ifdef LATTICE_STRETCH
+	float2 originalStretch = asfloat(AdditionalBuffer.Load2(id * AdditionalStride + StretchOffset));
+	
+	// Determine stretch
+	float stretchTangent  = length(tangentPosition - position) * 1000;
+	float stretchBinormal = length(binormalPosition - position) * 1000;
+	float2 stretch = originalStretch * float2(stretchTangent, stretchBinormal);
+	
+	// Update stretch buffer
+	AdditionalBuffer.Store2(id * AdditionalStride + StretchOffset, asuint(stretch));
+#endif
+#endif
+	
+}
+
+/// Kernel to reset stretch values of a mesh.
+[numthreads(64, 1, 1)]
+void Reset(uint id : SV_DispatchThreadID)
+{
+#ifdef LATTICE_STRETCH
+	if (id >= VertexCount)
+		return;
+	
+	AdditionalBuffer.Store2(id * AdditionalStride + StretchOffset, asuint(float2(1, 1)));
+#endif
+}

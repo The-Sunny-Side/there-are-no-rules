@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d37123ae4fc45704daf0fbdd070bf195
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Documentation/public/lattice/components/skinned-lattice-modifier.webp
+  uploadId: 811364

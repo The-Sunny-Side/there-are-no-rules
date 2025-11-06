@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 33ab0e20fdf6f1d4abd0d9a1012ac253
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Documentation/public/lattice/lattices/fit-to-renderer.webp
+  uploadId: 811364

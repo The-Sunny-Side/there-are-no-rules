@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4d71aeda6b6af714ba1aa632fd8e26ad
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Documentation/public/lattice/components/transform-lattice-modifier.webp
+  uploadId: 811364

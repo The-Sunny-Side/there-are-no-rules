@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5579631c35cda5641941065529c9cddd
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Documentation/public/style.css
+  uploadId: 811364

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: bb03fc6425e15cb45a6711073088ebfd
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Transform/Transform Controller.controller
+  uploadId: 811364

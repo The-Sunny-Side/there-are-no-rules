@@ -1,0 +1,151 @@
+html {
+    width: 100%;
+    height: 100%;
+    background-color: #edeff6;
+}
+
+body {
+    font-family: 'Roboto';
+    margin: 0;
+    line-height: 1.5;
+}
+
+a {
+    color: #007acc;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+a:hover {
+    color: black;
+    text-decoration: underline;
+}
+
+h1 {
+    border-bottom: 4px #edeff6 solid;
+    padding-bottom: 9.6px;
+    margin-top: 0;
+}
+
+h2 {
+    border-bottom: 4px #edeff6 solid;
+    padding-bottom: 7.2px;
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+#test {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    background-color: white;
+    width: 100%;
+}
+#web {
+    padding: 32px;
+    flex-grow: 1;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+#title {
+    font-size: 32px;
+    font-weight: 900;
+    user-select: none;
+}
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#pages {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.page a{
+    display: block;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 8px 16px;
+    transition: all 0.2s;
+}
+.page:hover > a {
+    background-color: #edeff6;
+    color: #007acc;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+.page a:hover {
+    background-color: #edeff6;
+    color: black;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+.active {
+    background-color: #007acc;
+    color: white;
+}
+.dropdown {
+    position: absolute;
+    max-height: 0;
+    overflow: hidden;
+    background-color: white;
+    transition: max-height 0.2s linear, background-color 0.2s;
+}
+.page:hover .dropdown {
+    max-height: 100px;
+    background-color: #edeff6;
+}
+#socials a {
+    background-color: #007acc;
+    color: white;
+    text-decoration: none;
+    padding: 8px;
+    font-size: 18px;
+    margin-left: 4px;
+    transform: translateY(-2px);
+    transition: all 0.2s;
+}
+#socials a:hover {
+    background-color: black;
+}
+#content {
+    padding-top: 32px;
+    padding-bottom: 48px;
+}
+#footer {
+    background-color: #edeff6;
+    color: #9fa5b9;
+    display: flex;
+    justify-content: center;
+    padding: 32px;
+}
+#footer-content {
+    padding: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 900px;
+    width: 100%;
+}
+@media (max-width:700px) {
+    #header {
+        display: block;
+        justify-content: space-between;
+        align-items: center;
+    }
+    #pages {
+        display: flex;
+        justify-content: left;
+        flex-wrap: wrap;
+        padding-top:18px;
+    }
+    /* #socials {
+        position: fixed;
+        top: 41px;
+        right: 32px;
+    } */
+}

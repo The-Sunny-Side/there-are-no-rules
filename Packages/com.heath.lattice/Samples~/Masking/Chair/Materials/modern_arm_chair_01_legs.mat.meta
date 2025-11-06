@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fc694c3ca54b78d48ac344c135c1da34
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Masking/Chair/Materials/modern_arm_chair_01_legs.mat
+  uploadId: 811364

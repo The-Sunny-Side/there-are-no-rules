@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 60447fca19c381641b8e307f2efe7636
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 293850
+  packageName: Lattice Modifier for Unity
+  packageVersion: 1.3.1
+  assetPath: Packages/com.heath.lattice/Samples~/Squished/Sample Shaders/Unlit Stretch.shader
+  uploadId: 811364
