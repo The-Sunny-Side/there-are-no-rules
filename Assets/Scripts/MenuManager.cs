@@ -1,35 +1,64 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
-    public void SelectVechicle()
-    {
-        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
-        SceneManager.LoadScene("VehichleSelectionScene");
+    public GameObject pausePanel;
 
+    public void Awake()
+    {
+        if(pausePanel != null)
+        {
+            pausePanel.SetActive(false );
+        }
     }
 
-    public void Play()
+    public void OnPlayButtonClick()
     {
         AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
-        SceneManager.LoadScene("PlayScene");
-
+        GameManager.Instance.LoadScene("PlayScene");
     }
 
-    public void GoHome()
+    public void OnVehicleSelectionButtonClick()
     {
         AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
-        SceneManager.LoadScene("MainScene");
-
+        GameManager.Instance.LoadScene("VehicleSelectionScene");
     }
 
-    public void Esci()
+    public void OnExitButtonClick()
     {
-        Application.Quit();
+        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        GameManager.Instance.ExitGame();
+    }
 
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
+    public void GoToHomeScreen()
+    {
+        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        GameManager.Instance.GoToHomeScreen();
+    }
+
+    public void OnPauseButtonClick()
+    {
+        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        GameManager.Instance.Pause();
+        if (pausePanel != null)
+        {
+            pausePanel.SetActive(true);
+        }
+    }
+
+    public void OnResumeButtonClick()
+    {
+        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        GameManager.Instance.Pause();
+        if (pausePanel != null)
+        {
+            pausePanel.SetActive(false);
+        }
+    }
+
+    public void OnRestartButtonClick()
+    {
+        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        GameManager.Instance.LoadScene("PlayScene");
     }
 }
