@@ -10,11 +10,11 @@ public class SkiMovement : MonoBehaviour
     private Rigidbody rb;
 
     public bool isGrounded;
-    private PcInputManager inputManager;
+    private MobileInputManager inputManager;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        inputManager = PcInputManager.instance;
+        inputManager = MobileInputManager.instance;
     }
 
     // Update is called once per frame
