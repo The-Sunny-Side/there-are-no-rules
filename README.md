@@ -39,7 +39,7 @@
 
 ## Stato attuale della build Unity
 
-- **Versione Unity:** `6000.2.10f1` (vedi `AGENTS.md`).
+- **Versione Unity:** `6000.2.10f1`.
 - **Scene disponibili:** `MainScene`, `BaseLevel`, `LatticeHitScene`, `ScriptingMovementeScene`.
 - **Script chiave:**
   - `SkiMovement.cs`: prototipo di fisica su pendii, rotazioni con A/D e salto W.
