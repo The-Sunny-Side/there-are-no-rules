@@ -8,7 +8,8 @@ public class MobileInputManager : MonoBehaviour
     public bool leftTapped;
     public bool jumpTapped;
     private float lastTapTime;
-    private float doubleTapThreshold = 0.3f;
+    private float doubleTapThreshold = 0.2f;
+    private bool shouldIgnoreMovement = false;
 
     private void Awake()
     {
@@ -39,6 +40,7 @@ public class MobileInputManager : MonoBehaviour
         if (Input.touchCount > 0)
         {
             float screenWidth = Screen.width;
+            bool isDoubleTap = false;
 
             for (int i = 0; i < Input.touchCount; i++)
             {
@@ -52,37 +54,54 @@ public class MobileInputManager : MonoBehaviour
                     if (timeSinceLastTap < doubleTapThreshold && lastTapTime > 0)
                     {
                         jumpTapped = true;
+                        isDoubleTap = true;
+                        shouldIgnoreMovement = false;
                         lastTapTime = 0;
                         return;
                     }
                     else
                     {
                         lastTapTime = Time.time;
+                        shouldIgnoreMovement = true;
                     }
                 }
             }
 
-            // Long press handler
-            for (int i = 0; i < Input.touchCount; i++)
+            if (shouldIgnoreMovement && (Time.time - lastTapTime) > doubleTapThreshold)
             {
-                Touch touch = Input.GetTouch(i);
-                float touchX = touch.position.x;
+                shouldIgnoreMovement = false;
+            }
 
-                if (touchX < screenWidth / 2)
+            // Long press handler
+            if (!shouldIgnoreMovement && !isDoubleTap)
+            {
+                for (int i = 0; i < Input.touchCount; i++)
                 {
-                    leftTapped = true;
-                }
-                else
-                {
-                    rightTapped = true;
+                    Touch touch = Input.GetTouch(i);
+                    float touchX = touch.position.x;
+
+                    if (touchX < screenWidth / 2)
+                    {
+                        leftTapped = true;
+                    }
+                    else
+                    {
+                        rightTapped = true;
+                    }
                 }
             }
         }
-        // Mouse support to test it into the editor
         else
+        {
+            shouldIgnoreMovement = false;
+        }
+
+        // Mouse support to test it into the editor
+        if (Input.touchCount == 0)
         {
             float screenWidth = Screen.width;
             float mouseX = Input.mousePosition.x;
+            bool isDoubleTap = false;
 
             // Double click handler
             if (Input.GetMouseButtonDown(0))
@@ -92,17 +111,25 @@ public class MobileInputManager : MonoBehaviour
                 if (timeSinceLastClick < doubleTapThreshold && lastTapTime > 0)
                 {
                     jumpTapped = true;
+                    isDoubleTap = true;
+                    shouldIgnoreMovement = false;
                     lastTapTime = 0;
                     return;
                 }
                 else
                 {
                     lastTapTime = Time.time;
+                    shouldIgnoreMovement = true;
                 }
             }
 
+            if (shouldIgnoreMovement && (Time.time - lastTapTime) > doubleTapThreshold)
+            {
+                shouldIgnoreMovement = false;
+            }
+
             // Long press handler
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0) && !shouldIgnoreMovement && !isDoubleTap)
             {
                 if (mouseX < screenWidth / 2)
                 {
