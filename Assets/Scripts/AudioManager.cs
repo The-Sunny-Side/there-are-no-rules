@@ -13,6 +13,8 @@ public class AudioManager : MonoBehaviour
 
     private AudioSource musicSource;
     private AudioSource sfxSource;
+    public float volume = 1f;
+    public bool audioEnabled = true;
 
     private void Awake()
     {
@@ -38,9 +40,9 @@ public class AudioManager : MonoBehaviour
             oneShotLibrary[s.name] = s.clip;
     }
 
-    public void PlayBackground(string name, float volume = 1f)
+    public void PlayBackground(string name)
     {
-        if (!backgroundLibrary.TryGetValue(name, out var clip))
+        if (!backgroundLibrary.TryGetValue(name, out var clip) || !audioEnabled)
             return;
 
         musicSource.clip = clip;
@@ -48,13 +50,33 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
 
-    public void PlayOneShot(string name, float volume = 1f)
+    public void PlayOneShot(string name)
     {
-        if (!oneShotLibrary.TryGetValue(name, out var clip))
+        if (!oneShotLibrary.TryGetValue(name, out var clip) || !audioEnabled)
             return;
 
         Debug.Log($"Playing SFX: {name}");
         sfxSource.PlayOneShot(clip, volume);
+    }
+
+    public void SetVolume(float newVolume)
+    {
+        volume = Mathf.Clamp01(newVolume);
+        sfxSource.volume = volume;
+        musicSource.volume = volume;
+    }
+
+    public void ToggleAudio()
+    {
+        audioEnabled = !audioEnabled;
+        if (audioEnabled)
+        {
+            SetVolume(volume);
+        }
+        else
+        {
+            SetVolume(0);
+        }
     }
 }
 

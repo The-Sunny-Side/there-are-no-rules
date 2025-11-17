@@ -14,31 +14,31 @@ public class MenuManager : MonoBehaviour
 
     public void OnPlayButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        AudioManager.Instance.PlayOneShot("notification_ok");
         GameManager.Instance.LoadScene("ScriptingMovementeScene");
     }
 
     public void OnVehicleSelectionButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        AudioManager.Instance.PlayOneShot("notification_ok");
         GameManager.Instance.LoadScene("VehicleSelectionScene");
     }
 
     public void OnExitButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        AudioManager.Instance.PlayOneShot("notification_ok");
         GameManager.Instance.ExitGame();
     }
 
     public void GoToHomeScreen()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        AudioManager.Instance.PlayOneShot("notification_ok");
         GameManager.Instance.GoToHomeScreen();
     }
 
     public void OnPauseButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        AudioManager.Instance.PlayOneShot("notification_ok");
         GameManager.Instance.Pause();
         if (pausePanel != null)
         {
@@ -48,7 +48,7 @@ public class MenuManager : MonoBehaviour
 
     public void OnResumeButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        AudioManager.Instance.PlayOneShot("notification_ok");
         GameManager.Instance.Resume();
         if (pausePanel != null)
         {
@@ -58,7 +58,13 @@ public class MenuManager : MonoBehaviour
 
     public void OnRestartButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
+        AudioManager.Instance.PlayOneShot("notification_ok");
         GameManager.Instance.LoadScene("ScriptingMovementeScene");
+    }
+
+    public void OnSettingsButtonClick()
+    {
+        AudioManager.Instance.PlayOneShot("notification_ok");
+        GameManager.Instance.LoadScene("SettingsScene");
     }
 }
