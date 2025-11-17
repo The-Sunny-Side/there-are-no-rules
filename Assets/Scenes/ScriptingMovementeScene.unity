@@ -1246,6 +1246,13 @@ MonoBehaviour:
   rightTapped: 0
   leftTapped: 0
   jumpTapped: 0
+  lastTapTime: 0
+  rotateThreshold: 0.1
+  jumpThreshold: 0.3
+  isFirstTapped: 0
+  isTapping: 0
+  isRotating: 0
+  delayDoubleTap: 0
 --- !u!1 &1397913227
 GameObject:
   m_ObjectHideFlags: 0
