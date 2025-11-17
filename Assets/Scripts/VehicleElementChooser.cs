@@ -19,6 +19,7 @@ public class VehicleElementChooser : MonoBehaviour
     }
     public void NextElement()
     {
+        Debug.Log("next element from chooser");
         int currentIndex = System.Array.IndexOf(elements, selectedElement);
         int nextIndex = (currentIndex + 1) % elements.Length;
         selectedElement = elements[nextIndex];
