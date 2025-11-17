@@ -25,12 +25,16 @@ public class MobileInputManager : MonoBehaviour
         ReadInput();
     }
 
-    void ReadInput()
+    void ResetInput()
     {
-        // Reset input
         rightTapped = false;
         leftTapped = false;
         jumpTapped = false;
+    }
+
+    void ReadInput()
+    {
+        ResetInput();
 
         if (Input.touchCount > 0)
         {
@@ -40,7 +44,7 @@ public class MobileInputManager : MonoBehaviour
             {
                 Touch touch = Input.GetTouch(i);
 
-                // Rileva doppio tap
+                // Double click handler
                 if (touch.phase == TouchPhase.Began)
                 {
                     float timeSinceLastTap = Time.time - lastTapTime;
@@ -49,36 +53,55 @@ public class MobileInputManager : MonoBehaviour
                     {
                         jumpTapped = true;
                         lastTapTime = 0;
+                        return;
                     }
                     else
                     {
                         lastTapTime = Time.time;
                     }
                 }
+            }
 
-                // Rileva tocchi continui per movimento (non solo Began)
-                if (!jumpTapped)
+            // Long press handler
+            for (int i = 0; i < Input.touchCount; i++)
+            {
+                Touch touch = Input.GetTouch(i);
+                float touchX = touch.position.x;
+
+                if (touchX < screenWidth / 2)
                 {
-                    float touchX = touch.position.x;
-
-                    if (touchX < screenWidth / 2)
-                    {
-                        leftTapped = true;
-                    }
-                    else
-                    {
-                        rightTapped = true;
-                    }
+                    leftTapped = true;
+                }
+                else
+                {
+                    rightTapped = true;
                 }
             }
         }
-        // Mouse per testare nell'editor
+        // Mouse support to test it into the editor
         else
         {
             float screenWidth = Screen.width;
             float mouseX = Input.mousePosition.x;
 
-            // Gestione click continuo
+            // Double click handler
+            if (Input.GetMouseButtonDown(0))
+            {
+                float timeSinceLastClick = Time.time - lastTapTime;
+
+                if (timeSinceLastClick < doubleTapThreshold && lastTapTime > 0)
+                {
+                    jumpTapped = true;
+                    lastTapTime = 0;
+                    return;
+                }
+                else
+                {
+                    lastTapTime = Time.time;
+                }
+            }
+
+            // Long press handler
             if (Input.GetMouseButton(0))
             {
                 if (mouseX < screenWidth / 2)
@@ -88,22 +111,6 @@ public class MobileInputManager : MonoBehaviour
                 else
                 {
                     rightTapped = true;
-                }
-            }
-
-            // Gestione doppio click
-            if (Input.GetMouseButtonDown(0))
-            {
-                float timeSinceLastClick = Time.time - lastTapTime;
-
-                if (timeSinceLastClick < doubleTapThreshold && lastTapTime > 0)
-                {
-                    jumpTapped = true;
-                    lastTapTime = 0;
-                }
-                else
-                {
-                    lastTapTime = Time.time;
                 }
             }
         }
