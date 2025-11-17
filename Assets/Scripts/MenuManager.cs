@@ -15,7 +15,7 @@ public class MenuManager : MonoBehaviour
     public void OnPlayButtonClick()
     {
         AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
-        GameManager.Instance.LoadScene("TestScene");
+        GameManager.Instance.LoadScene("ScriptingMovementeScene");
     }
 
     public void OnVehicleSelectionButtonClick()
@@ -59,6 +59,6 @@ public class MenuManager : MonoBehaviour
     public void OnRestartButtonClick()
     {
         AudioManager.Instance.PlayOneShot("notification_ok", 1.0f);
-        GameManager.Instance.LoadScene("TestScene");
+        GameManager.Instance.LoadScene("ScriptingMovementeScene");
     }
 }
