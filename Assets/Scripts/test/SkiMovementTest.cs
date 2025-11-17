@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SkiMovement : MonoBehaviour
+public class SkiMovementTest : MonoBehaviour
 {
     [Header("Fisica")]
     public float gravity = 9.81f;
