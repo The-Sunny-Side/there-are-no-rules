@@ -6,7 +6,7 @@ public class VehicleSelectorManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] selectors;
     [SerializeField] private String[] stepNames = { "Scegli la base", "Scegli il corpo" };
-    [SerializeField] private TextMeshProUGUI stepTitleText; 
+    [SerializeField] private TMP_Text stepTitleText; 
 
     public int stepIndex = 0;
 
@@ -50,7 +50,7 @@ public class VehicleSelectorManager : MonoBehaviour
     }
 
     public void NextElement()
-    { Debug.Log("next element");
+    {
         selectors[stepIndex].GetComponent<VehicleElementChooser>().NextElement();
     }
     public void PreviousElement()
@@ -59,7 +59,7 @@ public class VehicleSelectorManager : MonoBehaviour
     }
     private void UpdateActiveSelector()
     {
-        stepTitleText.GetComponent<TextMeshPro>().text = stepNames[stepIndex];
+        stepTitleText.text = stepNames[stepIndex];
         for (int i = 0; i < selectors.Length; i++)
             selectors[i].SetActive(i == stepIndex);
     }
