@@ -46,13 +46,14 @@ public class MobileInputManager : MonoBehaviour
             {
                 Touch touch = Input.GetTouch(i);
 
-                // Double click handler
+                // Double tap handler
                 if (touch.phase == TouchPhase.Began)
                 {
                     float timeSinceLastTap = Time.time - lastTapTime;
 
                     if (timeSinceLastTap < doubleTapThreshold && lastTapTime > 0)
                     {
+                        // Double tap detected
                         jumpTapped = true;
                         isDoubleTap = true;
                         shouldIgnoreMovement = false;
@@ -61,18 +62,20 @@ public class MobileInputManager : MonoBehaviour
                     }
                     else
                     {
+                        // First tap - waiting for the second
                         lastTapTime = Time.time;
                         shouldIgnoreMovement = true;
                     }
                 }
             }
 
+            // Reset the flag if threshold time is passed (no double tap)
             if (shouldIgnoreMovement && (Time.time - lastTapTime) > doubleTapThreshold)
             {
                 shouldIgnoreMovement = false;
             }
 
-            // Long press handler
+            // Long press handler - only if we are not waiting for a second tap
             if (!shouldIgnoreMovement && !isDoubleTap)
             {
                 for (int i = 0; i < Input.touchCount; i++)
@@ -93,6 +96,7 @@ public class MobileInputManager : MonoBehaviour
         }
         else
         {
+            // Reset when there are no touches
             shouldIgnoreMovement = false;
         }
 
@@ -123,6 +127,7 @@ public class MobileInputManager : MonoBehaviour
                 }
             }
 
+            // Reset the flag if threshold time is passed
             if (shouldIgnoreMovement && (Time.time - lastTapTime) > doubleTapThreshold)
             {
                 shouldIgnoreMovement = false;
