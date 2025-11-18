@@ -5,10 +5,12 @@ using UnityEngine;
 public class VehicleSelectorManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] selectors;
-    [SerializeField] private String[] stepNames = { "Scegli la base", "Scegli il corpo","Completa" };
+    [SerializeField] private String[] stepNames = { "Scegli la base", "Scegli il corpo", "Completa" };
     [SerializeField] private TMP_Text stepTitleText;
     [SerializeField] private GameObject NextElementButton;
     [SerializeField] private GameObject PreviousElementButton;
+    [SerializeField] private GameObject NextStepButton;
+    [SerializeField] private GameObject FinalizzaButton;
     [SerializeField] private GameObject Composer;
 
     public int stepIndex = 0;
@@ -20,13 +22,13 @@ public class VehicleSelectorManager : MonoBehaviour
 
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void NextStep()
@@ -46,10 +48,14 @@ public class VehicleSelectorManager : MonoBehaviour
         }
         else if (stepIndex == 2)
         {
+
             Composer.SetActive(true);
             Debug.Log("veicolo finito");
+            FinalizzaButton.SetActive(true);
+            NextStepButton.SetActive(false);
 
         }
+
     }
 
     public void PreviusStep()
@@ -59,7 +65,7 @@ public class VehicleSelectorManager : MonoBehaviour
             stepIndex--;
             UpdateActiveSelector();
         }
-        else if(stepIndex==2)
+        else if (stepIndex == 2)
         {
             stepIndex--;
             UpdateActiveSelector();
@@ -74,6 +80,11 @@ public class VehicleSelectorManager : MonoBehaviour
     public void PreviousElement()
     {
         selectors[stepIndex].GetComponent<VehicleElementChooser>().PreviousElement();
+    }
+    public void FinalizeVehicle()
+    {
+        Composer c = Composer.GetComponent<Composer>();
+        c.SaveVehiclePrefab();
     }
     private void UpdateActiveSelector()
     {
@@ -95,10 +106,10 @@ public class VehicleSelectorManager : MonoBehaviour
 
             baseInstance.transform.SetParent(c.transform);
             bodyInstance.transform.SetParent(c.transform);
-            c.baseElement= baseInstance;
-            c.bodyElement= bodyInstance;
+            c.baseElement = baseInstance;
+            c.bodyElement = bodyInstance;
             c.AlignComponents();
-            c.SaveVehiclePrefab();
+
         }
         else
         {
@@ -109,7 +120,7 @@ public class VehicleSelectorManager : MonoBehaviour
         }
 
         stepTitleText.text = stepNames[stepIndex];
-        
+
     }
 
 }

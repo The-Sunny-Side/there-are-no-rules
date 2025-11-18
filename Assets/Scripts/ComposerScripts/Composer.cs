@@ -8,15 +8,12 @@ public class Composer : MonoBehaviour
     public GameObject baseElement;
     public GameObject bodyElement;
     [SerializeField] private float composerSpeed = 5f;
-
+    [SerializeField] private GameObject vehicle;
     private Transform anchor1;
     private Transform anchor2;
     private bool aligning = false;
 
-    private GameObject vehicleRoot;
 
-   
-  
 
     void Update()
     {
@@ -64,19 +61,9 @@ public class Composer : MonoBehaviour
 
     void CreateVehicleGameObject()
     {
-        // 1) creo il root del veicolo
-        vehicleRoot = new GameObject("vehicle");
 
-        // lo metto dove sta la base (così ha un senso)
-        vehicleRoot.transform.position = baseElement.transform.position;
-        vehicleRoot.transform.rotation = baseElement.transform.rotation;
-
-        // se vuoi tenerlo sotto Composer, fallo ma mantenendo la world position
-        vehicleRoot.transform.SetParent(transform, false); // true = mantieni world
-
-        // 2) metto base e body dentro vehicle MA mantenendo la loro posizione nel mondo
-        baseElement.transform.SetParent(vehicleRoot.transform, false); // true = non si spostano
-        bodyElement.transform.SetParent(vehicleRoot.transform, false); // idem
+        baseElement.transform.SetParent(vehicle.transform, false);
+        bodyElement.transform.SetParent(vehicle.transform, false);
     }
 
 #if UNITY_EDITOR
@@ -92,7 +79,7 @@ public class Composer : MonoBehaviour
         string prefabPath = AssetDatabase.GenerateUniqueAssetPath(
             folderPath + "/vehicle.prefab");
 
-        PrefabUtility.SaveAsPrefabAsset(vehicleRoot, prefabPath);
+        PrefabUtility.SaveAsPrefabAsset(vehicle, prefabPath);
         AssetDatabase.SaveAssets();
         Debug.Log("Prefab salvato in: " + prefabPath);
     }
