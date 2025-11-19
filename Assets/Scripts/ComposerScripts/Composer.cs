@@ -9,30 +9,17 @@ public class Composer : MonoBehaviour
     public GameObject bodyElement;
     [SerializeField] private float composerSpeed = 5f;
     [SerializeField] private GameObject vehicle;
+
     private Transform anchor1;
     private Transform anchor2;
     private bool aligning = false;
 
 
-
-    void Update()
+    private void OnDisable()
     {
-        if (!aligning) return;
-
-        Vector3 offset = anchor1.position - anchor2.position;
-        Vector3 targetPos = bodyElement.transform.position + offset;
-
-        bodyElement.transform.position = Vector3.Lerp(
-            bodyElement.transform.position,
-            targetPos,
-            Time.deltaTime * composerSpeed);
-
-
-        if (Vector3.Distance(anchor1.position, anchor2.position) < 0.001f)
+        foreach (Transform child in vehicle.transform)
         {
-            aligning = false;
-            CreateVehicleGameObject();
-
+            Destroy(child.gameObject);
         }
     }
 
@@ -54,7 +41,6 @@ public class Composer : MonoBehaviour
     {
         anchor1 = baseElement.transform.Find("anchor");
         anchor2 = bodyElement.transform.Find("anchor");
-        //aligning = true;
         ComposeVehicle();
 
     }
@@ -84,6 +70,7 @@ public class Composer : MonoBehaviour
         Debug.Log("Prefab salvato in: " + prefabPath);
     }
 #else
+//todo: implement runtime saving
     public void SaveVehiclePrefab() { }
 #endif
 }

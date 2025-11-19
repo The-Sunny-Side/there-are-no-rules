@@ -20,57 +20,17 @@ public class VehicleSelectorManager : MonoBehaviour
         UpdateActiveSelector();
     }
 
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void NextStep()
     {
-        if (stepIndex == 0)
-        {
-            stepIndex++;
-            UpdateActiveSelector();
-
-        }
-        else if (stepIndex == 1)
-        {
-            stepIndex++;
-            UpdateActiveSelector();
-
-
-        }
-        else if (stepIndex == 2)
-        {
-
-            Composer.SetActive(true);
-            Debug.Log("veicolo finito");
-            FinalizzaButton.SetActive(true);
-            NextStepButton.SetActive(false);
-
-        }
+        stepIndex++;
+        UpdateActiveSelector();
 
     }
 
     public void PreviusStep()
     {
-        if (stepIndex == 1)
-        {
-            stepIndex--;
-            UpdateActiveSelector();
-        }
-        else if (stepIndex == 2)
-        {
-            stepIndex--;
-            UpdateActiveSelector();
-
-        }
+        stepIndex--;
+        UpdateActiveSelector();
     }
 
     public void NextElement()
@@ -88,38 +48,30 @@ public class VehicleSelectorManager : MonoBehaviour
     }
     private void UpdateActiveSelector()
     {
-        if (stepIndex == 2)
+        for (int i = 0; i < selectors.Length; i++)
+            selectors[i].SetActive(i == stepIndex);
+        stepTitleText.text = stepNames[stepIndex];
+
+
+        if (Composer.activeInHierarchy)
         {
-            for (int i = 0; i < selectors.Length; i++)
-                selectors[i].SetActive(false);
-
-            NextElementButton.SetActive(false);
-            PreviousElementButton.SetActive(false);
-
-            Composer.SetActive(true);
-            Composer c = Composer.GetComponent<Composer>();
+            
+            Composer composerComponent = Composer.GetComponent<Composer>();
             GameObject baseElement = selectors[0].GetComponent<VehicleElementChooser>().selectedElement;
             GameObject bodyElement = selectors[1].GetComponent<VehicleElementChooser>().selectedElement;
 
             GameObject baseInstance = Instantiate(baseElement, transform);
             GameObject bodyInstance = Instantiate(bodyElement, transform);
 
-            baseInstance.transform.SetParent(c.transform);
-            bodyInstance.transform.SetParent(c.transform);
-            c.baseElement = baseInstance;
-            c.bodyElement = bodyInstance;
-            c.AlignComponents();
+            baseInstance.transform.SetParent(composerComponent.transform);
+            bodyInstance.transform.SetParent(composerComponent.transform);
+            composerComponent.baseElement = baseInstance;
+            composerComponent.bodyElement = bodyInstance;
+            composerComponent.AlignComponents();
 
         }
-        else
-        {
-            NextElementButton.SetActive(true);
-            PreviousElementButton.SetActive(true);
-            for (int i = 0; i < selectors.Length; i++)
-                selectors[i].SetActive(i == stepIndex);
-        }
+        
 
-        stepTitleText.text = stepNames[stepIndex];
 
     }
 
