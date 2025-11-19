@@ -5,6 +5,7 @@ using UnityEngine;
 public class VehicleSelectorManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] selectors;
+    [SerializeField] private GameObject[] selectorsUI;
     [SerializeField] private String[] stepNames = { "Scegli la base", "Scegli il corpo", "Completa" };
     [SerializeField] private TMP_Text stepTitleText;
     [SerializeField] private GameObject NextElementButton;
@@ -49,7 +50,12 @@ public class VehicleSelectorManager : MonoBehaviour
     private void UpdateActiveSelector()
     {
         for (int i = 0; i < selectors.Length; i++)
+        {
             selectors[i].SetActive(i == stepIndex);
+
+            selectorsUI[i].SetActive(i == stepIndex);
+        }
+
         stepTitleText.text = stepNames[stepIndex];
 
 
