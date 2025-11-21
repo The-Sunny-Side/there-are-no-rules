@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/VehicleSelectionScene.unity
     guid: be3b7ca392ba11648b6ddf765bd63026
   - enabled: 1
-    path: Assets/Scenes/ScriptingMovementeScene.unity
+    path: Assets/Scenes/ScriptingMovementScene.unity
     guid: 005eeae615710134894db421d7f3a70c
   - enabled: 1
     path: Assets/Scenes/SettingsScene.unity
