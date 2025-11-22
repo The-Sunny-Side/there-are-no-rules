@@ -1329,6 +1329,7 @@ MonoBehaviour:
   alignSpeed: 8
   rotationSpeed: 90
   jumpForce: 10
+  sideBreak: 20
   raysCount: 8
   raySpread: 2
   whatIsGroud:
