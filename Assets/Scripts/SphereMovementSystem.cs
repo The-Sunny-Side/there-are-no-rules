@@ -19,7 +19,10 @@ public class SphereMovementSystem : MonoBehaviour
     [SerializeField] private float rotationSpeed = 90f;
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float sideBreak = 20f;
-
+    [SerializeField]private float forwardSpeed = 10f;
+    [SerializeField] private float minAlignment = 0f;
+    [SerializeField] private float boostForce = 100f;
+    [SerializeField] private float speedToStartBoostDecay = 50f;
 
     [Header("ALLINEAMENTO TERRENO")]
     [SerializeField] int raysCount = 8;
@@ -29,8 +32,9 @@ public class SphereMovementSystem : MonoBehaviour
     [SerializeField] private float whenIsGroundLenght = .5f;
     [SerializeField] private Transform groundRayPoint;
 
+    public float boostAccumulato = 0f;
+    public bool grounded;
 
-    private bool grounded;
     private Vector3 smoothedNormal = Vector3.up;
     private bool hasSmoothedNormal = false;
     void Start()
@@ -159,7 +163,7 @@ public class SphereMovementSystem : MonoBehaviour
         if (grounded)
         {
             rb.linearDamping = dragOnGround;
-            if (Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, 2f))
+            if (Physics.Raycast(groundRayPoint.position, -Vector3.up, out RaycastHit hit, whenIsGroundLenght, whatIsGroud))
             {
                 // direzioni della pendenza
                 Vector3 slopeNormal = hit.normal;
@@ -167,10 +171,10 @@ public class SphereMovementSystem : MonoBehaviour
                 // Direzione in cui il giocatore "guarda" proiettata sul terreno
                 Vector3 forwardOnSlope = Vector3.ProjectOnPlane(transform.forward, slopeNormal).normalized;
                 float alignment = Mathf.Clamp01(Vector3.Dot(forwardOnSlope, slopeDirection));
-                float minAlignment = 0.2f; // forza minima per slidare in pianura
                 alignment = Mathf.Max(alignment, minAlignment);
                 // Forza di scivolamento che segue la direzione del muso
-                Vector3 slideForce = forwardOnSlope * gravityForce * alignment;
+                Vector3 slideForce = forwardOnSlope * gravityForce * alignment* forwardSpeed;
+                
                 Debug.DrawRay(transform.position, slideForce * 5f, Color.aliceBlue); // Debug per vedere la direzione
                 rb.AddForce(slideForce);
                 // Riduce la velocità se di lato rispetto alla pendenza
@@ -179,9 +183,36 @@ public class SphereMovementSystem : MonoBehaviour
                     Vector3 velDir = rb.linearVelocity.normalized;
                     float dirAlignment = Vector3.Dot(velDir, forwardOnSlope); // 1 = avanti, 0 = di lato, -1 = indietro
                     float misalignment = 1f - Mathf.Max(0f, dirAlignment);    // 0 = allineato, 1 = perpendicolare
+                    //boost release
+                    if (misalignment < 0.1)
+                    {
+                        rb.AddForce(slideForce * boostAccumulato * boostForce, ForceMode.Impulse);
+
+
+                        boostAccumulato = 0f;
+
+                    }
+                    //boost decay
+                    else if (rb.linearVelocity.sqrMagnitude < speedToStartBoostDecay)
+                    {
+                        Debug.Log(boostAccumulato - Time.fixedDeltaTime);
+                        boostAccumulato = Mathf.Max(0, boostAccumulato - Time.fixedDeltaTime);
+                    }
+                    //boost charge
+                    else
+                    {
+
+                        boostAccumulato = Mathf.Min(1, boostAccumulato + misalignment * Time.fixedDeltaTime);
+                        //carica boost
+                    }
+
+
                     rb.linearVelocity *= Mathf.Lerp(1f, 0.9f, misalignment * Time.fixedDeltaTime * sideBreak);
+                   
                 }
+               
             }
+            
         }
 
 
