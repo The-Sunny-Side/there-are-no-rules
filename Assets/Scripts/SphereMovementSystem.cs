@@ -2,7 +2,7 @@
 
 public class SphereMovementSystem : MonoBehaviour
 {
-    private MobileInputManager inputManager;
+    private PcInputManager inputManager;
     [Header("SFERA RIGIDBODY")]
     [SerializeField] private Rigidbody rb;
 
@@ -15,10 +15,10 @@ public class SphereMovementSystem : MonoBehaviour
     [SerializeField] private float alignSpeed = 8f;
 
 
-    [Header("CARATTERISTICHE")] 
+    [Header("CARATTERISTICHE")]
     [SerializeField] private float rotationSpeed = 90f;
     [SerializeField] private float jumpForce = 10f;
-    [SerializeField] private float sideBreak=20f;   
+    [SerializeField] private float sideBreak = 20f;
 
 
     [Header("ALLINEAMENTO TERRENO")]
@@ -35,8 +35,8 @@ public class SphereMovementSystem : MonoBehaviour
     private bool hasSmoothedNormal = false;
     void Start()
     {
-        inputManager = MobileInputManager.instance;
-        rb.transform.parent=null;
+        inputManager = PcInputManager.instance;
+        rb.transform.parent = null;
     }
 
     void Update()
@@ -51,15 +51,15 @@ public class SphereMovementSystem : MonoBehaviour
         }
         if (grounded)
         {
-           
+
             if (inputManager.jumpTapped)
             {
                 rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
                 rb.AddForce(transform.forward * jumpForce, ForceMode.Impulse);
             }
         }
-        transform.position= rb.transform.position;
-        
+        transform.position = rb.transform.position;
+
 
 
     }
@@ -191,7 +191,7 @@ public class SphereMovementSystem : MonoBehaviour
             rb.AddForce(-transform.up * gravityForce);
 
         }
-       
+
     }
 
     private bool IsGrounded()
