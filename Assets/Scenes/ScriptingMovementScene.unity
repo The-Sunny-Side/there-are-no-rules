@@ -517,8 +517,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 420727908}
   serializedVersion: 2
-  m_LocalRotation: {x: -2.3114344e-11, y: 0.7071068, z: 2.1295354e-11, w: 0.7071068}
-  m_LocalPosition: {x: 184.39758, y: -552.72687, z: 547.12024}
+  m_LocalRotation: {x: 0.12624757, y: 0.3697548, z: -0.05078894, w: 0.9191102}
+  m_LocalPosition: {x: -64.09027, y: 1.1199951, z: 75.08362}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -577,7 +577,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDecollider
   CameraRadius: 10
   Decollision:
-    Enabled: 0
+    Enabled: 1
     ObstacleLayers:
       serializedVersion: 2
       m_Bits: 8
@@ -655,11 +655,11 @@ MonoBehaviour:
       Size: {x: 0.2, y: 0.2}
     HardLimits:
       Enabled: 0
-      Size: {x: 0.8, y: 0.8}
+      Size: {x: 0.2, y: 0.2}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
   TargetOffset: {x: 0, y: 0, z: 0}
-  Damping: {x: 1, y: 0}
+  Damping: {x: 0.5, y: 0.5}
   Lookahead:
     Enabled: 0
     Time: 0
@@ -1995,8 +1995,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1970535147}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.22553203, y: -0.70522755, z: 0.25806034, w: 0.6206403}
-  m_LocalPosition: {x: 1259.2802, y: 47.75311, z: 1975.3295}
+  m_LocalRotation: {x: 0.11825394, y: 0.37019426, z: -0.047566757, w: 0.9201683}
+  m_LocalPosition: {x: 1010.7, y: 601.6, z: 1446.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2434,31 +2434,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4510127651163535789, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 154.69666
+      value: -84.65863
       objectReference: {fileID: 0}
     - target: {fileID: 4510127651163535789, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -552.72687
+      value: 9.520264
       objectReference: {fileID: 0}
     - target: {fileID: 4510127651163535789, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 547.12024
+      value: 53.657227
       objectReference: {fileID: 0}
     - target: {fileID: 4510127651163535789, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.70710677
+      value: 0.9191102
       objectReference: {fileID: 0}
     - target: {fileID: 4510127651163535789, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.12624756
       objectReference: {fileID: 0}
     - target: {fileID: 4510127651163535789, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7071069
+      value: 0.36975482
       objectReference: {fileID: 0}
     - target: {fileID: 4510127651163535789, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.05078895
       objectReference: {fileID: 0}
     - target: {fileID: 5651676766371649285, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: Target.TrackingTarget
@@ -2506,7 +2506,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8941424410646962437, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1428.2092
+      value: 1371.6
       objectReference: {fileID: 0}
     - target: {fileID: 8941424410646962437, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       propertyPath: m_LocalRotation.w

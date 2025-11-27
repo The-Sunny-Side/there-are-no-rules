@@ -19,7 +19,7 @@ public class SphereMovementSystem : MonoBehaviour
     [SerializeField] private float rotationSpeed = 90f;
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float sideBreak = 20f;
-    [SerializeField]private float forwardSpeed = 10f;
+    [SerializeField] private float forwardSpeed = 10f;
     [SerializeField] private float minAlignment = 0f;
     [SerializeField] private float boostForce = 100f;
     [SerializeField] private float speedToStartBoostDecay = 50f;
@@ -45,6 +45,8 @@ public class SphereMovementSystem : MonoBehaviour
 
     void Update()
     {
+        grounded = IsGrounded();
+
         if (inputManager.rightTapped)
         {
             transform.Rotate(Vector3.up * Time.deltaTime * rotationSpeed);
@@ -58,7 +60,7 @@ public class SphereMovementSystem : MonoBehaviour
 
             if (inputManager.jumpTapped)
             {
-                rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 rb.AddForce(transform.forward * jumpForce, ForceMode.Impulse);
             }
         }
@@ -159,7 +161,6 @@ public class SphereMovementSystem : MonoBehaviour
     {
         CastGroundRays();
         // Fisica della pendenza - solo se a terra
-        grounded = IsGrounded();
         if (grounded)
         {
             rb.linearDamping = dragOnGround;
@@ -173,8 +174,8 @@ public class SphereMovementSystem : MonoBehaviour
                 float alignment = Mathf.Clamp01(Vector3.Dot(forwardOnSlope, slopeDirection));
                 alignment = Mathf.Max(alignment, minAlignment);
                 // Forza di scivolamento che segue la direzione del muso
-                Vector3 slideForce = forwardOnSlope * gravityForce * alignment* forwardSpeed;
-                
+                Vector3 slideForce = forwardOnSlope * gravityForce * alignment * forwardSpeed;
+
                 Debug.DrawRay(transform.position, slideForce * 5f, Color.aliceBlue); // Debug per vedere la direzione
                 rb.AddForce(slideForce);
                 // Riduce la velocità se di lato rispetto alla pendenza
@@ -208,18 +209,18 @@ public class SphereMovementSystem : MonoBehaviour
 
 
                     rb.linearVelocity *= Mathf.Lerp(1f, 0.9f, misalignment * Time.fixedDeltaTime * sideBreak);
-                   
+
                 }
-               
+
             }
-            
+
         }
 
 
         if (!grounded)
         {
             rb.linearDamping = dragInAir;
-            rb.AddForce(-transform.up * gravityForce);
+            rb.AddForce(Vector3.down * gravityForce);
 
         }
 
