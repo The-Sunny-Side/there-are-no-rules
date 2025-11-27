@@ -13,7 +13,7 @@ public class AudioManager : MonoBehaviour
 
     private AudioSource musicSource;
     private AudioSource sfxSource;
-    public float volume = 0.5f;
+    public float volume;
     public bool audioEnabled = true;
 
     private void Awake()
@@ -28,6 +28,7 @@ public class AudioManager : MonoBehaviour
         sfxSource = gameObject.AddComponent<AudioSource>();
         sfxSource.loop = false;
 
+        volume = 0.3f;
         InitLibrary();
     }
 
