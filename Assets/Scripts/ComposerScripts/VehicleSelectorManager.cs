@@ -44,8 +44,10 @@ public class VehicleSelectorManager : MonoBehaviour
     }
     public void FinalizeVehicle()
     {
-        Composer c = Composer.GetComponent<Composer>();
-        c.SaveVehiclePrefab();
+        GameObject baseElement = selectors[0].GetComponent<VehicleElementChooser>().selectedElement;
+        GameObject bodyElement = selectors[1].GetComponent<VehicleElementChooser>().selectedElement;
+
+        VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement);
     }
     private void UpdateActiveSelector()
     {
