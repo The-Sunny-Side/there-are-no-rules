@@ -2028,8 +2028,9 @@ MonoBehaviour:
   sideBreak: 20
   forwardSpeed: 0.5
   minAlignment: 0
-  boostForce: 0
+  boostForce: 5
   speedToStartBoostDecay: 50
+  timeToStartBoostCharge: 0.5
   raysCount: 8
   raySpread: 2
   whatIsGroud:
@@ -2040,6 +2041,7 @@ MonoBehaviour:
   groundRayPoint: {fileID: 513734080}
   boostAccumulato: 0
   grounded: 0
+  driftingTime: 0
 --- !u!1 &2130207627
 GameObject:
   m_ObjectHideFlags: 0

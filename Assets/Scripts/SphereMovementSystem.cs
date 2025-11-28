@@ -23,6 +23,7 @@ public class SphereMovementSystem : MonoBehaviour
     [SerializeField] private float minAlignment = 0f;
     [SerializeField] private float boostForce = 100f;
     [SerializeField] private float speedToStartBoostDecay = 50f;
+    [SerializeField] private float timeToStartBoostCharge = 0.3f;
 
     [Header("ALLINEAMENTO TERRENO")]
     [SerializeField] int raysCount = 8;
@@ -34,9 +35,10 @@ public class SphereMovementSystem : MonoBehaviour
 
     public float boostAccumulato = 0f;
     public bool grounded;
-
+    public float driftingTime = 0f;
     private Vector3 smoothedNormal = Vector3.up;
     private bool hasSmoothedNormal = false;
+
     void Start()
     {
         inputManager = PcInputManager.instance;
@@ -185,12 +187,13 @@ public class SphereMovementSystem : MonoBehaviour
                     float dirAlignment = Vector3.Dot(velDir, forwardOnSlope); // 1 = avanti, 0 = di lato, -1 = indietro
                     float misalignment = 1f - Mathf.Max(0f, dirAlignment);    // 0 = allineato, 1 = perpendicolare
                     //boost release
-                    if (misalignment < 0.1)
+                    if (misalignment < 0.3)
                     {
                         rb.AddForce(slideForce * boostAccumulato * boostForce, ForceMode.Impulse);
 
 
                         boostAccumulato = 0f;
+                        driftingTime = 0f;
 
                     }
                     //boost decay
@@ -200,11 +203,15 @@ public class SphereMovementSystem : MonoBehaviour
                         boostAccumulato = Mathf.Max(0, boostAccumulato - Time.fixedDeltaTime);
                     }
                     //boost charge
-                    else
+                    else if (driftingTime > timeToStartBoostCharge)
                     {
 
                         boostAccumulato = Mathf.Min(1, boostAccumulato + misalignment * Time.fixedDeltaTime);
                         //carica boost
+                    }
+                    else
+                    {
+                        driftingTime += Time.fixedDeltaTime;
                     }
 
 
