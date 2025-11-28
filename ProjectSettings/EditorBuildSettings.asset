@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SettingsScene.unity
     guid: 4d604dc4883f37c4a9baf9337d81f410
+  - enabled: 1
+    path: Assets/Scenes/LatticeHitScene.unity
+    guid: 424ef7cfae3cfa945b0df4d4627c19bb
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

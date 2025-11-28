@@ -2,7 +2,7 @@
 
 public class SphereMovementSystem : MonoBehaviour
 {
-    private MobileInputManager inputManager;
+    private PcInputManager inputManager;
     [Header("SFERA RIGIDBODY")]
     [SerializeField] private Rigidbody rb;
 
@@ -15,11 +15,15 @@ public class SphereMovementSystem : MonoBehaviour
     [SerializeField] private float alignSpeed = 8f;
 
 
-    [Header("CARATTERISTICHE")] 
+    [Header("CARATTERISTICHE")]
     [SerializeField] private float rotationSpeed = 90f;
     [SerializeField] private float jumpForce = 10f;
-    [SerializeField] private float sideBreak=20f;   
-
+    [SerializeField] private float sideBreak = 20f;
+    [SerializeField] private float forwardSpeed = 10f;
+    [SerializeField] private float minAlignment = 0f;
+    [SerializeField] private float boostForce = 100f;
+    [SerializeField] private float speedToStartBoostDecay = 50f;
+    [SerializeField] private float timeToStartBoostCharge = 0.3f;
 
     [Header("ALLINEAMENTO TERRENO")]
     [SerializeField] int raysCount = 8;
@@ -29,18 +33,22 @@ public class SphereMovementSystem : MonoBehaviour
     [SerializeField] private float whenIsGroundLenght = .5f;
     [SerializeField] private Transform groundRayPoint;
 
-
-    private bool grounded;
+    public float boostAccumulato = 0f;
+    public bool grounded;
+    public float driftingTime = 0f;
     private Vector3 smoothedNormal = Vector3.up;
     private bool hasSmoothedNormal = false;
+
     void Start()
     {
-        inputManager = MobileInputManager.instance;
-        rb.transform.parent=null;
+        inputManager = PcInputManager.instance;
+        rb.transform.parent = null;
     }
 
     void Update()
     {
+        grounded = IsGrounded();
+
         if (inputManager.rightTapped)
         {
             transform.Rotate(Vector3.up * Time.deltaTime * rotationSpeed);
@@ -51,15 +59,15 @@ public class SphereMovementSystem : MonoBehaviour
         }
         if (grounded)
         {
-           
+
             if (inputManager.jumpTapped)
             {
-                rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 rb.AddForce(transform.forward * jumpForce, ForceMode.Impulse);
             }
         }
-        transform.position= rb.transform.position;
-        
+        transform.position = rb.transform.position;
+
 
 
     }
@@ -155,11 +163,10 @@ public class SphereMovementSystem : MonoBehaviour
     {
         CastGroundRays();
         // Fisica della pendenza - solo se a terra
-        grounded = IsGrounded();
         if (grounded)
         {
             rb.linearDamping = dragOnGround;
-            if (Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, 2f))
+            if (Physics.Raycast(groundRayPoint.position, -Vector3.up, out RaycastHit hit, whenIsGroundLenght, whatIsGroud))
             {
                 // direzioni della pendenza
                 Vector3 slopeNormal = hit.normal;
@@ -167,10 +174,10 @@ public class SphereMovementSystem : MonoBehaviour
                 // Direzione in cui il giocatore "guarda" proiettata sul terreno
                 Vector3 forwardOnSlope = Vector3.ProjectOnPlane(transform.forward, slopeNormal).normalized;
                 float alignment = Mathf.Clamp01(Vector3.Dot(forwardOnSlope, slopeDirection));
-                float minAlignment = 0.2f; // forza minima per slidare in pianura
                 alignment = Mathf.Max(alignment, minAlignment);
                 // Forza di scivolamento che segue la direzione del muso
-                Vector3 slideForce = forwardOnSlope * gravityForce * alignment;
+                Vector3 slideForce = forwardOnSlope * gravityForce * alignment * forwardSpeed;
+
                 Debug.DrawRay(transform.position, slideForce * 5f, Color.aliceBlue); // Debug per vedere la direzione
                 rb.AddForce(slideForce);
                 // Riduce la velocità se di lato rispetto alla pendenza
@@ -179,19 +186,51 @@ public class SphereMovementSystem : MonoBehaviour
                     Vector3 velDir = rb.linearVelocity.normalized;
                     float dirAlignment = Vector3.Dot(velDir, forwardOnSlope); // 1 = avanti, 0 = di lato, -1 = indietro
                     float misalignment = 1f - Mathf.Max(0f, dirAlignment);    // 0 = allineato, 1 = perpendicolare
+                    //boost release
+                    if (misalignment < 0.3)
+                    {
+                        rb.AddForce(slideForce * boostAccumulato * boostForce, ForceMode.Impulse);
+
+
+                        boostAccumulato = 0f;
+                        driftingTime = 0f;
+
+                    }
+                    //boost decay
+                    else if (rb.linearVelocity.sqrMagnitude < speedToStartBoostDecay)
+                    {
+                        Debug.Log(boostAccumulato - Time.fixedDeltaTime);
+                        boostAccumulato = Mathf.Max(0, boostAccumulato - Time.fixedDeltaTime);
+                    }
+                    //boost charge
+                    else if (driftingTime > timeToStartBoostCharge)
+                    {
+
+                        boostAccumulato = Mathf.Min(1, boostAccumulato + misalignment * Time.fixedDeltaTime);
+                        //carica boost
+                    }
+                    else
+                    {
+                        driftingTime += Time.fixedDeltaTime;
+                    }
+
+
                     rb.linearVelocity *= Mathf.Lerp(1f, 0.9f, misalignment * Time.fixedDeltaTime * sideBreak);
+
                 }
+
             }
+
         }
 
 
         if (!grounded)
         {
             rb.linearDamping = dragInAir;
-            rb.AddForce(-transform.up * gravityForce);
+            rb.AddForce(Vector3.down * gravityForce);
 
         }
-       
+
     }
 
     private bool IsGrounded()
