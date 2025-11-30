@@ -2,7 +2,7 @@
 
 public class SphereMovementSystem : MonoBehaviour
 {
-    private PcInputManager inputManager;
+    private MobileInputManager inputManager;
     [Header("SFERA RIGIDBODY")]
     [SerializeField] private Rigidbody rb;
 
@@ -41,36 +41,31 @@ public class SphereMovementSystem : MonoBehaviour
 
     void Start()
     {
-        inputManager = PcInputManager.instance;
+        inputManager = MobileInputManager.instance;
         rb.transform.parent = null;
     }
-
     void Update()
     {
         grounded = IsGrounded();
 
-        if (inputManager.rightTapped)
+        if (inputManager.rightHeld)
         {
             transform.Rotate(Vector3.up * Time.deltaTime * rotationSpeed);
         }
-        if (inputManager.leftTapped)
+        if (inputManager.leftHeld)
         {
             transform.Rotate(Vector3.up * Time.deltaTime * -rotationSpeed);
         }
-        if (grounded)
+
+        if (grounded && inputManager.jumpTapped)
         {
-
-            if (inputManager.jumpTapped)
-            {
-                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                rb.AddForce(transform.forward * jumpForce, ForceMode.Impulse);
-            }
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rb.AddForce(transform.forward * jumpForce, ForceMode.Impulse);
         }
+
         transform.position = rb.transform.position;
-
-
-
     }
+
     void CastGroundRays()
     {
 
@@ -199,7 +194,6 @@ public class SphereMovementSystem : MonoBehaviour
                     //boost decay
                     else if (rb.linearVelocity.sqrMagnitude < speedToStartBoostDecay)
                     {
-                        Debug.Log(boostAccumulato - Time.fixedDeltaTime);
                         boostAccumulato = Mathf.Max(0, boostAccumulato - Time.fixedDeltaTime);
                     }
                     //boost charge
