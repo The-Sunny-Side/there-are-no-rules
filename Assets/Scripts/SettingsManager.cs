@@ -8,7 +8,7 @@ public class SettingsManager : MonoBehaviour
 
     void Start()
     {
-        volumeSlider.SetValueWithoutNotify(AudioManager.Instance.volume*100);
+        volumeSlider.value=AudioManager.Instance.volume;
         audioToggle.SetIsOnWithoutNotify(AudioManager.Instance.audioEnabled);
 
         volumeSlider.onValueChanged.AddListener(UpdateVolume);
@@ -23,7 +23,7 @@ public class SettingsManager : MonoBehaviour
 
     public void UpdateVolume(float volume)
     {
-        AudioManager.Instance.SetVolume(volume/100);
+        AudioManager.Instance.SetVolume(volume);
     }
 
     public void OnBackButtonClick()
