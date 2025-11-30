@@ -6,9 +6,9 @@ public class MenuManager : MonoBehaviour
 
     public void Awake()
     {
-        if(pausePanel != null)
+        if (pausePanel != null)
         {
-            pausePanel.SetActive(false );
+            pausePanel.SetActive(false);
         }
     }
 
