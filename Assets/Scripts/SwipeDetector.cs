@@ -47,8 +47,8 @@ public class SwipeDetector : MonoBehaviour
         }
     }
 
-    void OnSwipeLeft() { Debug.Log("Swipe left");  /* spara a sinistra */ }
-    void OnSwipeRight() { Debug.Log("Swipe right"); /* spara a destra  */ }
-    void OnSwipeUp() { Debug.Log("Swipe up");    /* spara avanti    */ }
-    void OnSwipeDown() { Debug.Log("Swipe down");  /* spara indietro  */ }
+    void OnSwipeLeft() { Debug.Log("Swipe left");}
+    void OnSwipeRight() { Debug.Log("Swipe right");}
+    void OnSwipeUp() { Debug.Log("Swipe up");}
+    void OnSwipeDown() { Debug.Log("Swipe down");}
 }
