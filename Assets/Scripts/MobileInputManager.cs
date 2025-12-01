@@ -3,18 +3,17 @@ using UnityEngine.InputSystem;
 
 public class MobileInputManager : MonoBehaviour
 {
-    public static MobileInputManager instance;
-
     [SerializeField] private InputActionAsset inputActions;
 
-    private InputAction leftRotateAction;
-    private InputAction rightRotateAction;
-    private InputAction jumpAction;
-
+    public static MobileInputManager instance;
     public bool leftHeld => leftRotateAction.IsPressed();
     public bool rightHeld => rightRotateAction.IsPressed();
 
     public bool jumpTapped => jumpAction.WasPressedThisFrame();
+
+    private InputAction leftRotateAction;
+    private InputAction rightRotateAction;
+    private InputAction jumpAction;
 
     void Awake()
     {

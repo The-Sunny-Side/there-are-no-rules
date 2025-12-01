@@ -2,7 +2,6 @@
 
 public class SphereMovementSystem : MonoBehaviour
 {
-    private MobileInputManager inputManager;
     [Header("SFERA RIGIDBODY")]
     [SerializeField] private Rigidbody rb;
 
@@ -38,6 +37,7 @@ public class SphereMovementSystem : MonoBehaviour
     public float driftingTime = 0f;
     private Vector3 smoothedNormal = Vector3.up;
     private bool hasSmoothedNormal = false;
+    private MobileInputManager inputManager;
 
     void Start()
     {
