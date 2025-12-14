@@ -46,7 +46,7 @@ public class VehicleSelectorManager : MonoBehaviour
     {
         GameObject baseElement = selectors[0].GetComponent<VehicleElementChooser>().selectedElement;
         GameObject bodyElement = selectors[1].GetComponent<VehicleElementChooser>().selectedElement;
-
+        
         VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement);
     }
     private void UpdateActiveSelector()
