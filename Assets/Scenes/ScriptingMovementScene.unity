@@ -792,7 +792,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1599962433}
+  m_Father: {fileID: 1100849150}
   m_LocalEulerAnglesHint: {x: 15.035, y: -90, z: 0}
 --- !u!114 &420727910
 MonoBehaviour:
@@ -1666,6 +1666,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.OnScreen.OnScreenButton
   m_ControlPath: <Gamepad>/buttonEast
+--- !u!4 &1100849150 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7800165974365268291, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
+  m_PrefabInstance: {fileID: 5934533688320898777}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1107662468
 GameObject:
   m_ObjectHideFlags: 0
@@ -2258,11 +2263,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1545347278}
   m_CullTransparentMesh: 1
---- !u!4 &1599962433 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8941424410646962437, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
-  m_PrefabInstance: {fileID: 5934533688320898777}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1642838676
 GameObject:
   m_ObjectHideFlags: 0
@@ -2853,9 +2853,6 @@ MonoBehaviour:
   groundRayLength: 4
   whenIsGroundLenght: 1
   groundRayPoint: {fileID: 513734080}
-  boostAccumulato: 0
-  grounded: 0
-  driftingTime: 0
 --- !u!1 &2130207627
 GameObject:
   m_ObjectHideFlags: 0
@@ -3355,7 +3352,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 8941424410646962437, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 7800165974365268291, guid: ff34c2f9088dc8c4d91090315f594c16, type: 3}
       insertIndex: -1
       addedObject: {fileID: 420727909}
     m_AddedComponents: []

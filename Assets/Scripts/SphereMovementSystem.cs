@@ -13,7 +13,6 @@ public class SphereMovementSystem : MonoBehaviour
     [SerializeField] private float normalAlignSpeed = 3f;
     [SerializeField] private float alignSpeed = 8f;
 
-
     [Header("CARATTERISTICHE")]
     [SerializeField] private float rotationSpeed = 90f;
     [SerializeField] private float jumpForce = 10f;
@@ -32,9 +31,9 @@ public class SphereMovementSystem : MonoBehaviour
     [SerializeField] private float whenIsGroundLenght = .5f;
     [SerializeField] private Transform groundRayPoint;
 
-    public float boostAccumulato = 0f;
-    public bool grounded;
-    public float driftingTime = 0f;
+    private float boostAccumulato = 0f;
+    private bool grounded;
+    private float driftingTime = 0f;
     private Vector3 smoothedNormal = Vector3.up;
     private bool hasSmoothedNormal = false;
     private MobileInputManager inputManager;
