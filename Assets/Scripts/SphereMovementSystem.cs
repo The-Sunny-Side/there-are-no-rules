@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using PurrNet;
+using Unity.Cinemachine;
+using UnityEngine;
 
-public class SphereMovementSystem : MonoBehaviour
+public class SphereMovementSystem : NetworkIdentity
 {
     [Header("SFERA RIGIDBODY")]
     [SerializeField] private Rigidbody rb;
@@ -39,6 +41,21 @@ public class SphereMovementSystem : MonoBehaviour
     private bool hasSmoothedNormal = false;
     private MobileInputManager inputManager;
 
+
+    protected override void OnSpawned()
+    {
+        base.OnSpawned();
+
+        rb.position = transform.position;
+        rb.rotation = transform.rotation;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        enabled = isOwner;
+
+        if (isOwner)
+            PlayerCamera.instance.SetTarget(transform);
+    }
     void Start()
     {
         inputManager = MobileInputManager.instance;
