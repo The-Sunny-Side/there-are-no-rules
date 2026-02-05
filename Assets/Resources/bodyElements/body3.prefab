@@ -1,5 +1,67 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4086936541051117567
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1626422493040675249}
+  m_Layer: 0
+  m_Name: armorRightAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1626422493040675249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4086936541051117567}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: -0.01063, y: -0.0039, z: 0.00663}
+  m_LocalScale: {x: 0.018598888, y: 0.018598882, z: 0.018598888}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4382026848720836284}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7921450365739145926
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6117323378170641055}
+  m_Layer: 0
+  m_Name: armorLeftAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6117323378170641055
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7921450365739145926}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 0.0062, y: -0.0039, z: 0.00663}
+  m_LocalScale: {x: 0.018598888, y: 0.018598882, z: 0.018598888}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4382026848720836284}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4276923549115461975
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86,6 +148,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: eebd2553c1b37a143b2b77a418e3fe42, type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 1626422493040675249}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: eebd2553c1b37a143b2b77a418e3fe42, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 6117323378170641055}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eebd2553c1b37a143b2b77a418e3fe42, type: 3}
+--- !u!4 &4382026848720836284 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: eebd2553c1b37a143b2b77a418e3fe42, type: 3}
+  m_PrefabInstance: {fileID: 4276923549115461975}
+  m_PrefabAsset: {fileID: 0}

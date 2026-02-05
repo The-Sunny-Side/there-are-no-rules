@@ -7,6 +7,10 @@ public class Composer : MonoBehaviour
 {
     public GameObject baseElement;
     public GameObject bodyElement;
+    public GameObject armorLeftElement;
+    public GameObject armorRightElement;
+    public GameObject armorFrontElement;
+    public GameObject armorBackElement;
     [SerializeField] private float composerSpeed = 5f;
     [SerializeField] private GameObject vehicle;
 
@@ -47,7 +51,10 @@ public class Composer : MonoBehaviour
 
     void CreateVehicleGameObject()
     {
-
+        Transform armorRightContainer = bodyElement.transform.Find("armorRightAnchor");
+        armorRightElement.transform.SetParent(armorRightContainer.transform, false);
+        armorLeftElement.transform.rotation = armorRightContainer.rotation;
+        //armorRightElement.transform.localScale = Vector3.Scale(armorRightContainer.localScale,new Vector3(0.1f,0.1f,0.1f));
         baseElement.transform.SetParent(vehicle.transform, false);
         bodyElement.transform.SetParent(vehicle.transform, false);
     }
