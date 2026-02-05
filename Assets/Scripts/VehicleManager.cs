@@ -7,6 +7,10 @@ public class Vehicle
 {
     public string baseElement;
     public string bodyElement;
+    public string armorLeftElement;
+    public string armorRightElement;
+    public string armorFrontElement;
+    public string armorBackElement;
 }
 
 public class VehicleManager : MonoBehaviour
@@ -36,17 +40,21 @@ public class VehicleManager : MonoBehaviour
         }
     }
 
-    public void SaveVehicleData(GameObject baseElement, GameObject bodyElement)
+    public void SaveVehicleData(GameObject baseElement, GameObject bodyElement, GameObject[] armors)
     {
-        Vehicle data = new Vehicle();
+        Vehicle dataToSave = new Vehicle();
 
-        data.baseElement = baseElement.name;
-        data.bodyElement = bodyElement.name;
+        dataToSave.baseElement = baseElement.name;
+        dataToSave.bodyElement = bodyElement.name;
+        dataToSave.armorFrontElement = armors[0]?.name ?? null;
+        dataToSave.armorLeftElement = armors[1]?.name ?? null;
+        dataToSave.armorBackElement = armors[2]?.name ?? null;
+        dataToSave.armorRightElement = armors[3]?.name ?? null;
 
-        string json = JsonUtility.ToJson(data, true);
+        string json = JsonUtility.ToJson(dataToSave, true);
         File.WriteAllText(configPath, json);
 
-        Debug.Log("Veicolo salvato: Base=" + data.baseElement + ", Body=" + data.bodyElement);
+        Debug.Log("Veicolo salvato: "+ dataToSave);
     }
 
     public Dictionary<string, GameObject> LoadVehicleData()
@@ -57,11 +65,33 @@ public class VehicleManager : MonoBehaviour
             string json = File.ReadAllText(configPath);
             Vehicle data = JsonUtility.FromJson<Vehicle>(json);
 
-            Debug.Log("Veicolo caricato: Base=" + data.baseElement + ", Body=" + data.bodyElement);
+            Debug.Log("Veicolo caricato: " + data);
 
             GameObject bodyObj = Resources.Load<GameObject>("bodyElements/" + data.bodyElement);
             GameObject baseObj = Resources.Load<GameObject>("baseElements/" + data.baseElement);
 
+            if (data.armorRightElement != null) {
+                GameObject armorRightObj = Resources.Load<GameObject>("armors/" + data.armorRightElement);
+                result["armorRight"] = armorRightObj;
+            }
+
+            if (data.armorFrontElement != null)
+            {
+                GameObject armorFrontObj = Resources.Load<GameObject>("armors/" + data.armorFrontElement);
+                result["armorFront"] = armorFrontObj;
+            }
+
+            if (data.armorBackElement != null)
+            {
+                GameObject armorRightObj = Resources.Load<GameObject>("armors/" + data.armorBackElement);
+                result["armorBack"] = armorRightObj;
+            }
+
+            if (data.armorLeftElement != null)
+            {
+                GameObject armorLeftObj = Resources.Load<GameObject>("armors/" + data.armorLeftElement);
+                result["armorLeft"] = armorLeftObj;
+            }
 
             result["body"] = bodyObj??defaultBodyElement;
             result["base"] = baseObj??defaultBaseElement;

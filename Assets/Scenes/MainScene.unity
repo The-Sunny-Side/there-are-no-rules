@@ -1483,6 +1483,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuManager
   pausePanel: {fileID: 0}
+  gameButtons: []
 --- !u!1 &2126929550
 GameObject:
   m_ObjectHideFlags: 0

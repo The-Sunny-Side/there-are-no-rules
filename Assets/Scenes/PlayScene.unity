@@ -1330,6 +1330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuManager
   pausePanel: {fileID: 476358632}
+  gameButtons: []
 --- !u!4 &2023728783
 Transform:
   m_ObjectHideFlags: 0
@@ -1501,7 +1502,7 @@ PrefabInstance:
     - target: {fileID: 2456556501942093263, guid: 107e310111c7cfa4a943cf05e3d29bb3, type: 3}
       propertyPath: 'players.Array.data[0]'
       value: 
-      objectReference: {fileID: 518888200399963756, guid: f050f14703d1f5c4890426910c982ed2, type: 3}
+      objectReference: {fileID: 2272084701727560326, guid: 76237d991fb4dde4689c7baabe59ca5a, type: 3}
     - target: {fileID: 2456556501942093263, guid: 107e310111c7cfa4a943cf05e3d29bb3, type: 3}
       propertyPath: 'players.Array.data[1]'
       value: 

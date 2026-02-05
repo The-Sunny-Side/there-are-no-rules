@@ -6,11 +6,12 @@ public class VehicleSelectorManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] selectors;
     [SerializeField] private GameObject[] selectorsUI;
-    [SerializeField] private String[] stepNames = { "Scegli la base", "Scegli il corpo", "Completa" };
+    [SerializeField] private String[] stepNames = { "Scegli la base", "Scegli il corpo", "Scegli l'arma", "Completa" };
     [SerializeField] private TMP_Text stepTitleText;
     [SerializeField] private GameObject NextElementButton;
     [SerializeField] private GameObject PreviousElementButton;
     [SerializeField] private GameObject NextStepButton;
+    [SerializeField] private GameObject PrevStepButton;
     [SerializeField] private GameObject FinalizzaButton;
     [SerializeField] private GameObject Composer;
 
@@ -46,8 +47,9 @@ public class VehicleSelectorManager : MonoBehaviour
     {
         GameObject baseElement = selectors[0].GetComponent<VehicleElementChooser>().selectedElement;
         GameObject bodyElement = selectors[1].GetComponent<VehicleElementChooser>().selectedElement;
-
-        VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement);
+        GameObject[] armors = selectors[2].GetComponent<VehicleArmorsChooser>().selectedArmors;
+        Debug.Log(armors);
+        VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement, armors);
     }
     private void UpdateActiveSelector()
     {
@@ -60,26 +62,75 @@ public class VehicleSelectorManager : MonoBehaviour
 
         stepTitleText.text = stepNames[stepIndex];
 
+        switch (stepIndex)
+        {
+            case 0:
+                {
+                    PrevStepButton.SetActive(false);
+                    FinalizzaButton.SetActive(false);
+                    NextStepButton.SetActive(true);
+                    PreviousElementButton.SetActive(true);
+                    NextElementButton.SetActive(true);
+                }
+                break;
+
+            case 1:
+                {
+                    PrevStepButton.SetActive(true);
+                    NextStepButton.SetActive(true);
+                    FinalizzaButton.SetActive(false);
+                    PreviousElementButton.SetActive(true);
+                    NextElementButton.SetActive(true);
+                }
+                break;
+            case 2:
+                {
+                    PrevStepButton.SetActive(true);
+                    NextStepButton.SetActive(true);
+                    FinalizzaButton.SetActive(false);
+                    PreviousElementButton.SetActive(true);
+                    NextElementButton.SetActive(true);
+                }
+                break;
+            case 3:
+                {
+                    PreviousElementButton.SetActive(false);
+                    NextElementButton.SetActive(false);
+                    NextStepButton.SetActive(false);
+                    FinalizzaButton.SetActive(true);
+                }
+                break;
+
+        }
 
         if (Composer.activeInHierarchy)
         {
-            
+
             Composer composerComponent = Composer.GetComponent<Composer>();
             GameObject baseElement = selectors[0].GetComponent<VehicleElementChooser>().selectedElement;
             GameObject bodyElement = selectors[1].GetComponent<VehicleElementChooser>().selectedElement;
+            GameObject[] armorElements = selectors[2].GetComponent<VehicleArmorsChooser>().selectedArmors;
+
+            Debug.Log("armors: "+armorElements);
 
             GameObject baseInstance = Instantiate(baseElement, transform);
             GameObject bodyInstance = Instantiate(bodyElement, transform);
+
+
 
             baseInstance.transform.SetParent(composerComponent.transform);
             bodyInstance.transform.SetParent(composerComponent.transform);
             composerComponent.baseElement = baseInstance;
             composerComponent.bodyElement = bodyInstance;
+
+            composerComponent.armorFrontElement = Instantiate(armorElements[0], transform);
+            composerComponent.armorLeftElement = Instantiate(armorElements[1], transform);
+            composerComponent.armorBackElement = Instantiate(armorElements[2], transform);
+            composerComponent.armorRightElement = Instantiate(armorElements[3], transform);
+
             composerComponent.AlignComponents();
 
         }
-        
-
 
     }
 

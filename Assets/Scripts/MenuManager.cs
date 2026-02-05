@@ -1,8 +1,10 @@
+using NUnit.Framework;
 using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
     public GameObject pausePanel;
+    [SerializeField] private GameObject[] gameButtons;
 
     public void Awake()
     {

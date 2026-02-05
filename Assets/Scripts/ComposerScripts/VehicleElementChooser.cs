@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class VehicleElementChooser : MonoBehaviour
 {
-    [SerializeField] private GameObject[] elements;
+    [SerializeField] public GameObject[] elements;
     public GameObject selectedElement;
     private GameObject currentInstance;
     void Awake()

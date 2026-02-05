@@ -3,37 +3,33 @@ using UnityEngine;
 
 public class VehicleLoader : MonoBehaviour
 {
-    public GameObject baseContainer;
-    public GameObject bodyContainer;
+    [SerializeField] private Composer composer;
+
 
     void Awake()
     {
-        Debug.Log("VehicleLoader: Inizio caricamento");
-
         Dictionary<string, GameObject> list = VehicleManager.Instance.LoadVehicleData();
 
-        if (list.ContainsKey("base") && list["base"] != null)
+        foreach(string key in list.Keys)
         {
-            Debug.Log("Caricamento base: " + list["base"].name);
-
-            GameObject baseInstance = Instantiate(list["base"]);
-            baseInstance.transform.SetParent(baseContainer.transform);
-
-            baseInstance.transform.localPosition = Vector3.zero;
-            baseInstance.transform.localRotation = Quaternion.identity;
-            baseInstance.transform.localScale = Vector3.one;
+            Debug.Log(key + ": " + list[key]);
         }
 
-        if (list.ContainsKey("body") && list["body"] != null)
+        if (list.ContainsKey("body") && list["body"] != null && list.ContainsKey("base") && list["base"] != null)
         {
-            Debug.Log("Caricamento body: " + list["body"].name);
+            composer.baseElement = Instantiate(list["base"]);
+            composer.bodyElement = Instantiate(list["body"]);
+            composer.armorBackElement = Instantiate(list["armorBack"]);
+            composer.armorFrontElement = Instantiate(list["armorFront"]);
+            composer.armorLeftElement = Instantiate(list["armorLeft"]);
+            composer.armorRightElement = Instantiate(list["armorRight"]);
 
-            GameObject bodyInstance = Instantiate(list["body"]);
-            bodyInstance.transform.SetParent(bodyContainer.transform);
+            composer.AlignComponents();
+        }
 
-            bodyInstance.transform.localPosition = Vector3.zero;
-            bodyInstance.transform.localRotation = Quaternion.identity;
-            bodyInstance.transform.localScale = Vector3.one;
+        else
+        {
+            Debug.Log("Vehicle loader: Errore durante il caricamento del veicolo");
         }
     }
 }

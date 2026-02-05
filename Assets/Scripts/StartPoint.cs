@@ -11,6 +11,7 @@ public class SpawnPoint : MonoBehaviour
         {
             Vector3 spawnPosition = new Vector3(transform.position.x + i * offset, transform.position.y, transform.position.z);
             Instantiate(players[i], spawnPosition, Quaternion.identity);
+            Debug.Log("Spawned player at: " + spawnPosition);
         }
     }
 
