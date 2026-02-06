@@ -5,52 +5,46 @@ public class VehicleArmorsChooser : VehicleElementChooser
     // 0 = Top - 1 = Left - 2 = Back - 3 = Right 
     public int selectedArmorType = 0;
     public GameObject[] selectedArmors;
+    private int[] selectedArmorsIndices = new int[4] { 0, 0, 0, 0 };
 
-    private GameObject currentInstance;
-    private int currentIndex = 0;
-
-    private void Awake()
+    public override void NextElement()
     {
-        GameObject emptyObj = Resources.Load<GameObject>("empty");
-        selectedArmors = new GameObject[] { emptyObj, emptyObj, emptyObj, emptyObj };
-    }
-
-    public new void NextElement()
-    {
+        
         int nextIndex = (currentIndex + 1) % this.elements.Length;
-
-        if (currentInstance != null)
-        {
-            Destroy(currentInstance);
-        }
         currentIndex = nextIndex;
-        currentInstance = Instantiate(elements[nextIndex], selectedElement.transform);
+        selectedArmors[selectedArmorType] = elements[nextIndex];
+        selectedArmorsIndices[selectedArmorType]= nextIndex;
+        SyncSelectedElement(elements[nextIndex]);
     }
-    public new void PreviousElement()
+    public override void PreviousElement()
     {
-        int previousIndex = (currentIndex - 1 + elements.Length) % elements.Length;
 
-        if (currentInstance != null)
-        {
-            Destroy(currentInstance);
-        }
+        int previousIndex = (currentIndex - 1 + elements.Length) % elements.Length;
         currentIndex = previousIndex;
-        currentInstance = Instantiate(elements[previousIndex], selectedElement.transform);
+        selectedArmors[selectedArmorType] = elements[previousIndex];
+        selectedArmorsIndices[selectedArmorType] = previousIndex;
+        SyncSelectedElement(elements[previousIndex]);
     }
 
     public void NextArmorType()
     {
         selectedArmorType = (selectedArmorType + 1 + 4) % 4;
+        currentIndex = selectedArmorsIndices[selectedArmorType];
+        SyncSelectedElement(elements[currentIndex]);
     }
 
     public void PreviousArmorType()
     {
-        selectedArmorType = (selectedArmorType + 1 + 4) % 4;
+        selectedArmorType = (selectedArmorType - 1 + 4) % 4;
+        currentIndex = selectedArmorsIndices[selectedArmorType];
+        SyncSelectedElement(elements[currentIndex]);
     }
 
     public void SetArmorType(int type)
     {
         selectedArmorType = type;
+        currentIndex = selectedArmorsIndices[selectedArmorType];
+        SyncSelectedElement(elements[currentIndex]);
     }
 
     void Update()
@@ -63,5 +57,14 @@ public class VehicleArmorsChooser : VehicleElementChooser
         {
             PreviousElement();
         }
+    }
+
+    protected void SyncSelectedElement(GameObject element)
+    {
+        selectedElement = element;
+
+        Destroy(currentInstance);
+
+        currentInstance = Instantiate(selectedElement, transform);
     }
 }

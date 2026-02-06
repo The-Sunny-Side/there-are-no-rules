@@ -4,22 +4,24 @@ public class VehicleElementChooser : MonoBehaviour
 {
     [SerializeField] public GameObject[] elements;
     public GameObject selectedElement;
-    private GameObject currentInstance;
+    protected GameObject currentInstance;
+    protected int currentIndex = 0;
+
     void Awake()
     {
         if (elements.Length > 0)
             selectedElement = elements[0];
     }
-    void Start()
+    protected void Start()
     {
         if (selectedElement != null)
         {
             currentInstance = Instantiate(selectedElement, transform);
         }
     }
-    public void NextElement()
+    public virtual void NextElement()
     {
-        int currentIndex = System.Array.IndexOf(elements, selectedElement);
+        currentIndex = System.Array.IndexOf(elements, selectedElement);
         int nextIndex = (currentIndex + 1) % elements.Length;
         selectedElement = elements[nextIndex];
 
@@ -27,9 +29,9 @@ public class VehicleElementChooser : MonoBehaviour
         Destroy(currentInstance);
         currentInstance = Instantiate(selectedElement, transform);
     }
-    public void PreviousElement()
+    public virtual void PreviousElement()
     {
-        int currentIndex = System.Array.IndexOf(elements, selectedElement);
+        currentIndex = System.Array.IndexOf(elements, selectedElement);
         int previousIndex = (currentIndex - 1 + elements.Length) % elements.Length;
         selectedElement = elements[previousIndex];
 

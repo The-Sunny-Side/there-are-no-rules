@@ -54,7 +54,7 @@ public class VehicleManager : MonoBehaviour
         string json = JsonUtility.ToJson(dataToSave, true);
         File.WriteAllText(configPath, json);
 
-        Debug.Log("Veicolo salvato: "+ dataToSave);
+        Debug.Log("Veicolo salvato: "+ json);
     }
 
     public Dictionary<string, GameObject> LoadVehicleData()
@@ -72,25 +72,25 @@ public class VehicleManager : MonoBehaviour
 
             if (data.armorRightElement != null) {
                 GameObject armorRightObj = Resources.Load<GameObject>("armors/" + data.armorRightElement);
-                result["armorRight"] = armorRightObj;
+                result["armorRightElement"] = armorRightObj;
             }
 
             if (data.armorFrontElement != null)
             {
                 GameObject armorFrontObj = Resources.Load<GameObject>("armors/" + data.armorFrontElement);
-                result["armorFront"] = armorFrontObj;
+                result["armorFrontElement"] = armorFrontObj;
             }
 
             if (data.armorBackElement != null)
             {
                 GameObject armorRightObj = Resources.Load<GameObject>("armors/" + data.armorBackElement);
-                result["armorBack"] = armorRightObj;
+                result["armorBackElement"] = armorRightObj;
             }
 
             if (data.armorLeftElement != null)
             {
                 GameObject armorLeftObj = Resources.Load<GameObject>("armors/" + data.armorLeftElement);
-                result["armorLeft"] = armorLeftObj;
+                result["armorLeftElement"] = armorLeftObj;
             }
 
             result["body"] = bodyObj??defaultBodyElement;
