@@ -52,6 +52,8 @@ public class Composer : MonoBehaviour
     {
         Transform armorRightContainer = bodyElement.transform.Find("armorRightAnchor");
         Transform armorLeftContainer = bodyElement.transform.Find("armorLeftAnchor");
+        Transform armorFrontContainer = bodyElement.transform.Find("armorFrontAnchor");
+        Transform armorBackContainer = bodyElement.transform.Find("armorBackAnchor");
 
 
         armorLeftElement.transform.SetParent(armorLeftContainer.transform, false);
@@ -61,6 +63,15 @@ public class Composer : MonoBehaviour
         armorRightElement.transform.SetParent(armorRightContainer.transform, false);
         armorRightElement.transform.rotation = armorRightContainer.rotation;
         armorRightElement.transform.localScale = Vector3.Scale(armorRightContainer.localScale,new Vector3(1f,1f,1f));
+
+        armorFrontElement.transform.SetParent(armorFrontContainer.transform, false);
+        armorFrontElement.transform.rotation = armorFrontContainer.rotation;
+        armorFrontElement.transform.localScale = Vector3.Scale(armorFrontContainer.localScale, new Vector3(1f, 1f, 1f));
+
+        armorBackElement.transform.SetParent(armorBackContainer.transform, false);
+        armorBackElement.transform.rotation = armorBackContainer.rotation;
+        armorBackElement.transform.localScale = Vector3.Scale(armorBackContainer.localScale, new Vector3(1f, 1f, 1f));
+
         baseElement.transform.SetParent(vehicle.transform, false);
         bodyElement.transform.SetParent(vehicle.transform, false);
     }
