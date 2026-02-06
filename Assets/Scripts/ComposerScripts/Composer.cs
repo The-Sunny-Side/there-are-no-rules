@@ -56,10 +56,11 @@ public class Composer : MonoBehaviour
 
         armorLeftElement.transform.SetParent(armorLeftContainer.transform, false);
         armorLeftElement.transform.rotation = armorLeftContainer.rotation;
+        armorLeftElement.transform.localScale = Vector3.Scale(armorLeftContainer.localScale, new Vector3(1f, 1f, 1f));
 
         armorRightElement.transform.SetParent(armorRightContainer.transform, false);
         armorRightElement.transform.rotation = armorRightContainer.rotation;
-        //armorRightElement.transform.localScale = Vector3.Scale(armorRightContainer.localScale,new Vector3(0.1f,0.1f,0.1f));
+        armorRightElement.transform.localScale = Vector3.Scale(armorRightContainer.localScale,new Vector3(1f,1f,1f));
         baseElement.transform.SetParent(vehicle.transform, false);
         bodyElement.transform.SetParent(vehicle.transform, false);
     }

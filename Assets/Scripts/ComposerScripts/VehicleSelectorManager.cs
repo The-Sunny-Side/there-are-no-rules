@@ -48,7 +48,6 @@ public class VehicleSelectorManager : MonoBehaviour
         GameObject baseElement = selectors[0].GetComponent<VehicleElementChooser>().selectedElement;
         GameObject bodyElement = selectors[1].GetComponent<VehicleElementChooser>().selectedElement;
         GameObject[] armors = selectors[2].GetComponent<VehicleArmorsChooser>().selectedArmors;
-        Debug.Log(armors);
         VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement, armors);
     }
     private void UpdateActiveSelector()
@@ -110,8 +109,6 @@ public class VehicleSelectorManager : MonoBehaviour
             GameObject baseElement = selectors[0].GetComponent<VehicleElementChooser>().selectedElement;
             GameObject bodyElement = selectors[1].GetComponent<VehicleElementChooser>().selectedElement;
             GameObject[] armorElements = selectors[2].GetComponent<VehicleArmorsChooser>().selectedArmors;
-
-            Debug.Log("armors: "+armorElements);
 
             GameObject baseInstance = Instantiate(baseElement, transform);
             GameObject bodyInstance = Instantiate(bodyElement, transform);
