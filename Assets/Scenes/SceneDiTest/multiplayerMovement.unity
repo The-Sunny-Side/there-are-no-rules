@@ -1911,6 +1911,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1545347278}
   m_CullTransparentMesh: 1
+--- !u!1 &1584015642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1584015644}
+  - component: {fileID: 1584015643}
+  m_Layer: 0
+  m_Name: VehicleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1584015643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584015642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919c988bd4ebe2c4e94381c72fb3fcc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleManager
+--- !u!4 &1584015644
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584015642}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 363.58783, y: 0, z: 3099.062}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1642838676
 GameObject:
   m_ObjectHideFlags: 0
@@ -2171,7 +2215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: PurrNet.Runtime::PurrNet.PlayerSpawner
   playerPrefab: {fileID: 0}
-  _playerPrefab: {fileID: 3886270546350311046, guid: 9319d606cf1094b4f948a1cfcb932220, type: 3}
+  _playerPrefab: {fileID: 8654641926553122775, guid: e098a6be38cc80f4d9e130e6f233a8a9, type: 3}
   _ignoreNetworkRules: 0
   spawnPoints:
   - {fileID: 1819435056}
@@ -3453,3 +3497,4 @@ SceneRoots:
   - {fileID: 1189729151}
   - {fileID: 1819435056}
   - {fileID: 4678161769741112451}
+  - {fileID: 1584015644}
