@@ -5,11 +5,13 @@ public class VehicleNetConfig : NetworkIdentity
 {
     [SerializeField] private VehicleLoader loader;
 
+    // tenuta lato server
+    private string _lastJson;
+
     protected override void OnSpawned()
     {
         base.OnSpawned();
 
-        // SOLO l'owner legge il suo file e manda la config al server
         if (isOwner)
         {
             string json = VehicleManager.Instance.GetVehicleJson();
@@ -20,8 +22,16 @@ public class VehicleNetConfig : NetworkIdentity
     [ServerRpc]
     private void SubmitConfig_ServerRpc(string json)
     {
-        // il server ridistribuisce a tutti
+        _lastJson = json;
         ApplyConfig_ObserversRpc(json);
+    }
+
+    // chiamabile SOLO dal server quando entra un nuovo client
+    public void ServerResendIfAny()
+    {
+        if (!isServer) return;
+        if (!string.IsNullOrEmpty(_lastJson))
+            ApplyConfig_ObserversRpc(_lastJson);
     }
 
     [ObserversRpc]
