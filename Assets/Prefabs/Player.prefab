@@ -386,12 +386,12 @@ MonoBehaviour:
   dragInAir: 0.1
   normalAlignSpeed: 3
   alignSpeed: 20
-  rotationSpeed: 90
+  rotationSpeed: 200
   jumpForce: 200
-  sideBreak: 20
+  sideBreak: 10
   forwardSpeed: 0.5
   minAlignment: 0
-  boostForce: 5
+  boostForce: 2
   speedToStartBoostDecay: 50
   timeToStartBoostCharge: 0.5
   raysCount: 8
