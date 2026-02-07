@@ -2170,7 +2170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: PurrNet.Runtime::PurrNet.PlayerSpawner
   playerPrefab: {fileID: 0}
-  _playerPrefab: {fileID: 5037981135537683669, guid: 76237d991fb4dde4689c7baabe59ca5a, type: 3}
+  _playerPrefab: {fileID: 3886270546350311046, guid: 9319d606cf1094b4f948a1cfcb932220, type: 3}
   _ignoreNetworkRules: 0
   spawnPoints:
   - {fileID: 1819435056}

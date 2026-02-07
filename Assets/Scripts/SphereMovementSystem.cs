@@ -7,7 +7,6 @@ public class SphereMovementSystem : NetworkIdentity
     [Header("SFERA RIGIDBODY")]
     [SerializeField] private Rigidbody rb;
 
-
     [Header("FISICA")]
     [SerializeField] private float gravityForce = 100f;
     [SerializeField] private float dragOnGround = 0.1f;
