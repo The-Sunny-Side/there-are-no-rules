@@ -1,15 +1,14 @@
 using PurrNet;
 using System.Collections.Generic;
-using PurrNet.Packing;
 using UnityEngine;
 
 public class FinishPoint : NetworkBehaviour
 {
     [SerializeField] private NetworkManager netManager;
-    private List<PlayerID> playerList = new();
 
-    public List<PackedULong> playerIdList = new();
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private readonly List<PlayerID> playerList = new();
+    private bool _raceEnded;
+
     void Start()
     {
         netManager.onPlayerJoined += UpdateList;
@@ -18,57 +17,49 @@ public class FinishPoint : NetworkBehaviour
 
     private void RemovePlayer(PlayerID player, bool asserver)
     {
+        if (!asserver) return;
         playerList.Remove(player);
-        playerIdList.Remove(player.id);
     }
 
     private void UpdateList(PlayerID player, bool isreconnect, bool asserver)
     {
-        playerList.Add(player);
-        playerIdList.Add(player.id);
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (!asserver) return;
+        if (!playerList.Contains(player))
+            playerList.Add(player);
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("collido"+collision.gameObject.name);
-        if (collision.gameObject.CompareTag("PlayerSphere"))
-        {       
-            PlayerID? winningId = collision.gameObject.GetComponent<NetworkTransform>().localPlayer;
-            Congrats(winningId.GetValueOrDefault());
-            foreach (var player in playerList)
-            {
-                if (!player.Equals(winningId) )
-                {
+        if (!isServer) return;
+        if (_raceEnded) return;
 
-                    LoseMessage(player);
+        if (!collision.gameObject.CompareTag("PlayerSphere"))
+            return;
 
-                }
-            }
-        }
+        var identity = collision.gameObject.GetComponentInParent<NetworkIdentity>();
+        if (!identity) return;
+
+        // TODO: sostituisci con la proprietà owner corretta del tuo NetworkIdentity
+        PlayerID winningId = identity.owner.GetValueOrDefault();
+
+        _raceEnded = true;
+
+        Congrats(winningId);
+
+        foreach (var p in playerList)
+            if (!p.Equals(winningId))
+                LoseMessage(p);
     }
 
     [TargetRpc]
     private void Congrats(PlayerID target)
     {
-        if (target != null)
-        {
-            Debug.Log("hai vinto");
-        }
+        Debug.Log("hai vinto");
     }
 
     [TargetRpc]
     private void LoseMessage(PlayerID target)
     {
-        if (target != null)
-        {
-            Debug.Log("hai perso sarà per la prossima");
-        }
+        Debug.Log("hai perso sarà per la prossima");
     }
 }
