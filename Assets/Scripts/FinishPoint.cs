@@ -1,22 +1,33 @@
 using PurrNet;
 using System.Collections.Generic;
+using PurrNet.Packing;
 using UnityEngine;
 
 public class FinishPoint : NetworkBehaviour
 {
     [SerializeField] private NetworkManager netManager;
-    public List<PlayerID> playerList = new();
+    private List<PlayerID> playerList = new();
 
+    public List<PackedULong> playerIdList = new();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         netManager.onPlayerJoined += UpdateList;
+        netManager.onPlayerLeft += RemovePlayer;
+    }
+
+    private void RemovePlayer(PlayerID player, bool asserver)
+    {
+        playerList.Remove(player);
+        playerIdList.Remove(player.id);
     }
 
     private void UpdateList(PlayerID player, bool isreconnect, bool asserver)
     {
         playerList.Add(player);
+        playerIdList.Add(player.id);
     }
+
 
     // Update is called once per frame
     void Update()
@@ -33,7 +44,7 @@ public class FinishPoint : NetworkBehaviour
             Congrats(winningId.GetValueOrDefault());
             foreach (var player in playerList)
             {
-                if (player != winningId)
+                if (!player.Equals(winningId) )
                 {
 
                     LoseMessage(player);

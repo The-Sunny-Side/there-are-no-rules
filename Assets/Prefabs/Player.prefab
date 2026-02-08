@@ -113,7 +113,6 @@ MonoBehaviour:
   armorRightElement: {fileID: 0}
   armorFrontElement: {fileID: 0}
   armorBackElement: {fileID: 0}
-  composerSpeed: 5
   vehicle: {fileID: 6397016520105436605}
 --- !u!1 &7368547368459050411
 GameObject:
