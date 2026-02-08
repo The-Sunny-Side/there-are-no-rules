@@ -981,6 +981,7 @@ Transform:
   m_Children:
   - {fileID: 1189729151}
   - {fileID: 1819435056}
+  - {fileID: 1765716557}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &952891619
@@ -2026,19 +2027,19 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 879400303}
     m_Modifications:
     - target: {fileID: 2224379930375280936, guid: 93928d0b3291d7941b13d3a706cbcc1d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1075.95
+      value: 17.89
       objectReference: {fileID: 0}
     - target: {fileID: 2224379930375280936, guid: 93928d0b3291d7941b13d3a706cbcc1d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.27
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2224379930375280936, guid: 93928d0b3291d7941b13d3a706cbcc1d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1368.72
+      value: 1.19
       objectReference: {fileID: 0}
     - target: {fileID: 2224379930375280936, guid: 93928d0b3291d7941b13d3a706cbcc1d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2075,7 +2076,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4034496886005207943, guid: 93928d0b3291d7941b13d3a706cbcc1d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1765716558}
   m_SourcePrefab: {fileID: 100100000, guid: 93928d0b3291d7941b13d3a706cbcc1d, type: 3}
 --- !u!1 &1642838676
 GameObject:
@@ -2330,6 +2334,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1726829172}
   m_CullTransparentMesh: 1
+--- !u!1 &1765716552 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4034496886005207943, guid: 93928d0b3291d7941b13d3a706cbcc1d, type: 3}
+  m_PrefabInstance: {fileID: 1625441805}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1765716557 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2224379930375280936, guid: 93928d0b3291d7941b13d3a706cbcc1d, type: 3}
+  m_PrefabInstance: {fileID: 1625441805}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1765716558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765716552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5681fe548eb84304ea28a286062791f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PurrNet.Runtime::PurrNet.NetworkIdentity
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
 --- !u!1 &1779854403
 GameObject:
   m_ObjectHideFlags: 0
@@ -3704,4 +3739,3 @@ SceneRoots:
   - {fileID: 879400303}
   - {fileID: 4678161769741112451}
   - {fileID: 1584015644}
-  - {fileID: 1625441805}
