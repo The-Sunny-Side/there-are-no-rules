@@ -17,7 +17,7 @@ public class MenuManager : MonoBehaviour
     public void OnPlayButtonClick()
     {
         AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.LoadScene("PlayScene");
+        GameManager.Instance.LoadScene("multiplayerMovement");
     }
 
     public void OnVehicleSelectionButtonClick()

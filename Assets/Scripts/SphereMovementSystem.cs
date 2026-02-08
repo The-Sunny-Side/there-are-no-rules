@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using PurrNet;
+using Unity.Cinemachine;
+using UnityEngine;
 
-public class SphereMovementSystem : MonoBehaviour
+public class SphereMovementSystem : NetworkIdentity
 {
     [Header("SFERA RIGIDBODY")]
     [SerializeField] private Rigidbody rb;
-
+    [SerializeField] private GameObject centroPivot;
 
     [Header("FISICA")]
     [SerializeField] private float gravityForce = 100f;
@@ -38,11 +40,29 @@ public class SphereMovementSystem : MonoBehaviour
     private Vector3 smoothedNormal = Vector3.up;
     private bool hasSmoothedNormal = false;
     private MobileInputManager inputManager;
+    private Vector3 _pivotOffsetWorld;
 
+
+    protected override void OnSpawned()
+    {
+        base.OnSpawned();
+
+        rb.position = transform.position;
+        rb.rotation = transform.rotation;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        enabled = isOwner;
+
+        if (isOwner)
+            PlayerCamera.instance.SetTarget(transform);
+    }
     void Start()
     {
         inputManager = MobileInputManager.instance;
         rb.transform.parent = null;
+
+        _pivotOffsetWorld = centroPivot.transform.position - transform.position;
     }
     void Update()
     {
@@ -63,7 +83,8 @@ public class SphereMovementSystem : MonoBehaviour
             rb.AddForce(transform.forward * jumpForce, ForceMode.Impulse);
         }
 
-        transform.position = rb.transform.position;
+        transform.position = rb.transform.position - _pivotOffsetWorld;
+
     }
 
     void CastGroundRays()
