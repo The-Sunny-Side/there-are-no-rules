@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class VehicleArmorsChooser : VehicleElementChooser
 {
@@ -6,6 +7,12 @@ public class VehicleArmorsChooser : VehicleElementChooser
     public int selectedArmorType = 0;
     public GameObject[] selectedArmors;
     private int[] selectedArmorsIndices = new int[4] { 0, 0, 0, 0 };
+    [SerializeField] private Sprite[] icons;
+
+    [SerializeField] private Composer composer;
+
+    [SerializeField] private Image[] iconBoxes;
+
 
     public override void NextElement()
     {
@@ -61,10 +68,14 @@ public class VehicleArmorsChooser : VehicleElementChooser
 
     protected void SyncSelectedElement(GameObject element)
     {
+        Debug.Log("syncing element: " + element.name + " for armor type: " + selectedArmorType);
         selectedElement = element;
+        iconBoxes[selectedArmorType].sprite = icons[currentIndex];
+        composer.armorFrontElement = Instantiate(selectedArmors[0], transform);
+        composer.armorLeftElement = Instantiate(selectedArmors[1], transform);
+        composer.armorBackElement = Instantiate(selectedArmors[2], transform);
+        composer.armorRightElement = Instantiate(selectedArmors[3], transform);
 
-        Destroy(currentInstance);
-
-        currentInstance = Instantiate(selectedElement, transform);
+        composer.AlignComponents();
     }
 }
