@@ -1,12 +1,21 @@
 using PurrNet;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class FinishPoint : NetworkBehaviour
 {
+    [SerializeField] private NetworkManager netManager;
+    public List<PlayerID> playerList = new();
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        netManager.onPlayerJoined += UpdateList;
+    }
+
+    private void UpdateList(PlayerID player, bool isreconnect, bool asserver)
+    {
+        playerList.Add(player);
     }
 
     // Update is called once per frame
@@ -20,43 +29,35 @@ public class FinishPoint : NetworkBehaviour
         Debug.Log("collido"+collision.gameObject.name);
         if (collision.gameObject.CompareTag("PlayerSphere"))
         {       
-            CollideWithWinner(collision.gameObject.name);
+            PlayerID? winningId = collision.gameObject.GetComponent<NetworkTransform>().localPlayer;
+            Congrats(winningId.GetValueOrDefault());
+            foreach (var player in playerList)
+            {
+                if (player != winningId)
+                {
 
+                    LoseMessage(player);
+
+                }
+            }
         }
-
-        //if (collision.gameObject.CompareTag("Player"))
-        //{
-        //    Debug.Log("Player has reached the finish point!");
-        //    // mostrare messaggio a schermo
-        //}
-    }
-     [ObserversRpc]
-    void CollideWithWinner(string  name)
-    {
-        if(isServer)
-            Debug.Log("hai vinto"+ name);
-    }
-    protected override void OnSpawned(bool asServer)
-    {
-        if (asServer)
-            return;
-        Debug.Log("nasco");
     }
 
-    [ServerRpc]
-    private void TestServerMethod()
+    [TargetRpc]
+    private void Congrats(PlayerID target)
     {
-        //This code will be called on the server.
-
-        //The server is now calling the observers rpc method on all observing clients.
-        //If your Network Rules allow for it, this could also be called from clients, essentially skipping the Server RPC
-        TestObserverMethod();
+        if (target != null)
+        {
+            Debug.Log("hai vinto");
+        }
     }
 
-    [ObserversRpc]
-    private void TestObserverMethod()
+    [TargetRpc]
+    private void LoseMessage(PlayerID target)
     {
-        //This code will be called on every observing clients machine.
-        //This is a good way to update all observing clients with the same information.
+        if (target != null)
+        {
+            Debug.Log("hai perso sarà per la prossima");
+        }
     }
 }
