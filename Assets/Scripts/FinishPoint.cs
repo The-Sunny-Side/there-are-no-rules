@@ -5,8 +5,10 @@ using UnityEngine;
 public class FinishPoint : NetworkBehaviour
 {
     [SerializeField] private NetworkManager netManager;
+    [SerializeField] private MenuManager menuManager;
 
     private readonly List<PlayerID> playerList = new();
+
     private bool _raceEnded;
 
     void Start()
@@ -39,7 +41,6 @@ public class FinishPoint : NetworkBehaviour
         var identity = collision.gameObject.GetComponentInParent<NetworkIdentity>();
         if (!identity) return;
 
-        // TODO: sostituisci con la proprietà owner corretta del tuo NetworkIdentity
         PlayerID winningId = identity.owner.GetValueOrDefault();
 
         _raceEnded = true;
@@ -55,11 +56,13 @@ public class FinishPoint : NetworkBehaviour
     private void Congrats(PlayerID target)
     {
         Debug.Log("hai vinto");
+        menuManager.OnWinMatch();
     }
 
     [TargetRpc]
     private void LoseMessage(PlayerID target)
     {
         Debug.Log("hai perso sarà per la prossima");
+        menuManager.OnLoseMatch();
     }
 }

@@ -1,10 +1,14 @@
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
-    public GameObject pausePanel;
+    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject finishedGamePanel;
+    [SerializeField] private GameObject InGamePanel;
     [SerializeField] private GameObject[] gameButtons;
+    [SerializeField] private TextMeshProUGUI textToShowWhenFinished;
 
     public void Awake()
     {
@@ -68,5 +72,20 @@ public class MenuManager : MonoBehaviour
     {
         AudioManager.Instance.PlayOneShot("notification_ok");
         GameManager.Instance.LoadScene("SettingsScene");
+    }
+
+    public void OnLoseMatch()
+    {
+        InGamePanel.SetActive(false);
+        finishedGamePanel.SetActive(true);
+
+        textToShowWhenFinished.text = "Hai perso, sarà per la prossima!";
+    }
+    public void OnWinMatch()
+    {
+        InGamePanel.SetActive(false);
+
+        finishedGamePanel.SetActive(true);
+        textToShowWhenFinished.text = "Congratulazione hai vinto!";
     }
 }
