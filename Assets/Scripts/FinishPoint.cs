@@ -30,15 +30,15 @@ public class FinishPoint : NetworkBehaviour
             playerList.Add(player);
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collider)
     {
         if (!isServer) return;
         if (_raceEnded) return;
 
-        if (!collision.gameObject.CompareTag("PlayerSphere"))
+        if (!collider.gameObject.CompareTag("PlayerSphere"))
             return;
 
-        var identity = collision.gameObject.GetComponentInParent<NetworkIdentity>();
+        var identity = collider.gameObject.GetComponentInParent<NetworkIdentity>();
         if (!identity) return;
 
         PlayerID winningId = identity.owner.GetValueOrDefault();
