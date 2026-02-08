@@ -62,7 +62,7 @@ public class FinishPoint : NetworkBehaviour
     [TargetRpc]
     private void LoseMessage(PlayerID target)
     {
-        Debug.Log("hai perso sarà per la prossima");
+        Debug.Log("hai perso");
         menuManager.OnLoseMatch();
     }
 }

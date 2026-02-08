@@ -250,6 +250,6 @@ public class SphereMovementSystem : NetworkIdentity
 
     private bool IsGrounded()
     {
-        return Physics.Raycast(groundRayPoint.position, -Vector3.up, out RaycastHit hit, whenIsGroundLenght, whatIsGroud);
+        return Physics.Raycast(groundRayPoint.position, -transform.up, out RaycastHit hit, whenIsGroundLenght, whatIsGroud);
     }
 }

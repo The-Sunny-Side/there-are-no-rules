@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2504191355426421774}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.81, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -428,10 +428,10 @@ MonoBehaviour:
   gravityForce: 3000
   dragOnGround: 0.3
   dragInAir: 0.1
-  normalAlignSpeed: 3
-  alignSpeed: 20
+  normalAlignSpeed: 5
+  alignSpeed: 30
   rotationSpeed: 200
-  jumpForce: 200
+  jumpForce: 800
   sideBreak: 10
   forwardSpeed: 0.5
   minAlignment: 0
@@ -444,7 +444,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   groundRayLength: 4
-  whenIsGroundLenght: 4
+  whenIsGroundLenght: 3
   groundRayPoint: {fileID: 6593413673250619101}
   boostAccumulato: 0
   grounded: 0
