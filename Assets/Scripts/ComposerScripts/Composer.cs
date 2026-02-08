@@ -11,12 +11,19 @@ public class Composer : MonoBehaviour
     public GameObject armorRightElement;
     public GameObject armorFrontElement;
     public GameObject armorBackElement;
-    [SerializeField] private float composerSpeed = 5f;
     [SerializeField] private GameObject vehicle;
 
     private Transform anchor1;
     private Transform anchor2;
 
+    private void Awake()
+    {
+        GameObject defaultElement = Resources.Load<GameObject>("/icons/empty");
+        armorLeftElement = defaultElement;
+        armorBackElement=defaultElement;
+        armorFrontElement=defaultElement;
+        armorRightElement=defaultElement;
+    }
 
     private void OnDisable()
     {
@@ -55,6 +62,25 @@ public class Composer : MonoBehaviour
         Transform armorFrontContainer = bodyElement.transform.Find("armorFrontAnchor");
         Transform armorBackContainer = bodyElement.transform.Find("armorBackAnchor");
 
+        foreach (Transform child in armorRightContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Transform child in armorLeftContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Transform child in armorFrontContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Transform child in armorBackContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
 
         armorLeftElement.transform.SetParent(armorLeftContainer.transform, false);
         armorLeftElement.transform.rotation = armorLeftContainer.rotation;

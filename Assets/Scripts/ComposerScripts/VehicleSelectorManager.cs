@@ -26,7 +26,6 @@ public class VehicleSelectorManager : MonoBehaviour
     {
         stepIndex++;
         UpdateActiveSelector();
-
     }
 
     public void PreviusStep()
@@ -85,21 +84,12 @@ public class VehicleSelectorManager : MonoBehaviour
             case 2:
                 {
                     PrevStepButton.SetActive(true);
-                    NextStepButton.SetActive(true);
-                    FinalizzaButton.SetActive(false);
+                    NextStepButton.SetActive(false);
+                    FinalizzaButton.SetActive(true);
                     PreviousElementButton.SetActive(true);
                     NextElementButton.SetActive(true);
                 }
                 break;
-            case 3:
-                {
-                    PreviousElementButton.SetActive(false);
-                    NextElementButton.SetActive(false);
-                    NextStepButton.SetActive(false);
-                    FinalizzaButton.SetActive(true);
-                }
-                break;
-
         }
 
         if (Composer.activeInHierarchy)
