@@ -99,7 +99,10 @@ public class Composer : MonoBehaviour
         armorBackElement.transform.localScale = Vector3.Scale(armorBackContainer.localScale, new Vector3(1f, 1f, 1f));
 
         baseElement.transform.SetParent(vehicle.transform, false);
+        baseElement.transform.localPosition = new Vector3(0, baseElement.transform.localPosition.y, baseElement.transform.localPosition.z);
+
         bodyElement.transform.SetParent(vehicle.transform, false);
+        bodyElement.transform.localPosition = new Vector3(0, bodyElement.transform.localPosition.y, bodyElement.transform.localPosition.z);
     }
 
 #if UNITY_EDITOR
