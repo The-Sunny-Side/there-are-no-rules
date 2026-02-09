@@ -79,7 +79,7 @@ public class MenuManager : MonoBehaviour
         InGamePanel.SetActive(false);
         finishedGamePanel.SetActive(true);
 
-        textToShowWhenFinished.text = "Hai perso, sarà per la prossima!";
+        textToShowWhenFinished.text = "Hai perso, mi disp!";
     }
     public void OnWinMatch()
     {
