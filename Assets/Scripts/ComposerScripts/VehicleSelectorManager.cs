@@ -15,11 +15,12 @@ public class VehicleSelectorManager : MonoBehaviour
     [SerializeField] private GameObject[] selectors;
     [SerializeField] private GameObject[] selectorsUI;
     [SerializeField] private HighlightableElement[] stepButtons;
-    [SerializeField] private String[] stepNames = { "Scegli la base", "Scegli il corpo", "Scegli l'arma", "Completa" };
+    [SerializeField] private string[] stepNames = { "Scegli la base", "Scegli il corpo", "Scegli l'arma", "Completa" };
     [SerializeField] private TMP_Text stepTitleText;
-    [SerializeField] private GameObject NextElementButton;
-    [SerializeField] private GameObject PreviousElementButton;
     [SerializeField] private GameObject Composer;
+    [SerializeField] private GameObject[] weaponElements;
+    [SerializeField] private GameObject[] baseElements;
+    [SerializeField] private GameObject[] bodyElements;
 
     public int stepIndex = 0;
 

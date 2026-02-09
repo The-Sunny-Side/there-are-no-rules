@@ -1047,9 +1047,18 @@ MonoBehaviour:
   - Scegli le armi
   - Completa
   stepTitleText: {fileID: 1527091488}
-  NextElementButton: {fileID: 443416187}
-  PreviousElementButton: {fileID: 153745604}
   Composer: {fileID: 204385858}
+  weaponElements:
+  - {fileID: 3925080907645985337, guid: a536f05c114be2448b11828a296cb27e, type: 3}
+  - {fileID: 3853782094996777641, guid: 1b0446cdc59f87c4da7fcf9106189743, type: 3}
+  baseElements:
+  - {fileID: 2450203625896656481, guid: 198ce8d257941b746a2d41a679321d6e, type: 3}
+  - {fileID: 5647684242856359959, guid: 05ec983233934e34fba2b7c41f57cef5, type: 3}
+  - {fileID: 7977349255659494426, guid: 7388340fd7d0b3640821c2924822b725, type: 3}
+  bodyElements:
+  - {fileID: 5577811924372296200, guid: f72137edc4bf2dc4e885cd26b35cffef, type: 3}
+  - {fileID: 4007014680358456326, guid: 21471510ad41a574e8b9ee50579413e4, type: 3}
+  - {fileID: 7968280193111092051, guid: 0ea5821e309434b45b42bcfe4cfc941c, type: 3}
   stepIndex: 0
 --- !u!1 &577223318
 GameObject:
@@ -2231,6 +2240,7 @@ GameObject:
   - component: {fileID: 1155384564}
   - component: {fileID: 1155384565}
   - component: {fileID: 1155384566}
+  - component: {fileID: 1155384567}
   m_Layer: 0
   m_Name: BaseComponentSelector
   m_TagString: Untagged
@@ -2283,6 +2293,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectRotator
   rotationSpeed: 100
+--- !u!114 &1155384567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155384563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1197029941
 GameObject:
   m_ObjectHideFlags: 0
