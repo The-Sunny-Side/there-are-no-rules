@@ -113,12 +113,9 @@ public class VehicleManager : MonoBehaviour
     }
     public string GetVehicleJson()
     {
-        // se hai gi� il file, manda quello
         if (File.Exists(configPath))
             return File.ReadAllText(configPath);
+        return "";
 
-        // fallback minimo
-        var v = new Vehicle { baseElement = defaultBase, bodyElement = defaultBody };
-        return JsonUtility.ToJson(v, false);
     }
 }

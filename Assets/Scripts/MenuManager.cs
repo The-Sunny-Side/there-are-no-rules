@@ -29,16 +29,7 @@ public class MenuManager : MonoBehaviour
             return;
         }
 
-        Vehicle data = JsonUtility.FromJson<Vehicle>(json);
-
-        if (data == null || !data.IsValid())
-        {
-            GameManager.Instance.LoadScene("VehicleSelectionScene");
-        }
-        else
-        {
-            GameManager.Instance.LoadScene("multiplayerMovement");
-        }
+        GameManager.Instance.LoadScene("multiplayerMovement");
 
         AudioManager.Instance.PlayOneShot("notification_ok");
     }
