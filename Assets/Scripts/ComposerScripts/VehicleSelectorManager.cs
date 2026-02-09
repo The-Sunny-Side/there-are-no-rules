@@ -2,17 +2,23 @@ using System;
 using TMPro;
 using UnityEngine;
 
+[System.Serializable]
+public class HighlightableElement
+{
+    public GameObject element;
+    public GameObject highlight;
+}
+
+
 public class VehicleSelectorManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] selectors;
     [SerializeField] private GameObject[] selectorsUI;
+    [SerializeField] private HighlightableElement[] stepButtons;
     [SerializeField] private String[] stepNames = { "Scegli la base", "Scegli il corpo", "Scegli l'arma", "Completa" };
     [SerializeField] private TMP_Text stepTitleText;
     [SerializeField] private GameObject NextElementButton;
     [SerializeField] private GameObject PreviousElementButton;
-    [SerializeField] private GameObject NextStepButton;
-    [SerializeField] private GameObject PrevStepButton;
-    [SerializeField] private GameObject FinalizzaButton;
     [SerializeField] private GameObject Composer;
 
     public int stepIndex = 0;
@@ -32,6 +38,20 @@ public class VehicleSelectorManager : MonoBehaviour
     {
         stepIndex--;
         UpdateActiveSelector();
+    }
+
+    public void SetStep(int step)
+    {
+        if(step>= 0 && step < selectors.Length)
+        {
+            stepButtons[stepIndex].highlight.SetActive(false);
+
+            stepIndex = step;
+
+            stepButtons[stepIndex].highlight.SetActive(true);
+
+            UpdateActiveSelector();
+        }
     }
 
     public void NextElement()
@@ -59,38 +79,6 @@ public class VehicleSelectorManager : MonoBehaviour
         }
 
         stepTitleText.text = stepNames[stepIndex];
-
-        switch (stepIndex)
-        {
-            case 0:
-                {
-                    PrevStepButton.SetActive(false);
-                    FinalizzaButton.SetActive(false);
-                    NextStepButton.SetActive(true);
-                    PreviousElementButton.SetActive(true);
-                    NextElementButton.SetActive(true);
-                }
-                break;
-
-            case 1:
-                {
-                    PrevStepButton.SetActive(true);
-                    NextStepButton.SetActive(true);
-                    FinalizzaButton.SetActive(false);
-                    PreviousElementButton.SetActive(true);
-                    NextElementButton.SetActive(true);
-                }
-                break;
-            case 2:
-                {
-                    PrevStepButton.SetActive(true);
-                    NextStepButton.SetActive(false);
-                    FinalizzaButton.SetActive(true);
-                    PreviousElementButton.SetActive(true);
-                    NextElementButton.SetActive(true);
-                }
-                break;
-        }
 
         if (Composer.activeInHierarchy)
         {

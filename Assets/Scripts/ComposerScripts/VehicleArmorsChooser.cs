@@ -12,6 +12,7 @@ public class VehicleArmorsChooser : VehicleElementChooser
     [SerializeField] private Composer composer;
 
     [SerializeField] private Image[] iconBoxes;
+    [SerializeField] private GameObject[] weaponButtons;
 
 
     public override void NextElement()
@@ -49,7 +50,10 @@ public class VehicleArmorsChooser : VehicleElementChooser
 
     public void SetArmorType(int type)
     {
+        weaponButtons[selectedArmorType].GetComponent<Outline>().enabled = false;
         selectedArmorType = type;
+        weaponButtons[selectedArmorType].GetComponent<Outline>().enabled = true;
+
         currentIndex = selectedArmorsIndices[selectedArmorType];
         SyncSelectedElement(elements[currentIndex]);
     }
