@@ -20,8 +20,19 @@ public class MenuManager : MonoBehaviour
 
     public void OnPlayButtonClick()
     {
+        string json = VehicleManager.Instance.GetVehicleJson();
+        Vehicle data = JsonUtility.FromJson<Vehicle>(json);
+        if (data == null)
+        {
+            GameManager.Instance.LoadScene("VehicleSelectionScene");
+        }
+        else
+        {
+            GameManager.Instance.LoadScene("multiplayerMovement");
+        }
         AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.LoadScene("multiplayerMovement");
+
+
     }
 
     public void OnVehicleSelectionButtonClick()
