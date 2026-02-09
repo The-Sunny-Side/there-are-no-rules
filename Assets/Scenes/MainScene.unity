@@ -165,7 +165,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   backgroundClips:
   - name: background_menu
-    clip: {fileID: 8300000, guid: 31b5ca6604cec4d7b8a58143a6248f0f, type: 3}
+    clip: {fileID: 8300000, guid: 7fde86d4a9c91184cbb9b5f174177c65, type: 3}
   - name: background_match
     clip: {fileID: 8300000, guid: 186351947a346458d9c55e45d32e2a4c, type: 3}
   oneShotClips:
@@ -1483,7 +1483,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuManager
   pausePanel: {fileID: 0}
+  finishedGamePanel: {fileID: 0}
+  InGamePanel: {fileID: 0}
   gameButtons: []
+  textToShowWhenFinished: {fileID: 0}
 --- !u!1 &2126929550
 GameObject:
   m_ObjectHideFlags: 0
