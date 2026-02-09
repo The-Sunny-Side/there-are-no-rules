@@ -1,25 +1,68 @@
+using PurrNet;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class FinishPoint : MonoBehaviour
+public class FinishPoint : NetworkBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private NetworkManager netManager;
+    [SerializeField] private MenuManager menuManager;
+
+    private readonly List<PlayerID> playerList = new();
+
+    private bool _raceEnded;
+
     void Start()
     {
-        
+        netManager.onPlayerJoined += UpdateList;
+        netManager.onPlayerLeft += RemovePlayer;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void RemovePlayer(PlayerID player, bool asserver)
     {
-        
+        if (!asserver) return;
+        playerList.Remove(player);
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void UpdateList(PlayerID player, bool isreconnect, bool asserver)
     {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            Debug.Log("Player has reached the finish point!");
-            // mostrare messaggio a schermo
-        }
+        if (!asserver) return;
+        if (!playerList.Contains(player))
+            playerList.Add(player);
+    }
+
+    void OnTriggerEnter(Collider collider)
+    {
+        if (!isServer) return;
+        if (_raceEnded) return;
+
+        if (!collider.gameObject.CompareTag("PlayerSphere"))
+            return;
+
+        var identity = collider.gameObject.GetComponentInParent<NetworkIdentity>();
+        if (!identity) return;
+
+        PlayerID winningId = identity.owner.GetValueOrDefault();
+
+        _raceEnded = true;
+
+        Congrats(winningId);
+
+        foreach (var p in playerList)
+            if (!p.Equals(winningId))
+                LoseMessage(p);
+    }
+
+    [TargetRpc]
+    private void Congrats(PlayerID target)
+    {
+        Debug.Log("hai vinto");
+        menuManager.OnWinMatch();
+    }
+
+    [TargetRpc]
+    private void LoseMessage(PlayerID target)
+    {
+        Debug.Log("hai perso");
+        menuManager.OnLoseMatch();
     }
 }
