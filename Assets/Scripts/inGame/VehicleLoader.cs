@@ -28,7 +28,6 @@ public class VehicleLoader : MonoBehaviour
             return;
         }
 
-        // Carico i prefabs dai nomi (come già fai tu nel VehicleManager.LoadVehicleData)
         var list = new Dictionary<string, GameObject>();
 
         // base / body
