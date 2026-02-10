@@ -12,15 +12,18 @@ public class HighlightableElement
 
 public class VehicleSelectorManager : MonoBehaviour
 {
-    [SerializeField] private GameObject[] selectors;
-    [SerializeField] private GameObject[] selectorsUI;
+    [SerializeField] private GameObject weaponSelector;
     [SerializeField] private HighlightableElement[] stepButtons;
     [SerializeField] private string[] stepNames = { "Scegli la base", "Scegli il corpo", "Scegli l'arma", "Completa" };
     [SerializeField] private TMP_Text stepTitleText;
-    [SerializeField] private GameObject Composer;
+    [SerializeField] private Composer Composer;
     [SerializeField] private GameObject[] weaponElements;
     [SerializeField] private GameObject[] baseElements;
     [SerializeField] private GameObject[] bodyElements;
+
+    private int selectedBaseIndex = 0;
+    private int selectedBodyIndex = 0;
+    private int[] selectedWeaponsIndexes = { 0, 0, 0, 0 };
 
     public int stepIndex = 0;
 
@@ -29,22 +32,8 @@ public class VehicleSelectorManager : MonoBehaviour
         UpdateActiveSelector();
     }
 
-    public void NextStep()
-    {
-        stepIndex++;
-        UpdateActiveSelector();
-    }
-
-    public void PreviusStep()
-    {
-        stepIndex--;
-        UpdateActiveSelector();
-    }
-
     public void SetStep(int step)
     {
-        if(step>= 0 && step < selectors.Length)
-        {
             stepButtons[stepIndex].highlight.SetActive(false);
 
             stepIndex = step;
@@ -52,50 +41,71 @@ public class VehicleSelectorManager : MonoBehaviour
             stepButtons[stepIndex].highlight.SetActive(true);
 
             UpdateActiveSelector();
-        }
     }
 
     public void NextElement()
     {
-        selectors[stepIndex].GetComponent<VehicleElementChooser>().NextElement();
+        switch(stepIndex)
+        {
+            case 0:
+                selectedBaseIndex = (selectedBaseIndex + 1) % baseElements.Length;
+                break;
+            case 1:
+                selectedBodyIndex = (selectedBodyIndex + 1) % bodyElements.Length;
+                break;
+            case 2:
+                weaponSelector.GetComponent<VehicleArmorsChooser>().NextElement();
+                break;
+        }
+
+        UpdateActiveSelector();
     }
     public void PreviousElement()
     {
-        selectors[stepIndex].GetComponent<VehicleElementChooser>().PreviousElement();
+        switch (stepIndex)
+        {
+            case 0:
+                selectedBaseIndex = (selectedBaseIndex - 1 + baseElements.Length) % baseElements.Length;
+                break;
+            case 1:
+                selectedBodyIndex = (selectedBodyIndex - 1 + bodyElements.Length) % bodyElements.Length;
+                break;
+            case 2:
+                weaponSelector.GetComponent<VehicleArmorsChooser>().PreviousElement();
+                break;
+        }
+
+        UpdateActiveSelector();
     }
     public void FinalizeVehicle()
     {
-        GameObject baseElement = selectors[0].GetComponent<VehicleElementChooser>().selectedElement;
-        GameObject bodyElement = selectors[1].GetComponent<VehicleElementChooser>().selectedElement;
-        GameObject[] armors = selectors[2].GetComponent<VehicleArmorsChooser>().selectedArmors;
+        GameObject baseElement = baseElements[selectedBaseIndex];
+        GameObject bodyElement = bodyElements[selectedBodyIndex];
+        GameObject[] armors = weaponSelector.GetComponent<VehicleArmorsChooser>().selectedArmors;
         VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement, armors);
     }
-    private void UpdateActiveSelector()
+    public void UpdateActiveSelector()
     {
-        for (int i = 0; i < selectors.Length; i++)
-        {
-            selectors[i].SetActive(i == stepIndex);
+        weaponSelector.SetActive(stepIndex==2);
 
-            selectorsUI[i].SetActive(i == stepIndex);
-        }
-
+        Debug.Log("trigger");
         stepTitleText.text = stepNames[stepIndex];
 
-        if (Composer.activeInHierarchy)
-        {
-
             Composer composerComponent = Composer.GetComponent<Composer>();
-            GameObject baseElement = selectors[0].GetComponent<VehicleElementChooser>().selectedElement;
-            GameObject bodyElement = selectors[1].GetComponent<VehicleElementChooser>().selectedElement;
-            GameObject[] armorElements = selectors[2].GetComponent<VehicleArmorsChooser>().selectedArmors;
+        Transform composedVehicle = composerComponent.transform.Find("Vehicle");
+
+        foreach (Transform child in composedVehicle.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        GameObject baseElement = baseElements[selectedBaseIndex];
+            GameObject bodyElement = bodyElements[selectedBodyIndex];
+            GameObject[] armorElements = weaponSelector.GetComponent<VehicleArmorsChooser>().GetComponent<VehicleArmorsChooser>().selectedArmors;
 
             GameObject baseInstance = Instantiate(baseElement, transform);
             GameObject bodyInstance = Instantiate(bodyElement, transform);
 
-
-
-            baseInstance.transform.SetParent(composerComponent.transform);
-            bodyInstance.transform.SetParent(composerComponent.transform);
             composerComponent.baseElement = baseInstance;
             composerComponent.bodyElement = bodyInstance;
 
@@ -106,8 +116,12 @@ public class VehicleSelectorManager : MonoBehaviour
 
             composerComponent.AlignComponents();
 
-        }
+    }
 
+    public void ResetVehicleRotation()
+    {
+        Transform composedVehicle = Composer.transform.Find("Vehicle");
+        composedVehicle.rotation = Quaternion.identity;
     }
 
 }
