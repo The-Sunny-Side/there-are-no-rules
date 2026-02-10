@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class HighlightableElement
@@ -9,6 +10,11 @@ public class HighlightableElement
     public GameObject highlight;
 }
 
+[Serializable]
+public class VehicleElement { 
+    public GameObject element;
+    public Sprite icon;
+}
 
 public class VehicleSelectorManager : MonoBehaviour
 {
@@ -17,10 +23,11 @@ public class VehicleSelectorManager : MonoBehaviour
     [SerializeField] private string[] stepNames = { "Scegli la base", "Scegli il corpo", "Scegli l'arma", "Completa" };
     [SerializeField] private TMP_Text stepTitleText;
     [SerializeField] private Composer Composer;
-    [SerializeField] private GameObject[] weaponElements;
-    [SerializeField] private GameObject[] baseElements;
-    [SerializeField] private GameObject[] bodyElements;
-
+    [SerializeField] private VehicleElement[] weaponElements;
+    [SerializeField] private VehicleElement[] baseElements;
+    [SerializeField] private VehicleElement[] bodyElements;
+    [SerializeField] private Image[] elementsIconBoxes;
+    [SerializeField] private Sprite emptyPart;
     private int selectedBaseIndex = 0;
     private int selectedBodyIndex = 0;
     private int[] selectedWeaponsIndexes = { 0, 0, 0, 0 };
@@ -30,6 +37,36 @@ public class VehicleSelectorManager : MonoBehaviour
     void Awake()
     {
         UpdateActiveSelector();
+        InitIcons();
+
+    }
+
+    public void InitIcons()
+    {
+        VehicleElement[] actualParts = { };
+
+                switch (stepIndex)
+        {
+            case 0:
+                actualParts = baseElements;
+                break;
+            case 1:
+                actualParts = bodyElements;
+                break;
+            case 2:
+                actualParts = weaponElements;
+                break;
+        }
+
+        for (int i = 0; i < elementsIconBoxes.Length; i++) {
+            if (i < actualParts.Length)
+            { 
+                Debug.Log("Setting icon for part " + i + ": " + actualParts[i].icon);
+                elementsIconBoxes[i].sprite = actualParts[i].icon; }
+            else
+                elementsIconBoxes[i].sprite = emptyPart;
+        }
+        
     }
 
     public void SetStep(int step)
@@ -40,7 +77,8 @@ public class VehicleSelectorManager : MonoBehaviour
 
             stepButtons[stepIndex].highlight.SetActive(true);
 
-            UpdateActiveSelector();
+        InitIcons();
+        UpdateActiveSelector();
     }
 
     public void NextElement()
@@ -79,8 +117,8 @@ public class VehicleSelectorManager : MonoBehaviour
     }
     public void FinalizeVehicle()
     {
-        GameObject baseElement = baseElements[selectedBaseIndex];
-        GameObject bodyElement = bodyElements[selectedBodyIndex];
+        GameObject baseElement = baseElements[selectedBaseIndex].element;
+        GameObject bodyElement = bodyElements[selectedBodyIndex].element;
         GameObject[] armors = weaponSelector.GetComponent<VehicleArmorsChooser>().selectedArmors;
         VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement, armors);
     }
@@ -99,8 +137,8 @@ public class VehicleSelectorManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        GameObject baseElement = baseElements[selectedBaseIndex];
-            GameObject bodyElement = bodyElements[selectedBodyIndex];
+        GameObject baseElement = baseElements[selectedBaseIndex].element;
+            GameObject bodyElement = bodyElements[selectedBodyIndex].element;
             GameObject[] armorElements = weaponSelector.GetComponent<VehicleArmorsChooser>().GetComponent<VehicleArmorsChooser>().selectedArmors;
 
             GameObject baseInstance = Instantiate(baseElement, transform);

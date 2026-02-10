@@ -153,7 +153,6 @@ public class ObjectRotator : MonoBehaviour
             {
                 float rotationY = touch.deltaPosition.x * rotationSpeed * Time.deltaTime;
                 float rotationX = 0f;
-                float rotationZ = 0f;
 
                 if (!horizontalRotation)
                 {
