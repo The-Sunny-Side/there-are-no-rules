@@ -20,9 +20,20 @@ public class MenuManager : MonoBehaviour
 
     public void OnPlayButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
+        string json = VehicleManager.Instance.GetVehicleJson();
+
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            GameManager.Instance.LoadScene("VehicleSelectionScene");
+            AudioManager.Instance.PlayOneShot("notification_ok");
+            return;
+        }
+
         GameManager.Instance.LoadScene("multiplayerMovement");
+
+        AudioManager.Instance.PlayOneShot("notification_ok");
     }
+
 
     public void OnVehicleSelectionButtonClick()
     {
@@ -65,7 +76,7 @@ public class MenuManager : MonoBehaviour
     public void OnRestartButtonClick()
     {
         AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.LoadScene("ScriptingMovementeScene");
+        GameManager.Instance.LoadScene("multiplayerMovement");
     }
 
     public void OnSettingsButtonClick()
@@ -88,4 +99,6 @@ public class MenuManager : MonoBehaviour
         finishedGamePanel.SetActive(true);
         textToShowWhenFinished.text = "Congratulazione hai vinto!";
     }
+
+
 }

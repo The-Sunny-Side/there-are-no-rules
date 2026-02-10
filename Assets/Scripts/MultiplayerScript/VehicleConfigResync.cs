@@ -24,7 +24,7 @@ public class VehicleConfigResync : PurrMonoBehaviour
     {
         if (!asServer) return;
 
-        // quando entra un nuovo player: ribroadcast delle config già note
+        // quando entra un nuovo player: ribroadcast delle config note
         var all = Object.FindObjectsByType<VehicleNetConfig>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         foreach (var v in all)
             v.ServerResendIfAny();
