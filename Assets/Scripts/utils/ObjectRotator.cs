@@ -127,7 +127,7 @@ public class ObjectRotator : MonoBehaviour
                  rotationX = delta.y * rotationSpeed * Time.deltaTime;
                  rotationZ = delta.z * rotationSpeed * Time.deltaTime;
             }
-            transform.Rotate(rotationX, rotationY, 0, Space.World);
+            transform.Rotate(rotationX, -rotationY, 0, Space.World);
             lastInputPosition = Input.mousePosition;
         }
 
@@ -159,7 +159,7 @@ public class ObjectRotator : MonoBehaviour
                     rotationX = touch.deltaPosition.y * rotationSpeed * Time.deltaTime;
                 }
 
-                transform.Rotate(rotationX, rotationY, 0, Space.World);
+                transform.Rotate(rotationX, -rotationY, 0, Space.World);
             }
         }
     }

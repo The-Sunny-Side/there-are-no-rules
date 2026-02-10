@@ -14,6 +14,13 @@ public class VehicleArmorsChooser : VehicleElementChooser
     [SerializeField] private Image[] iconBoxes;
     [SerializeField] private GameObject[] weaponButtons;
 
+    public void SetElement(int elementIndex)
+    {
+        currentIndex = elementIndex;
+        selectedArmors[selectedArmorType] = elements[elementIndex];
+        selectedArmorsIndices[selectedArmorType] = elementIndex;
+        SyncSelectedElement(elements[elementIndex]);
+    }
 
     public override void NextElement()
     {

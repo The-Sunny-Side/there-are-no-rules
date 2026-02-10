@@ -11,125 +11,157 @@ public class HighlightableElement
 }
 
 [Serializable]
-public class VehicleElement { 
+public class VehicleElement
+{
     public GameObject element;
     public Sprite icon;
 }
 
 public class VehicleSelectorManager : MonoBehaviour
 {
-    [SerializeField] private GameObject weaponSelector;
     [SerializeField] private HighlightableElement[] stepButtons;
-    [SerializeField] private string[] stepNames = { "Scegli la base", "Scegli il corpo", "Scegli l'arma", "Completa" };
-    [SerializeField] private TMP_Text stepTitleText;
     [SerializeField] private Composer Composer;
     [SerializeField] private VehicleElement[] weaponElements;
     [SerializeField] private VehicleElement[] baseElements;
     [SerializeField] private VehicleElement[] bodyElements;
+    [SerializeField] private GameObject[] elementsBoxes;
     [SerializeField] private Image[] elementsIconBoxes;
     [SerializeField] private Sprite emptyPart;
-    private int selectedBaseIndex = 0;
-    private int selectedBodyIndex = 0;
-    private int[] selectedWeaponsIndexes = { 0, 0, 0, 0 };
+
+    /** 0 = Top - 1 = Left - 2 = Back - 3 = Right **/
+    [SerializeField] private int selectedWeaponType = 0;
+    public GameObject[] selectedWeapons;
+    private int[] selectedWeaponsIndexes = new int[4] { 0, 0, 0, 0 };
+    [SerializeField] private Image[] weaponIconBoxes;
+    [SerializeField] private GameObject[] weaponButtons;
+    [SerializeField] private GameObject prevStepButton;
+    [SerializeField] private GameObject nextStepButton;
+    [SerializeField] private GameObject weaponsPanel;
+
 
     public int stepIndex = 0;
+    private int selectedBaseIndex = 0;
+    private int selectedBodyIndex = 0;
 
     void Awake()
     {
         UpdateActiveSelector();
         InitIcons();
-
     }
 
     public void InitIcons()
     {
         VehicleElement[] actualParts = { };
+        int partIndex = 0;
 
-                switch (stepIndex)
+        switch (stepIndex)
         {
             case 0:
                 actualParts = baseElements;
+                partIndex = selectedBaseIndex;
                 break;
             case 1:
                 actualParts = bodyElements;
+                partIndex = selectedBodyIndex;
                 break;
             case 2:
                 actualParts = weaponElements;
+                partIndex = selectedWeaponsIndexes[selectedWeaponType];
                 break;
         }
 
-        for (int i = 0; i < elementsIconBoxes.Length; i++) {
+        for (int i = 0; i < elementsBoxes.Length; i++)
+        {
+            elementsBoxes[i].GetComponent<Outline>().enabled = false;
+
             if (i < actualParts.Length)
-            { 
-                Debug.Log("Setting icon for part " + i + ": " + actualParts[i].icon);
-                elementsIconBoxes[i].sprite = actualParts[i].icon; }
+            {
+                elementsBoxes[i].transform.Find("Icon").GetComponent<Image>().sprite = actualParts[i].icon;
+            }
             else
-                elementsIconBoxes[i].sprite = emptyPart;
+                elementsBoxes[i].transform.Find("Icon").GetComponent<Image>().sprite = emptyPart;
         }
-        
+
+        elementsBoxes[partIndex].GetComponent<Outline>().enabled = true;
     }
 
     public void SetStep(int step)
     {
-            stepButtons[stepIndex].highlight.SetActive(false);
+        stepButtons[stepIndex].highlight.SetActive(false);
 
-            stepIndex = step;
+        stepIndex = step;
 
-            stepButtons[stepIndex].highlight.SetActive(true);
+        stepButtons[stepIndex].highlight.SetActive(true);
 
         InitIcons();
         UpdateActiveSelector();
     }
 
-    public void NextElement()
+    public void SetElement(int elementIndex)
     {
-        switch(stepIndex)
-        {
-            case 0:
-                selectedBaseIndex = (selectedBaseIndex + 1) % baseElements.Length;
-                break;
-            case 1:
-                selectedBodyIndex = (selectedBodyIndex + 1) % bodyElements.Length;
-                break;
-            case 2:
-                weaponSelector.GetComponent<VehicleArmorsChooser>().NextElement();
-                break;
-        }
 
-        UpdateActiveSelector();
-    }
-    public void PreviousElement()
-    {
         switch (stepIndex)
         {
             case 0:
-                selectedBaseIndex = (selectedBaseIndex - 1 + baseElements.Length) % baseElements.Length;
+                {
+                    elementsBoxes[selectedBaseIndex].GetComponent<Outline>().enabled = false;
+                    selectedBaseIndex = elementIndex;
+                    elementsBoxes[elementIndex].GetComponent<Outline>().enabled = true;
+                }
                 break;
             case 1:
-                selectedBodyIndex = (selectedBodyIndex - 1 + bodyElements.Length) % bodyElements.Length;
+                {
+                    elementsBoxes[selectedBodyIndex].GetComponent<Outline>().enabled = false;
+                    selectedBodyIndex = elementIndex;
+                    elementsBoxes[elementIndex].GetComponent<Outline>().enabled = true;
+                }
                 break;
             case 2:
-                weaponSelector.GetComponent<VehicleArmorsChooser>().PreviousElement();
+                {
+                    elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = false;
+                    weaponIconBoxes[selectedWeaponType].sprite = weaponElements[elementIndex].icon;
+                    selectedWeapons[selectedWeaponType] = weaponElements[elementIndex].element;
+                    selectedWeaponsIndexes[selectedWeaponType] = elementIndex;
+                    elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = true;
+                }
                 break;
         }
 
         UpdateActiveSelector();
     }
+
+    public void SetWeaponType(int type)
+    {
+        weaponButtons[selectedWeaponType].GetComponent<Outline>().enabled = false;
+        selectedWeaponType = type;
+        weaponButtons[selectedWeaponType].GetComponent<Outline>().enabled = true;
+    }
+
+    public void NextStep()
+    {
+        if (stepIndex < 21)
+            SetStep(stepIndex + 1);
+    }
+
+    public void PrevStep()
+    {
+        if (stepIndex > 0)
+            SetStep(stepIndex - 1);
+    }
+
     public void FinalizeVehicle()
     {
         GameObject baseElement = baseElements[selectedBaseIndex].element;
         GameObject bodyElement = bodyElements[selectedBodyIndex].element;
-        GameObject[] armors = weaponSelector.GetComponent<VehicleArmorsChooser>().selectedArmors;
-        VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement, armors);
+        VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement, selectedWeapons);
     }
     public void UpdateActiveSelector()
     {
-        weaponSelector.SetActive(stepIndex==2);
+        prevStepButton.SetActive(stepIndex > 0);
+        nextStepButton.SetActive(stepIndex < 2);
+        weaponsPanel.SetActive(stepIndex == 2);
 
-        Debug.Log("trigger");
-        stepTitleText.text = stepNames[stepIndex];
-
-            Composer composerComponent = Composer.GetComponent<Composer>();
+        Composer composerComponent = Composer.GetComponent<Composer>();
         Transform composedVehicle = composerComponent.transform.Find("Vehicle");
 
         foreach (Transform child in composedVehicle.transform)
@@ -138,21 +170,20 @@ public class VehicleSelectorManager : MonoBehaviour
         }
 
         GameObject baseElement = baseElements[selectedBaseIndex].element;
-            GameObject bodyElement = bodyElements[selectedBodyIndex].element;
-            GameObject[] armorElements = weaponSelector.GetComponent<VehicleArmorsChooser>().GetComponent<VehicleArmorsChooser>().selectedArmors;
+        GameObject bodyElement = bodyElements[selectedBodyIndex].element;
 
-            GameObject baseInstance = Instantiate(baseElement, transform);
-            GameObject bodyInstance = Instantiate(bodyElement, transform);
+        GameObject baseInstance = Instantiate(baseElement, transform);
+        GameObject bodyInstance = Instantiate(bodyElement, transform);
 
-            composerComponent.baseElement = baseInstance;
-            composerComponent.bodyElement = bodyInstance;
+        composerComponent.baseElement = baseInstance;
+        composerComponent.bodyElement = bodyInstance;
 
-            composerComponent.armorFrontElement = Instantiate(armorElements[0], transform);
-            composerComponent.armorLeftElement = Instantiate(armorElements[1], transform);
-            composerComponent.armorBackElement = Instantiate(armorElements[2], transform);
-            composerComponent.armorRightElement = Instantiate(armorElements[3], transform);
+        composerComponent.armorFrontElement = Instantiate(selectedWeapons[0], transform);
+        composerComponent.armorLeftElement = Instantiate(selectedWeapons[1], transform);
+        composerComponent.armorBackElement = Instantiate(selectedWeapons[2], transform);
+        composerComponent.armorRightElement = Instantiate(selectedWeapons[3], transform);
 
-            composerComponent.AlignComponents();
+        composerComponent.AlignComponents();
 
     }
 
