@@ -11,6 +11,13 @@ public class Vehicle
     public string armorRightElement;
     public string armorFrontElement;
     public string armorBackElement;
+
+    public bool IsValid()
+    {
+        if (string.IsNullOrWhiteSpace(baseElement) || baseElement == "empty") return false;
+        if (string.IsNullOrWhiteSpace(bodyElement) || bodyElement == "empty") return false;
+        return true;
+    }
 }
 
 public class VehicleManager : MonoBehaviour
@@ -54,7 +61,7 @@ public class VehicleManager : MonoBehaviour
         string json = JsonUtility.ToJson(dataToSave, true);
         File.WriteAllText(configPath, json);
         GameManager.Instance.GoToHomeScreen();
-        Debug.Log("Veicolo salvato: "+ json);
+        Debug.Log("Veicolo salvato: " + json);
     }
 
     public Dictionary<string, GameObject> LoadVehicleData()
@@ -70,7 +77,8 @@ public class VehicleManager : MonoBehaviour
             GameObject bodyObj = Resources.Load<GameObject>("bodyElements/" + data.bodyElement);
             GameObject baseObj = Resources.Load<GameObject>("baseElements/" + data.baseElement);
 
-            if (data.armorRightElement != null) {
+            if (data.armorRightElement != null)
+            {
                 GameObject armorRightObj = Resources.Load<GameObject>("armors/" + data.armorRightElement);
                 result["armorRightElement"] = armorRightObj;
             }
@@ -93,8 +101,8 @@ public class VehicleManager : MonoBehaviour
                 result["armorLeftElement"] = armorLeftObj;
             }
 
-            result["body"] = bodyObj??defaultBodyElement;
-            result["base"] = baseObj??defaultBaseElement;
+            result["body"] = bodyObj ?? defaultBodyElement;
+            result["base"] = baseObj ?? defaultBaseElement;
 
         }
         else
@@ -105,7 +113,7 @@ public class VehicleManager : MonoBehaviour
     }
     public string GetVehicleJson()
     {
-        // se hai già il file, manda quello
+        // se hai giï¿½ il file, manda quello
         if (File.Exists(configPath))
             return File.ReadAllText(configPath);
 
