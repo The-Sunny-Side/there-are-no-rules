@@ -2,44 +2,38 @@ using System.Collections;
 using UnityEngine;
 using PurrNet;
 
+[RequireComponent(typeof(NetworkManager))]
 [DefaultExecutionOrder(-1000)]
 public class PurrnetAutoStart : MonoBehaviour
 {
     public enum Mode { Host, ServerOnly, Client }
 
-    [Header("Avvio")]
+    [Header("TipoAvvio")]
     [SerializeField] private Mode mode = Mode.Host;
+    private NetworkManager _nm;
 
-    [Header("Override (consigliato)")]
-    [SerializeField] private NetworkManager networkManagerOverride;
-
+    private void Awake()
+    {
+        _nm = GetComponent<NetworkManager>();
+    }
     private IEnumerator Start()
     {
-        var nm = networkManagerOverride ? networkManagerOverride : NetworkManager.main;
-        if (!nm)
-        {
-            Debug.LogError("[PurrNetAutoStart] NetworkManager non trovato.");
-            yield break;
-        }
-
-        // aspetta 1 frame per far inizializzare moduli/scene
-        yield return null;
 
         Debug.Log($"[PurrNetAutoStart] Starting {mode}");
 
         if (mode == Mode.Host)
         {
-            nm.StartServer();
-            yield return null; // 1 frame per mettersi in listening
-            nm.StartClient();
+            _nm.StartServer();
+            yield return null;
+            _nm.StartClient();
         }
         else if (mode == Mode.ServerOnly)
         {
-            nm.StartServer();
+            _nm.StartServer();
         }
-        else // Client
+        else
         {
-            nm.StartClient();
+            _nm.StartClient();
         }
     }
 }
