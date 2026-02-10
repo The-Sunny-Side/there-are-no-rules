@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class ObjectRotator : MonoBehaviour
 {
+    [SerializeField] private bool horizontalRotation = true;
     [SerializeField] private float rotationSpeed = 100f;
 
     private Vector3 lastInputPosition;
@@ -117,8 +118,16 @@ public class ObjectRotator : MonoBehaviour
         if (isRotating && Input.GetMouseButton(0))
         {
             Vector3 delta = Input.mousePosition - lastInputPosition;
+            float rotationX = 0f;
+            float rotationZ = 0f;
             float rotationY = delta.x * rotationSpeed * Time.deltaTime;
-            transform.Rotate(0, rotationY, 0, Space.World);
+
+            if(!horizontalRotation)
+            {
+                 rotationX = delta.y * rotationSpeed * Time.deltaTime;
+                 rotationZ = delta.z * rotationSpeed * Time.deltaTime;
+            }
+            transform.Rotate(rotationX, -rotationY, 0, Space.World);
             lastInputPosition = Input.mousePosition;
         }
 
@@ -143,7 +152,14 @@ public class ObjectRotator : MonoBehaviour
             if (isRotating && touch.phase == TouchPhase.Moved)
             {
                 float rotationY = touch.deltaPosition.x * rotationSpeed * Time.deltaTime;
-                transform.Rotate(0, rotationY, 0, Space.World);
+                float rotationX = 0f;
+
+                if (!horizontalRotation)
+                {
+                    rotationX = touch.deltaPosition.y * rotationSpeed * Time.deltaTime;
+                }
+
+                transform.Rotate(rotationX, -rotationY, 0, Space.World);
             }
         }
     }
