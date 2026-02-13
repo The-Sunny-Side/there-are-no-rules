@@ -105,8 +105,31 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 119caecccc792f84b8c2a421394ee139, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4996236545385249791}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 119caecccc792f84b8c2a421394ee139, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 390968642537737885}
   m_SourcePrefab: {fileID: 100100000, guid: 119caecccc792f84b8c2a421394ee139, type: 3}
+--- !u!1 &2450203625896656481 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 119caecccc792f84b8c2a421394ee139, type: 3}
+  m_PrefabInstance: {fileID: 3369175098043695920}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &390968642537737885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450203625896656481}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc5360006663caf41b656bd451a64b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PulsingHighlight
+  intensityMin: 0.05
+  intensityMax: 0.4
+  speed: 2
 --- !u!4 &2975489140797334747 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 119caecccc792f84b8c2a421394ee139, type: 3}

@@ -42,7 +42,6 @@ public class ObjectRotator : MonoBehaviour
         {
             // Se non ci sono renderer, usa un BoxCollider di default
             BoxCollider boxCollider = gameObject.AddComponent<BoxCollider>();
-            Debug.LogWarning("ObjectRotator: Nessun Renderer trovato. Aggiunto BoxCollider con dimensioni di default.");
             return;
         }
 
@@ -54,7 +53,6 @@ public class ObjectRotator : MonoBehaviour
             // Se c'è una mesh, usa MeshCollider
             MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
             meshCollider.convex = false;
-            Debug.Log("ObjectRotator: Aggiunto MeshCollider automaticamente.");
         }
         else
         {
@@ -71,8 +69,6 @@ public class ObjectRotator : MonoBehaviour
                 Mathf.Abs(localSize.y),
                 Mathf.Abs(localSize.z)
             );
-
-            Debug.Log($"ObjectRotator: Aggiunto BoxCollider con dimensioni {boxCollider.size} e centro {boxCollider.center}");
         }
     }
 

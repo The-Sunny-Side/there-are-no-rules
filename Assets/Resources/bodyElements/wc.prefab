@@ -223,10 +223,33 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
       insertIndex: 3
       addedObject: {fileID: 2959372620991587604}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5533128863970821144}
   m_SourcePrefab: {fileID: 100100000, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
 --- !u!4 &7340537756954309097 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
   m_PrefabInstance: {fileID: 7085408303205307906}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7968280193111092051 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
+  m_PrefabInstance: {fileID: 7085408303205307906}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5533128863970821144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7968280193111092051}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc5360006663caf41b656bd451a64b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PulsingHighlight
+  intensityMin: 0.05
+  intensityMax: 0.4
+  speed: 2

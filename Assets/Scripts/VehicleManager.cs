@@ -72,7 +72,7 @@ public class VehicleManager : MonoBehaviour
             string json = File.ReadAllText(configPath);
             Vehicle data = JsonUtility.FromJson<Vehicle>(json);
 
-            Debug.Log("Veicolo caricato: " + data);
+            Debug.Log("Veicolo caricato: " + data.baseElement + " - "+data.bodyElement);
 
             GameObject bodyObj = Resources.Load<GameObject>("bodyElements/" + data.bodyElement);
             GameObject baseObj = Resources.Load<GameObject>("baseElements/" + data.baseElement);
