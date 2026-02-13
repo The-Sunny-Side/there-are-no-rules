@@ -20,6 +20,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+    }
+
     public void LoadScene(string scene)
     {
         Time.timeScale = 1f;

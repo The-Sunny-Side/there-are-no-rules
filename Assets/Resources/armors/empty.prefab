@@ -93,6 +93,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc5360006663caf41b656bd451a64b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PulsingHighlight
+  targetObjects: []
   intensityMin: 0.05
   intensityMax: 0.4
-  speed: 2
+  pulseSpeed: 2
+  highlightColor: {r: 0, g: 1, b: 1, a: 1}
+  useOriginalColor: 1
+  forceDynamicGI: 1
+  updateEveryNFrames: 1
+  showDebugLogs: 0

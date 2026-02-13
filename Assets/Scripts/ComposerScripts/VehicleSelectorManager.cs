@@ -7,11 +7,12 @@ public class VehicleSelectorManager : MonoBehaviour
 {
     [SerializeField] private Composer Composer;
 
-    [SerializeField] private Animator prevStepButton;
-    [SerializeField] private Animator nextStepButton;
-    [SerializeField] private Animator elementsPanel;
-    [SerializeField] private Animator stepsBar;
-    [SerializeField] private Animator weaponsPanel;
+    [SerializeField] private UiAnimator prevStepButton;
+    [SerializeField] private UiAnimator nextStepButton;
+    [SerializeField] private UiAnimator elementsPanel;
+    [SerializeField] private UiAnimator stepsBar;
+    [SerializeField] private UiAnimator weaponsPanel;
+    [SerializeField] private UiAnimator vehicle;
 
     [SerializeField] private HighlightableElement[] stepButtons;
 
@@ -37,9 +38,6 @@ public class VehicleSelectorManager : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log($"prevStepButton null? {prevStepButton == null}");
-        Debug.Log($"nextStepButton null? {nextStepButton == null}");
-
         Dictionary<string, GameObject> loaded = VehicleManager.Instance.LoadVehicleData();
 
         if (loaded != null)
@@ -142,22 +140,18 @@ public class VehicleSelectorManager : MonoBehaviour
         isVisible = !isVisible;
         if (isVisible)
         {
+            vehicle.Show();
             elementsPanel.Show();
             stepsBar.Show();
-            if (stepIndex>0)
-                prevStepButton.Show();
-            if (stepIndex<2)
-                nextStepButton.Show();
             if (stepIndex==2)
                 weaponsPanel.Show();
         }
         else
         {
+            vehicle.Hide();
             elementsPanel.Hide();
             stepsBar.Hide();
-            nextStepButton.Hide();
             weaponsPanel.Hide();
-            prevStepButton.Hide();
         }
     }
 
@@ -199,9 +193,13 @@ public class VehicleSelectorManager : MonoBehaviour
 
     public void SetWeaponType(int type)
     {
+        elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = false;
         weaponButtons[selectedWeaponType].GetComponent<Outline>().enabled = false;
         selectedWeaponType = type;
         weaponButtons[selectedWeaponType].GetComponent<Outline>().enabled = true;
+        elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = true;
+
+        UpdateActiveSelector();
     }
 
     public void NextStep()
@@ -223,11 +221,11 @@ public class VehicleSelectorManager : MonoBehaviour
         VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement, selectedWeapons);
     }
 
-    private void HighlightSelectedPart(GameObject part)
+    private void HighlightSelectedPart(GameObject part, bool active=true)
     {
         PulsingHighlight mr = part.GetComponent<PulsingHighlight>();
 
-        mr.enabled = true;
+        mr.enabled = active;
     }
 
     public void UpdateActiveSelector()
@@ -268,7 +266,20 @@ public class VehicleSelectorManager : MonoBehaviour
                 HighlightSelectedPart(bodyInstance);
                 break;
             case 2:
-                HighlightSelectedPart(selectedWeapons[selectedWeaponType]);
+                GameObject[] weaponsObjects = new GameObject[] {
+                    composerComponent.armorFrontElement,
+                    composerComponent.armorLeftElement,
+                    composerComponent.armorBackElement,
+                    composerComponent.armorRightElement
+                };
+                GameObject selectedWeaponPart = weaponsObjects[selectedWeaponType];
+                HighlightSelectedPart(selectedWeaponPart);
+                Animator animator = selectedWeaponPart.GetComponent<Animator>();
+                if(animator != null)
+                {
+                    animator.SetTrigger("activate");
+                }
+
                 break;
 
         }

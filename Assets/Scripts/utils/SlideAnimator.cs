@@ -3,7 +3,7 @@ using System.Collections;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(CanvasGroup))]
-public class SlideAnimator : Animator
+public class SlideAnimator : UiAnimator
 {
     [SerializeField] private float duration = 0.25f;
 
@@ -20,18 +20,7 @@ public class SlideAnimator : Animator
     {
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
-        if (initiallyVisible) Show();
-        else
-        {
-            HideInstant();
-        }
-    }
-
-    public override void SetVisibility(bool visible)
-    {
-        IsVisible=visible;
-        if (visible) Show();
-        else Hide();
+        SetVisibility(initiallyVisible);
     }
 
     public override void Show()
@@ -60,18 +49,21 @@ public class SlideAnimator : Animator
 
     private IEnumerator Slide(Vector2 targetPos, bool interactable)
     {
-        // blocca input durante l’animazione
-        canvasGroup.interactable = false;
-        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = interactableOnAnimation;
+        canvasGroup.blocksRaycasts = interactableOnAnimation;
 
         Vector2 startPos = rectTransform.anchoredPosition;
-        float t = 0f;
+        float elapsed = 0f;
 
-        while (t < duration)
+        while (elapsed < duration)
         {
-            t += Time.unscaledDeltaTime;
+            elapsed += Time.deltaTime; // prova con deltaTime normale
+            float t = Mathf.Clamp01(elapsed / duration);
+            t = Mathf.SmoothStep(0f, 1f, t); // easing
+
             rectTransform.anchoredPosition =
-                Vector2.Lerp(startPos, targetPos, t / duration);
+                Vector2.LerpUnclamped(startPos, targetPos, t);
+
             yield return null;
         }
 
@@ -80,6 +72,7 @@ public class SlideAnimator : Animator
         canvasGroup.interactable = interactable;
         canvasGroup.blocksRaycasts = interactable;
     }
+
 
     public override void HideInstant()
     {

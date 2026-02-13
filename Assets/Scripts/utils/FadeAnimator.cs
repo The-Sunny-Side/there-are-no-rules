@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class FadeAnimator : Animator
+public class FadeAnimator : UiAnimator
 {
     [SerializeField] private float duration = 0.25f;
 
@@ -14,14 +14,6 @@ public class FadeAnimator : Animator
         canvasGroup = GetComponent<CanvasGroup>();
         HideInstant();
     }
-
-    public override void SetVisibility(bool visible)
-    {
-        IsVisible=visible;
-        if (visible) Show();
-        else Hide();
-    }
-
     public override void Show()
     {
         IsVisible=true;
