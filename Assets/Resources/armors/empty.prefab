@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 8957781074561941126}
   - component: {fileID: 8146472151571736447}
   - component: {fileID: -3540152486777735545}
+  - component: {fileID: -288715665904373551}
   m_Layer: 0
   m_Name: empty
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -88,17 +89,26 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3925080907645985337}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc5360006663caf41b656bd451a64b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PulsingHighlight
-  targetObjects: []
+  targets: []
   intensityMin: 0.05
   intensityMax: 0.4
-  pulseSpeed: 2
-  highlightColor: {r: 0, g: 1, b: 1, a: 1}
-  useOriginalColor: 1
-  forceDynamicGI: 1
-  updateEveryNFrames: 1
-  showDebugLogs: 0
+  speed: 0.1
+--- !u!114 &-288715665904373551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3925080907645985337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccd8df69a4a41734c926f65abf93b3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VeichleWeapon
+  cooldown: 0
+  isActive: 1

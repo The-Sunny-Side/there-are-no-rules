@@ -31,6 +31,7 @@ public class Composer : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        Utilities.DestroyAllChildren(vehicle);
     }
 
     void ComposeVehicle()
@@ -49,54 +50,39 @@ public class Composer : MonoBehaviour
 
     public void AlignComponents()
     {
-        anchor1 = baseElement.transform.Find("anchor");
-        anchor2 = bodyElement.transform.Find("anchor");
+        anchor1 = baseElement.transform.Find(AnchorNames.StandardAnchor);
+        anchor2 = bodyElement.transform.Find(AnchorNames.StandardAnchor);
         ComposeVehicle();
 
     }
 
     void CreateVehicleGameObject()
     {
-        Transform armorRightContainer = bodyElement.transform.Find("armorRightAnchor");
-        Transform armorLeftContainer = bodyElement.transform.Find("armorLeftAnchor");
-        Transform armorFrontContainer = bodyElement.transform.Find("armorFrontAnchor");
-        Transform armorBackContainer = bodyElement.transform.Find("armorBackAnchor");
+        Transform weaponRightContainer = bodyElement.transform.Find(AnchorNames.WeaponRightAnchor);
+        Transform weaponLeftContainer = bodyElement.transform.Find(AnchorNames.WeaponLeftAnchor);
+        Transform weaponFrontContainer = bodyElement.transform.Find(AnchorNames.WeaponFrontAnchor);
+        Transform weaponBackContainer = bodyElement.transform.Find(AnchorNames.WeaponBackAnchor);
 
-        foreach (Transform child in armorRightContainer.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        Utilities.DestroyAllChildren(weaponRightContainer);
+        Utilities.DestroyAllChildren(weaponLeftContainer);
+        Utilities.DestroyAllChildren(weaponFrontContainer);
+        Utilities.DestroyAllChildren(weaponBackContainer);
 
-        foreach (Transform child in armorLeftContainer.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        armorLeftElement.transform.SetParent(weaponLeftContainer.transform, false);
+        armorLeftElement.transform.rotation = weaponLeftContainer.rotation;
+        armorLeftElement.transform.localScale = Vector3.Scale(weaponLeftContainer.localScale, new Vector3(1f, 1f, 1f));
 
-        foreach (Transform child in armorFrontContainer.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        armorRightElement.transform.SetParent(weaponRightContainer.transform, false);
+        armorRightElement.transform.rotation = weaponRightContainer.rotation;
+        armorRightElement.transform.localScale = Vector3.Scale(weaponRightContainer.localScale,new Vector3(1f,1f,1f));
 
-        foreach (Transform child in armorBackContainer.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        armorFrontElement.transform.SetParent(weaponFrontContainer.transform, false);
+        armorFrontElement.transform.rotation = weaponFrontContainer.rotation;
+        armorFrontElement.transform.localScale = Vector3.Scale(weaponFrontContainer.localScale, new Vector3(1f, 1f, 1f));
 
-        armorLeftElement.transform.SetParent(armorLeftContainer.transform, false);
-        armorLeftElement.transform.rotation = armorLeftContainer.rotation;
-        armorLeftElement.transform.localScale = Vector3.Scale(armorLeftContainer.localScale, new Vector3(1f, 1f, 1f));
-
-        armorRightElement.transform.SetParent(armorRightContainer.transform, false);
-        armorRightElement.transform.rotation = armorRightContainer.rotation;
-        armorRightElement.transform.localScale = Vector3.Scale(armorRightContainer.localScale,new Vector3(1f,1f,1f));
-
-        armorFrontElement.transform.SetParent(armorFrontContainer.transform, false);
-        armorFrontElement.transform.rotation = armorFrontContainer.rotation;
-        armorFrontElement.transform.localScale = Vector3.Scale(armorFrontContainer.localScale, new Vector3(1f, 1f, 1f));
-
-        armorBackElement.transform.SetParent(armorBackContainer.transform, false);
-        armorBackElement.transform.rotation = armorBackContainer.rotation;
-        armorBackElement.transform.localScale = Vector3.Scale(armorBackContainer.localScale, new Vector3(1f, 1f, 1f));
+        armorBackElement.transform.SetParent(weaponBackContainer.transform, false);
+        armorBackElement.transform.rotation = weaponBackContainer.rotation;
+        armorBackElement.transform.localScale = Vector3.Scale(weaponBackContainer.localScale, new Vector3(1f, 1f, 1f));
 
         baseElement.transform.SetParent(vehicle.transform, false);
         baseElement.transform.localPosition = new Vector3(0, baseElement.transform.localPosition.y, baseElement.transform.localPosition.z);
@@ -118,7 +104,7 @@ public class Composer : MonoBehaviour
         string prefabPath = AssetDatabase.GenerateUniqueAssetPath(
             folderPath + "/vehicle.prefab");
 
-        PrefabUtility.SaveAsPrefabAsset(vehicle, prefabPath);
+        PrefabUtility.SaveAsPrefabAsset(vehicle, "Assets/Prefabs/composedVehicles/vehicle.prefab");
         AssetDatabase.SaveAssets();
         Debug.Log("Prefab salvato in: " + prefabPath);
     }

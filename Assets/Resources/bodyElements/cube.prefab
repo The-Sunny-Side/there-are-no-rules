@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 408547972757678915}
+  - component: {fileID: 604601574795889710}
   m_Layer: 0
   m_Name: armorBackAnchor
   m_TagString: Untagged
@@ -31,6 +32,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5054040196796270770}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &604601574795889710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3322003764559905232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: armorBackAnchor
 --- !u!1 &5226797770613990883
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,6 +54,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2979247619408516137}
+  - component: {fileID: 8692906558720508174}
   m_Layer: 0
   m_Name: armorFrontAnchor
   m_TagString: Untagged
@@ -62,6 +77,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5054040196796270770}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8692906558720508174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5226797770613990883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: armorFrontAnchor
 --- !u!1 &6181835682170247247
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,6 +99,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7523216137189553193}
+  - component: {fileID: 8935365253487691180}
   m_Layer: 0
   m_Name: armorLeftAnchor
   m_TagString: Untagged
@@ -93,6 +122,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5054040196796270770}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &8935365253487691180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6181835682170247247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: armorLeftAnchor
 --- !u!1 &6255699626865457899
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,6 +144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1036270231472610359}
+  - component: {fileID: 5348770314173707617}
   m_Layer: 0
   m_Name: armorRightAnchor
   m_TagString: Untagged
@@ -124,6 +167,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5054040196796270770}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &5348770314173707617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6255699626865457899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: armorRightAnchor
 --- !u!1 &6397104864511247772
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,6 +189,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 15463744651302474}
+  - component: {fileID: 1178103860271941561}
   m_Layer: 0
   m_Name: anchor
   m_TagString: Untagged
@@ -155,6 +212,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5054040196796270770}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1178103860271941561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6397104864511247772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: anchor
 --- !u!1001 &4731374135872794457
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -268,6 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc5360006663caf41b656bd451a64b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PulsingHighlight
-  intensityMin: 0.05
-  intensityMax: 0.4
-  speed: 2
+  targets: []
+  intensityMin: 1
+  intensityMax: 2.5
+  speed: 2.5

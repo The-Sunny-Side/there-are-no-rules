@@ -2,26 +2,26 @@ using UnityEngine;
 
 public class CollisionDetector : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void OnTriggerEnter(Collider collider)
     {
-        
-    }
+        VehicleWeapon weapon = collider.gameObject.GetComponent<VehicleWeapon>();
+        VehicleWeaponPart weaponPart = collider.gameObject.GetComponent<VehicleWeaponPart>();
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "PlayerSphere")
+        if (weaponPart && weaponPart.IsHitting())
         {
-            Debug.Log("collido" + collision.gameObject.name);
+            //Colpito
+            Debug.Log("collido" + collider.gameObject.name);
 
         }
 
+        else if (weapon && weapon.isHitting)
+        {
+            //Colpito
+            Debug.Log("collido" + collider.gameObject.name);
+
+        }
+
+        
     }
 }
  

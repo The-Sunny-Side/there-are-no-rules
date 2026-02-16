@@ -91,7 +91,28 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cc4c22f59edbf3c498cc96a202dd7ded, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7537474948186516347}
+    - targetCorrespondingSourceObject: {fileID: -3585645129852567221, guid: cc4c22f59edbf3c498cc96a202dd7ded, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6106758478563614557}
   m_SourcePrefab: {fileID: 100100000, guid: cc4c22f59edbf3c498cc96a202dd7ded, type: 3}
+--- !u!1 &908823274892051469 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3585645129852567221, guid: cc4c22f59edbf3c498cc96a202dd7ded, type: 3}
+  m_PrefabInstance: {fileID: 4801386084817372486}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6106758478563614557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908823274892051469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: anchor
 --- !u!1 &5647684242856359959 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: cc4c22f59edbf3c498cc96a202dd7ded, type: 3}
@@ -109,6 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc5360006663caf41b656bd451a64b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PulsingHighlight
-  intensityMin: 0.05
-  intensityMax: 0.4
-  speed: 2
+  targets: []
+  intensityMin: 1
+  intensityMax: 2.5
+  speed: 2.5

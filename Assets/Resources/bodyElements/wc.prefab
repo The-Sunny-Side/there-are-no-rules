@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2959372620991587604}
+  - component: {fileID: 8365756324085745988}
   m_Layer: 0
   m_Name: armorLeftAnchor
   m_TagString: Untagged
@@ -31,6 +32,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7340537756954309097}
   m_LocalEulerAnglesHint: {x: -180, y: -90, z: 90}
+--- !u!114 &8365756324085745988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104717275076076629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: armorLeftAnchor
 --- !u!1 &2842360951285547351
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,6 +54,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8702899638322713352}
+  - component: {fileID: 5691732334879095789}
   m_Layer: 0
   m_Name: armorBackAnchor
   m_TagString: Untagged
@@ -62,6 +77,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7340537756954309097}
   m_LocalEulerAnglesHint: {x: -90, y: -90, z: 90}
+--- !u!114 &5691732334879095789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2842360951285547351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: armorBackAnchor
 --- !u!1 &2910467811997856766
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,6 +99,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6793728884681530635}
+  - component: {fileID: 7382042825253403887}
   m_Layer: 0
   m_Name: armorRightAnchor
   m_TagString: Untagged
@@ -93,6 +122,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7340537756954309097}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 90}
+--- !u!114 &7382042825253403887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2910467811997856766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: armorRightAnchor
 --- !u!1 &5966559900250331601
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,6 +144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 853271633418420460}
+  - component: {fileID: 7494395171274856692}
   m_Layer: 0
   m_Name: armorFrontAnchor
   m_TagString: Untagged
@@ -124,6 +167,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7340537756954309097}
   m_LocalEulerAnglesHint: {x: 90, y: 90, z: -90}
+--- !u!114 &7494395171274856692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5966559900250331601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: armorFrontAnchor
 --- !u!1001 &7085408303205307906
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -227,7 +283,28 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5533128863970821144}
+    - targetCorrespondingSourceObject: {fileID: -3055314854170530088, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8627432693627371382}
   m_SourcePrefab: {fileID: 100100000, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
+--- !u!1 &4020933935203039450 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3055314854170530088, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
+  m_PrefabInstance: {fileID: 7085408303205307906}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8627432693627371382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4020933935203039450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
+  anchorName: anchor
 --- !u!4 &7340537756954309097 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 19596fa8b0bf5cb46a5a3f76effd3923, type: 3}
@@ -250,6 +327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc5360006663caf41b656bd451a64b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PulsingHighlight
-  intensityMin: 0.05
-  intensityMax: 0.4
-  speed: 2
+  targets: []
+  intensityMin: 1
+  intensityMax: 2.5
+  speed: 2.5

@@ -2495,7 +2495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: PurrNet.Runtime::PurrNet.PlayerSpawner
   playerPrefab: {fileID: 0}
-  _playerPrefab: {fileID: 8654641926553122775, guid: e098a6be38cc80f4d9e130e6f233a8a9, type: 3}
+  _playerPrefab: {fileID: 3486102010061806348, guid: b063805dd7b30504e9027fe572db78bb, type: 3}
   _ignoreNetworkRules: 0
   spawnPoints:
   - {fileID: 1819435056}
@@ -2525,7 +2525,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PurrnetAutoStart
   mode: 0
-  networkManagerOverride: {fileID: 1779854406}
 --- !u!1 &1819435055
 GameObject:
   m_ObjectHideFlags: 0
@@ -3393,6 +3392,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4678161769741112451}
+  - component: {fileID: 5898374542333973699}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -3400,6 +3400,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &5898374542333973699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5898374542333973698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4e8b01a75ed78d4a802039249c9f7ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
+  _cinemachineCamera: {fileID: 4422345525976924561}
 --- !u!114 &6362895241980486492
 MonoBehaviour:
   m_ObjectHideFlags: 0
