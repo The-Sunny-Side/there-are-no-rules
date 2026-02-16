@@ -3029,8 +3029,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3750f11a6fd9e948a961570cb8f352a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectRotator
-  horizontalRotation: 0
-  rotationSpeed: 100
+  horizontalRotation: 1
+  rotationSpeed: 7
 --- !u!114 &867977516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4921,10 +4921,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   backgroundClips:
-  - name: background_menu
-    clip: {fileID: 8300000, guid: 31b5ca6604cec4d7b8a58143a6248f0f, type: 3}
   - name: background_match
     clip: {fileID: 8300000, guid: 186351947a346458d9c55e45d32e2a4c, type: 3}
+  - name: background_menu
+    clip: {fileID: 8300000, guid: 31b5ca6604cec4d7b8a58143a6248f0f, type: 3}
   oneShotClips:
   - name: notification_ok
     clip: {fileID: 8300000, guid: 0748b37d6cfb248f5a06e485e3114155, type: 3}

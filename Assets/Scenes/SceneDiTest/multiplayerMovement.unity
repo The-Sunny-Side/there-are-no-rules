@@ -1378,7 +1378,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1118714469}
   - component: {fileID: 1118714470}
-  - component: {fileID: 1118714471}
   m_Layer: 0
   m_Name: InputManager
   m_TagString: Untagged
@@ -1414,19 +1413,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MobileInputManager
   inputActions: {fileID: -944628639613478452, guid: db278d4685d027a438af39d200e7867b, type: 3}
---- !u!114 &1118714471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1118714468}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fae1c52ba2bc98244bfa9d23191937d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SwipeDetector
-  minSwipeDistance: 50
 --- !u!1 &1189729150
 GameObject:
   m_ObjectHideFlags: 0
@@ -2525,7 +2511,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PurrnetAutoStart
   mode: 0
-  networkManagerOverride: {fileID: 1779854406}
 --- !u!1 &1819435055
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,12 +8,19 @@ public class MobileInputManager : MonoBehaviour
     public static MobileInputManager instance;
     public bool leftHeld => leftRotateAction.IsPressed();
     public bool rightHeld => rightRotateAction.IsPressed();
-
+    public bool slideUpHeld => slideUpAction.WasPressedThisFrame();
+    public bool slideDownHeld => slideDownAction.WasPressedThisFrame();
+    public bool slideLeftHeld => slideLeftAction.WasPressedThisFrame();
+    public bool slideRightHeld => slideRightAction.WasPressedThisFrame();
     public bool jumpTapped => jumpAction.WasPressedThisFrame();
 
     private InputAction leftRotateAction;
     private InputAction rightRotateAction;
     private InputAction jumpAction;
+    private InputAction slideUpAction;
+    private InputAction slideLeftAction;
+    private InputAction slideRightAction;
+    private InputAction slideDownAction;
 
     void Awake()
     {
@@ -28,6 +35,10 @@ public class MobileInputManager : MonoBehaviour
         leftRotateAction = map.FindAction("LeftRotate", true);
         rightRotateAction = map.FindAction("RightRotate", true);
         jumpAction = map.FindAction("Jump", true);
+        slideUpAction = map.FindAction("SlideUp", true);
+        slideDownAction = map.FindAction("SlideDown", true);
+        slideLeftAction = map.FindAction("SlideLeft", true);
+        slideRightAction = map.FindAction("SlideRight", true);
     }
 
     void OnEnable()
@@ -35,6 +46,10 @@ public class MobileInputManager : MonoBehaviour
         leftRotateAction.Enable();
         rightRotateAction.Enable();
         jumpAction.Enable();
+        slideUpAction.Enable();
+        slideDownAction.Enable();
+        slideLeftAction.Enable();   
+        slideRightAction.Enable();
     }
 
     void OnDisable()
@@ -42,5 +57,9 @@ public class MobileInputManager : MonoBehaviour
         leftRotateAction.Disable();
         rightRotateAction.Disable();
         jumpAction.Disable();
+        slideUpAction.Disable();
+        slideDownAction.Disable();
+        slideLeftAction.Disable();
+        slideRightAction.Disable();
     }
 }

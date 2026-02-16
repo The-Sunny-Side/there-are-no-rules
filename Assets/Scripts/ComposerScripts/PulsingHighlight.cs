@@ -7,19 +7,20 @@ public class PulsingHighlight : MonoBehaviour
     [SerializeField] private GameObject[] targets;
 
     [Header("Pulse Settings")]
-    [SerializeField] private float intensityMin = 0.05f;
-    [SerializeField] private float intensityMax = 0.4f;
+    [SerializeField] private float intensityMin = 0f;
+    [SerializeField] private float intensityMax = 1f;
     [SerializeField] private float speed = 2f;
 
     private class PulseData
     {
-        public Material mat;
+        public Renderer renderer;
+        public MaterialPropertyBlock mpb;
         public Color baseColor;
+        public int colorPropertyID;
     }
 
-    private List<PulseData> pulseMaterials = new List<PulseData>();
+    private List<PulseData> pulseRenderers = new List<PulseData>();
 
-    private static readonly int EmissionID = Shader.PropertyToID("_EmissionColor");
     private static readonly int BaseColorID = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorID = Shader.PropertyToID("_Color");
 
@@ -33,43 +34,65 @@ public class PulsingHighlight : MonoBehaviour
         {
             if (go == null) continue;
 
-            var renderer = go.GetComponent<MeshRenderer>();
+            var renderer = go.GetComponent<Renderer>();
             if (renderer == null) continue;
 
-            Material mat = renderer.material;
-            mat.EnableKeyword("_EMISSION");
+            var mat = renderer.sharedMaterial;
+            if (mat == null) continue;
 
-            Color baseColor = mat.HasProperty(BaseColorID)
-                ? mat.GetColor(BaseColorID)
-                : mat.GetColor(ColorID);
+            int propertyID;
+            Color baseColor;
 
-            pulseMaterials.Add(new PulseData
+            if (mat.HasProperty(BaseColorID))
             {
-                mat = mat,
-                baseColor = baseColor
+                propertyID = BaseColorID;
+                baseColor = mat.GetColor(BaseColorID);
+            }
+            else if (mat.HasProperty(ColorID))
+            {
+                propertyID = ColorID;
+                baseColor = mat.GetColor(ColorID);
+            }
+            else
+            {
+                continue; // materiale non supportato
+            }
+
+            pulseRenderers.Add(new PulseData
+            {
+                renderer = renderer,
+                mpb = new MaterialPropertyBlock(),
+                baseColor = baseColor,
+                colorPropertyID = propertyID
             });
         }
     }
 
     void Update()
     {
-        if (pulseMaterials.Count == 0) return;
+        if (pulseRenderers.Count == 0) return;
 
         float t = Mathf.PingPong(Time.time * speed, 1f);
         float intensity = Mathf.Lerp(intensityMin, intensityMax, t);
 
-        foreach (var data in pulseMaterials)
+        foreach (var data in pulseRenderers)
         {
-            data.mat.SetColor(EmissionID, data.baseColor * intensity);
+            // Usa direttamente baseColor modulato per intensità
+            Color finalColor = data.baseColor * intensity;
+
+            data.renderer.GetPropertyBlock(data.mpb);
+            data.mpb.SetColor(data.colorPropertyID, finalColor);
+            data.renderer.SetPropertyBlock(data.mpb);
         }
     }
 
     void OnDisable()
     {
-        foreach (var data in pulseMaterials)
+        foreach (var data in pulseRenderers)
         {
-            if (data.mat != null)
-                data.mat.SetColor(EmissionID, Color.black);
+            data.renderer.GetPropertyBlock(data.mpb);
+            data.mpb.SetColor(data.colorPropertyID, data.baseColor);
+            data.renderer.SetPropertyBlock(data.mpb);
         }
     }
 }

@@ -8,6 +8,8 @@ TagManager:
   - Ground
   - HUD
   - PlayerSphere
+  - Weapon
+  - Vehicle
   layers:
   - Default
   - TransparentFX
