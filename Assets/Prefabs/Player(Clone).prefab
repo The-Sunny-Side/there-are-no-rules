@@ -595,7 +595,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VeichleWeapon
   isHitting: 0
-  weaponParts: []
 --- !u!1 &1183922827171309663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1239,7 +1238,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VeichleWeapon
   isHitting: 0
-  weaponParts: []
 --- !u!1 &2054969240801216284
 GameObject:
   m_ObjectHideFlags: 0
@@ -2095,7 +2093,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VeichleWeapon
   isHitting: 0
-  weaponParts: []
 --- !u!1 &2992520824788819665
 GameObject:
   m_ObjectHideFlags: 0
@@ -4411,7 +4408,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VeichleWeapon
   isHitting: 0
-  weaponParts: []
 --- !u!1 &7281681235278576395
 GameObject:
   m_ObjectHideFlags: 0

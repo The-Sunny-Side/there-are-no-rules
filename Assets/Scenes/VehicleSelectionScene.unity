@@ -3029,7 +3029,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3750f11a6fd9e948a961570cb8f352a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectRotator
-  horizontalRotation: 1
+  horizontalRotation: 0
   rotationSpeed: 7
 --- !u!114 &867977516
 MonoBehaviour:
