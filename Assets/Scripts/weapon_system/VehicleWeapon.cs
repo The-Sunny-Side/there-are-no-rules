@@ -6,6 +6,11 @@ public class VehicleWeapon : MonoBehaviour
 
     private Animator animator;
 
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
+
     public void ActivateWeapon()
     {
         if (animator != null && !isHitting)

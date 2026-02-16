@@ -280,10 +280,7 @@ public class VehicleSelectorManager : MonoBehaviour
         Composer composerComponent = Composer.GetComponent<Composer>();
         Transform composedVehicle = composerComponent.transform.Find("Vehicle");
 
-        foreach (Transform child in composedVehicle.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        Utilities.DestroyAllChildren(composedVehicle);
 
         GameObject baseElement = baseElements[selectedBaseIndex].element;
         GameObject bodyElement = bodyElements[selectedBodyIndex].element;
