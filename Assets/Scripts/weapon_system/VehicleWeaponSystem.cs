@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using PurrNet;
 
-public class VehicleWeaponSystem : MonoBehaviour
+
+public class VehicleWeaponSystem : NetworkIdentity
 {
 
     private MobileInputManager inputManager;
@@ -16,8 +18,9 @@ public class VehicleWeaponSystem : MonoBehaviour
         weaponsKey.Add("right", AnchorNames.WeaponRightAnchor);
     }
 
+ 
     public void ActivateWeapon(string direction) {         
-        if (weaponsKey.TryGetValue(direction, out string partName))
+        if (weaponsKey.TryGetValue(direction, out string partName)&&isOwner)
         {
             VehicleWeapon weapon = gameObject.FindChildWithName(partName)?.FindChildWithTag("Weapon")?.GetComponent<VehicleWeapon>();
             if (weapon != null)

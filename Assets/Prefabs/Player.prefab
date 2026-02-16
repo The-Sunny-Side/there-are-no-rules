@@ -50,6 +50,9 @@ GameObject:
   - component: {fileID: 6720866229993928931}
   - component: {fileID: 1136300561488583344}
   - component: {fileID: 7685918027606414319}
+  - component: {fileID: 6010306748768002747}
+  - component: {fileID: 5883323003369229598}
+  - component: {fileID: 1595470094853899305}
   m_Layer: 0
   m_Name: Player
   m_TagString: PlayerSphere
@@ -299,6 +302,44 @@ MonoBehaviour:
   boostAccumulato: 0
   grounded: 0
   driftingTime: 0
+--- !u!114 &6010306748768002747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3486102010061806348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b4c180ebd0742d4e920b98a0366be6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleWeaponSystem
+--- !u!114 &5883323003369229598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3486102010061806348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd3ff1d027cf79b479975d5cad650973, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollisionDetector
+--- !u!114 &1595470094853899305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3486102010061806348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fae1c52ba2bc98244bfa9d23191937d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwipeDetector
+  minSwipeDistance: 50
+  weaponSystem: {fileID: 6010306748768002747}
 --- !u!1 &4530243595185391314
 GameObject:
   m_ObjectHideFlags: 0

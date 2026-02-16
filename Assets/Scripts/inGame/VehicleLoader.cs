@@ -8,6 +8,7 @@ using UnityEngine;
 public class VehicleLoader : MonoBehaviour
 {
     [SerializeField] private Composer composer;
+    private string _currentJson;
 
     /// <summary>
     /// Applica una configurazione veicolo ricevuta via rete.
@@ -15,6 +16,11 @@ public class VehicleLoader : MonoBehaviour
     /// </summary>
     public void ApplyConfigJson(string json)
     {
+        if (_currentJson == json)
+            return;
+
+        _currentJson = json;
+
         if (string.IsNullOrEmpty(json))
         {
             Debug.LogWarning("VehicleLoader: ApplyConfigJson ricevuto json vuoto");
