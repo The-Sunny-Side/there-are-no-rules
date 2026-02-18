@@ -761,6 +761,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b4c180ebd0742d4e920b98a0366be6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleWeaponSystem
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
 --- !u!114 &4096356312945475117
 MonoBehaviour:
   m_ObjectHideFlags: 0
