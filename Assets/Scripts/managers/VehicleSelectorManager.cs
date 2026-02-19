@@ -36,8 +36,15 @@ public class VehicleSelectorManager : MonoBehaviour
     private int selectedBaseIndex = 0;
     private int selectedBodyIndex = 0;
 
+    private Image[] weaponIcons = new Image[4];
+
     void Awake()
     {
+        for(int i=0;i<weaponButtons.Length; i++)
+        {
+            weaponIcons[i] = weaponButtons[i].transform.Find("IconBox").Find("Icon").GetComponent<Image>();
+        }
+
         Dictionary<string, GameObject> loaded = VehicleManager.Instance.LoadVehicleData();
 
         if (loaded != null)
@@ -103,7 +110,7 @@ public class VehicleSelectorManager : MonoBehaviour
 
         for (int i = 0; i < weaponButtons.Length; i++)
         {
-            weaponButtons[i].transform.Find("IconBox").Find("Icon").GetComponent<Image>().sprite = weaponElements[selectedWeaponsIndexes[i]].icon;
+            weaponIcons[i].sprite = weaponElements[selectedWeaponsIndexes[i]].icon;
         }
 
         SetStep(0);
@@ -177,7 +184,7 @@ public class VehicleSelectorManager : MonoBehaviour
         }
 
         InitIcons();
-        UpdateActiveSelector();
+        UpdateVehicle();
     }
 
     public void ToggleHudVisibility()
@@ -203,37 +210,39 @@ public class VehicleSelectorManager : MonoBehaviour
     public void SetElement(int elementIndex)
     {
 
+        int indexToDisable = 0;
+
         switch (stepIndex)
         {
             case 0:
                 {
                     if (elementIndex >= baseElements.Length) return;
-                    elementsBoxes[selectedBaseIndex].GetComponent<Outline>().enabled = false;
+                    indexToDisable=selectedBaseIndex;
                     selectedBaseIndex = elementIndex;
-                    elementsBoxes[elementIndex].GetComponent<Outline>().enabled = true;
                 }
                 break;
             case 1:
                 {
                     if (elementIndex >= bodyElements.Length) return;
-                    elementsBoxes[selectedBodyIndex].GetComponent<Outline>().enabled = false;
+                    indexToDisable = selectedBodyIndex;
                     selectedBodyIndex = elementIndex;
-                    elementsBoxes[elementIndex].GetComponent<Outline>().enabled = true;
                 }
                 break;
             case 2:
                 {
                     if (elementIndex >= weaponElements.Length) return;
-                    elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = false;
-                    weaponButtons[selectedWeaponType].transform.Find("IconBox").Find("Icon").GetComponent<Image>().sprite = weaponElements[elementIndex].icon;
+                    indexToDisable = selectedWeaponsIndexes[selectedWeaponType];
+                    weaponIcons[selectedWeaponType].sprite = weaponElements[elementIndex].icon;
                     selectedWeapons[selectedWeaponType] = weaponElements[elementIndex].element;
                     selectedWeaponsIndexes[selectedWeaponType] = elementIndex;
-                    elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = true;
                 }
                 break;
         }
 
-        UpdateActiveSelector();
+        elementsBoxes[indexToDisable].GetComponent<Outline>().enabled = false;
+        elementsBoxes[elementIndex].GetComponent<Outline>().enabled = true;
+
+        UpdateVehicle();
     }
 
     public void SetWeaponType(int type)
@@ -244,7 +253,7 @@ public class VehicleSelectorManager : MonoBehaviour
         weaponButtons[selectedWeaponType].GetComponent<Outline>().enabled = true;
         elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = true;
 
-        UpdateActiveSelector();
+        UpdateVehicle();
     }
 
     public void NextStep()
@@ -273,7 +282,7 @@ public class VehicleSelectorManager : MonoBehaviour
         mr.enabled = active;
     }
 
-    public void UpdateActiveSelector()
+    public void UpdateVehicle()
     {
 
 
