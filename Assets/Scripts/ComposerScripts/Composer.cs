@@ -7,10 +7,11 @@ public class Composer : MonoBehaviour
 {
     public GameObject baseElement;
     public GameObject bodyElement;
-    public GameObject armorLeftElement;
-    public GameObject armorRightElement;
-    public GameObject armorFrontElement;
-    public GameObject armorBackElement;
+    public GameObject weaponLeftElement;
+    public GameObject weaponRightElement;
+    public GameObject weaponFrontElement;
+    public GameObject weaponBackElement;
+
     [SerializeField] private GameObject vehicle;
 
     private Transform anchor1;
@@ -19,10 +20,10 @@ public class Composer : MonoBehaviour
     private void Awake()
     {
         GameObject defaultElement = Resources.Load<GameObject>("/icons/empty");
-        armorLeftElement = defaultElement;
-        armorBackElement=defaultElement;
-        armorFrontElement=defaultElement;
-        armorRightElement=defaultElement;
+        weaponLeftElement = defaultElement;
+        weaponBackElement = defaultElement;
+        weaponFrontElement = defaultElement;
+        weaponRightElement = defaultElement;
     }
 
     private void OnDisable()
@@ -53,7 +54,6 @@ public class Composer : MonoBehaviour
         anchor1 = baseElement.transform.Find(AnchorNames.StandardAnchor);
         anchor2 = bodyElement.transform.Find(AnchorNames.StandardAnchor);
         ComposeVehicle();
-
     }
 
     void CreateVehicleGameObject()
@@ -68,21 +68,21 @@ public class Composer : MonoBehaviour
         Utilities.DestroyAllChildren(weaponFrontContainer);
         Utilities.DestroyAllChildren(weaponBackContainer);
 
-        armorLeftElement.transform.SetParent(weaponLeftContainer.transform, false);
-        armorLeftElement.transform.rotation = weaponLeftContainer.rotation;
-        armorLeftElement.transform.localScale = Vector3.Scale(weaponLeftContainer.localScale, new Vector3(1f, 1f, 1f));
+        weaponLeftElement.transform.SetParent(weaponLeftContainer.transform, false);
+        weaponLeftElement.transform.rotation = weaponLeftContainer.rotation;
+        weaponLeftElement.transform.localScale = Vector3.Scale(weaponLeftContainer.localScale, new Vector3(1f, 1f, 1f));
 
-        armorRightElement.transform.SetParent(weaponRightContainer.transform, false);
-        armorRightElement.transform.rotation = weaponRightContainer.rotation;
-        armorRightElement.transform.localScale = Vector3.Scale(weaponRightContainer.localScale,new Vector3(1f,1f,1f));
+        weaponRightElement.transform.SetParent(weaponRightContainer.transform, false);
+        weaponRightElement.transform.rotation = weaponRightContainer.rotation;
+        weaponRightElement.transform.localScale = Vector3.Scale(weaponRightContainer.localScale, new Vector3(1f, 1f, 1f));
 
-        armorFrontElement.transform.SetParent(weaponFrontContainer.transform, false);
-        armorFrontElement.transform.rotation = weaponFrontContainer.rotation;
-        armorFrontElement.transform.localScale = Vector3.Scale(weaponFrontContainer.localScale, new Vector3(1f, 1f, 1f));
+        weaponFrontElement.transform.SetParent(weaponFrontContainer.transform, false);
+        weaponFrontElement.transform.rotation = weaponFrontContainer.rotation;
+        weaponFrontElement.transform.localScale = Vector3.Scale(weaponFrontContainer.localScale, new Vector3(1f, 1f, 1f));
 
-        armorBackElement.transform.SetParent(weaponBackContainer.transform, false);
-        armorBackElement.transform.rotation = weaponBackContainer.rotation;
-        armorBackElement.transform.localScale = Vector3.Scale(weaponBackContainer.localScale, new Vector3(1f, 1f, 1f));
+        weaponBackElement.transform.SetParent(weaponBackContainer.transform, false);
+        weaponBackElement.transform.rotation = weaponBackContainer.rotation;
+        weaponBackElement.transform.localScale = Vector3.Scale(weaponBackContainer.localScale, new Vector3(1f, 1f, 1f));
 
         baseElement.transform.SetParent(vehicle.transform, false);
         baseElement.transform.localPosition = new Vector3(0, baseElement.transform.localPosition.y, baseElement.transform.localPosition.z);

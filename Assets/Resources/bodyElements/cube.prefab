@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 408547972757678915}
   - component: {fileID: 604601574795889710}
   m_Layer: 0
-  m_Name: armorBackAnchor
+  m_Name: weaponBackAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
-  anchorName: armorBackAnchor
+  anchorName: weaponBackAnchor
 --- !u!1 &5226797770613990883
 GameObject:
   m_ObjectHideFlags: 0
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 2979247619408516137}
   - component: {fileID: 8692906558720508174}
   m_Layer: 0
-  m_Name: armorFrontAnchor
+  m_Name: weaponFrontAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
-  anchorName: armorFrontAnchor
+  anchorName: weaponFrontAnchor
 --- !u!1 &6181835682170247247
 GameObject:
   m_ObjectHideFlags: 0
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 7523216137189553193}
   - component: {fileID: 8935365253487691180}
   m_Layer: 0
-  m_Name: armorLeftAnchor
+  m_Name: weaponLeftAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
-  anchorName: armorLeftAnchor
+  anchorName: weaponLeftAnchor
 --- !u!1 &6255699626865457899
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 1036270231472610359}
   - component: {fileID: 5348770314173707617}
   m_Layer: 0
-  m_Name: armorRightAnchor
+  m_Name: weaponRightAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b2549cea0ac47449ceee9ceb2f320a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnchorObject
-  anchorName: armorRightAnchor
+  anchorName: weaponRightAnchor
 --- !u!1 &6397104864511247772
 GameObject:
   m_ObjectHideFlags: 0

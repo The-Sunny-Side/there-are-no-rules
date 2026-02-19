@@ -1,175 +1,206 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Transform))]
 public class ObjectRotator : MonoBehaviour
 {
+    [Header("Rotation Settings")]
     [SerializeField] private bool horizontalRotation = true;
-    [SerializeField] private float rotationSpeed = 100f;
+    [SerializeField] private float rotationSpeed = 150f;
 
-    private Vector3 lastInputPosition;
-    private bool isRotating = false;
     private Camera mainCamera;
+    private bool isRotating;
+    private Vector2 lastPointerPosition;
 
+    #region Unity Lifecycle
 
-    public void CheckCollider()
-    {
-        Collider collider = GetComponent<Collider>();
-
-        // Aggiungi automaticamente un Collider se non presente
-        if (collider == null)
-        {
-            AddAppropriateCollider();
-        }
-        else
-        {
-            Destroy(collider);
-            AddAppropriateCollider();
-        }
-    }
-
-    void Start()
+    void Awake()
     {
         mainCamera = Camera.main;
-
-        CheckCollider();
+        SetupCollider();
     }
 
-    private void AddAppropriateCollider()
+    void Update()
     {
-        // Calcola i bounds dell'oggetto includendo tutti i renderer figli
-        Bounds bounds = CalculateBounds();
-
-        if (bounds.size == Vector3.zero)
-        {
-            // Se non ci sono renderer, usa un BoxCollider di default
-            BoxCollider boxCollider = gameObject.AddComponent<BoxCollider>();
-            return;
-        }
-
-        // Verifica se c'è un MeshFilter per determinare il tipo di collider
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
-
-        if (meshFilter != null)
-        {
-            // Se c'è una mesh, usa MeshCollider
-            MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
-            meshCollider.convex = false;
-        }
-        else
-        {
-            // Usa BoxCollider e adattalo ai bounds calcolati
-            BoxCollider boxCollider = gameObject.AddComponent<BoxCollider>();
-
-            // Converti i bounds da world space a local space
-            Vector3 localCenter = transform.InverseTransformPoint(bounds.center);
-            Vector3 localSize = transform.InverseTransformVector(bounds.size);
-
-            boxCollider.center = localCenter;
-            boxCollider.size = new Vector3(
-                Mathf.Abs(localSize.x),
-                Mathf.Abs(localSize.y),
-                Mathf.Abs(localSize.z)
-            );
-        }
+        HandlePointerInput();
     }
 
-    private Bounds CalculateBounds()
+    #endregion
+
+    #region Collider Setup
+
+    public void SetupCollider()
     {
-        // Ottieni tutti i renderer dell'oggetto e dei suoi figli
+        Collider existing = GetComponent<Collider>();
+        if (existing != null)
+            Destroy(existing);
+
+        AddBoxColliderFromRenderers();
+    }
+
+    private void AddBoxColliderFromRenderers()
+    {
+        Bounds bounds = CalculateLocalBounds();
+
+        BoxCollider box = gameObject.AddComponent<BoxCollider>();
+        box.center = bounds.center;
+        box.size = bounds.size;
+    }
+
+private Bounds CalculateLocalBounds()
+    {
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
 
         if (renderers.Length == 0)
-        {
-            return new Bounds(transform.position, Vector3.zero);
-        }
+            return new Bounds(Vector3.zero, Vector3.one);
 
-        // Inizializza con il primo renderer
-        Bounds bounds = renderers[0].bounds;
+        Bounds bounds = new Bounds();
+        bool initialized = false;
 
-        // Espandi per includere tutti gli altri renderer
-        for (int i = 1; i < renderers.Length; i++)
+        foreach (Renderer r in renderers)
         {
-            bounds.Encapsulate(renderers[i].bounds);
+            Bounds wb = r.bounds;
+            Vector3 c = wb.center;
+            Vector3 e = wb.extents;
+
+            // Gli 8 angoli in world space
+            Vector3[] worldCorners =
+            {
+            c + new Vector3( e.x,  e.y,  e.z),
+            c + new Vector3( e.x,  e.y, -e.z),
+            c + new Vector3( e.x, -e.y,  e.z),
+            c + new Vector3( e.x, -e.y, -e.z),
+            c + new Vector3(-e.x,  e.y,  e.z),
+            c + new Vector3(-e.x,  e.y, -e.z),
+            c + new Vector3(-e.x, -e.y,  e.z),
+            c + new Vector3(-e.x, -e.y, -e.z),
+        };
+
+            foreach (Vector3 wc in worldCorners)
+            {
+                // Converti il corner (già in world space) in local space
+                Vector3 lc = transform.InverseTransformPoint(wc);
+
+                if (!initialized)
+                {
+                    bounds = new Bounds(lc, Vector3.zero);
+                    initialized = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(lc);
+                }
+            }
         }
 
         return bounds;
     }
 
-    void Update()
+    #endregion
+
+    #region Input Handling
+
+    private void HandlePointerInput()
     {
-        // Input Mouse (PC)
-        if (Input.GetMouseButtonDown(0))
+        if (TryGetPointerDown(out Vector2 position))
         {
-            if (IsPointerOverObject(Input.mousePosition))
+            if (IsPointerOverObject(position))
             {
-                lastInputPosition = Input.mousePosition;
                 isRotating = true;
+                lastPointerPosition = position;
             }
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (TryGetPointerUp())
         {
             isRotating = false;
         }
 
-        if (isRotating && Input.GetMouseButton(0))
+        if (isRotating && TryGetPointer(out Vector2 currentPosition))
         {
-            Vector3 delta = Input.mousePosition - lastInputPosition;
-            float rotationX = 0f;
-            float rotationZ = 0f;
-            float rotationY = delta.x * rotationSpeed * Time.deltaTime;
-
-            if(!horizontalRotation)
-            {
-                 rotationX = delta.y * rotationSpeed * Time.deltaTime;
-                 rotationZ = delta.z * rotationSpeed * Time.deltaTime;
-            }
-            transform.Rotate(rotationX, -rotationY, 0, Space.World);
-            lastInputPosition = Input.mousePosition;
-        }
-
-        // Input Touch (Android)
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-
-            if (touch.phase == TouchPhase.Began)
-            {
-                if (IsPointerOverObject(touch.position))
-                {
-                    isRotating = true;
-                }
-            }
-
-            if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-            {
-                isRotating = false;
-            }
-
-            if (isRotating && touch.phase == TouchPhase.Moved)
-            {
-                float rotationY = touch.deltaPosition.x * rotationSpeed * Time.deltaTime;
-                float rotationX = 0f;
-
-                if (!horizontalRotation)
-                {
-                    rotationX = touch.deltaPosition.y * rotationSpeed * Time.deltaTime;
-                }
-
-                transform.Rotate(rotationX, -rotationY, 0, Space.World);
-            }
+            Vector2 delta = currentPosition - lastPointerPosition;
+            RotateObject(delta);
+            lastPointerPosition = currentPosition;
         }
     }
 
-    private bool IsPointerOverObject(Vector3 screenPosition)
+    private void RotateObject(Vector2 delta)
     {
-        Ray ray = mainCamera.ScreenPointToRay(screenPosition);
-        RaycastHit hit;
+        float rotX = 0f;
+        float rotY = delta.x * rotationSpeed * Time.deltaTime;
 
-        if (Physics.Raycast(ray, out hit))
+        if (!horizontalRotation)
+            rotX = delta.y * rotationSpeed * Time.deltaTime;
+
+        transform.Rotate(rotX, -rotY, 0f, Space.World);
+    }
+
+    #endregion
+
+    #region Pointer Abstraction (Mouse + Touch)
+
+    private bool TryGetPointerDown(out Vector2 position)
+    {
+        if (Input.GetMouseButtonDown(0))
         {
-            return hit.transform == transform;
+            position = Input.mousePosition;
+            return true;
+        }
+
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        {
+            position = Input.GetTouch(0).position;
+            return true;
+        }
+
+        position = default;
+        return false;
+    }
+
+    private bool TryGetPointerUp()
+    {
+        if (Input.GetMouseButtonUp(0))
+            return true;
+
+        if (Input.touchCount > 0)
+        {
+            TouchPhase phase = Input.GetTouch(0).phase;
+            return phase == TouchPhase.Ended || phase == TouchPhase.Canceled;
         }
 
         return false;
     }
+
+    private bool TryGetPointer(out Vector2 position)
+    {
+        if (Input.GetMouseButton(0))
+        {
+            position = Input.mousePosition;
+            return true;
+        }
+
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        {
+            position = Input.GetTouch(0).position;
+            return true;
+        }
+
+        position = default;
+        return false;
+    }
+
+    #endregion
+
+    #region Raycast
+
+    private bool IsPointerOverObject(Vector2 screenPosition)
+    {
+        Ray ray = mainCamera.ScreenPointToRay(screenPosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+            return hit.transform == transform;
+
+        return false;
+    }
+
+    #endregion
 }
