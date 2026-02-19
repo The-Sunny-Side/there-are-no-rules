@@ -8,6 +8,13 @@ public class VehicleNetConfig : NetworkIdentity
     // tenuta lato server
     private string _lastJson;
 
+    void Start()
+    {
+        string json = VehicleManager.Instance.GetVehicleJson();
+
+        Debug.Log("Provo a caricare");
+        loader.ApplyConfigJson(json);
+    }
     protected override void OnSpawned()
     {
         base.OnSpawned();
