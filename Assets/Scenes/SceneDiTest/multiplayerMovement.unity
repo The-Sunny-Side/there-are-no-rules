@@ -2415,7 +2415,6 @@ GameObject:
   - component: {fileID: 1779854406}
   - component: {fileID: 1779854405}
   - component: {fileID: 1779854407}
-  - component: {fileID: 1779854408}
   - component: {fileID: 1779854409}
   m_Layer: 0
   m_Name: NetworkManager
@@ -2455,7 +2454,7 @@ MonoBehaviour:
     _adaptToEdgegap: 1
   _serverPort: 5000
   _maxConnections: 100
-  _address: 127.0.0.1
+  _address: 192.168.0.183
   _timeoutInSeconds: 5
   _pollEventsInUpdate: 0
 --- !u!114 &1779854406
@@ -2481,7 +2480,7 @@ MonoBehaviour:
   _networkRules: {fileID: 11400000, guid: ff5a11973fb33cb488524e4ae0247f93, type: 2}
   _visibilityRules: {fileID: 11400000, guid: 8f014a5bd8dc68646a2a3c0b18c5bbd8, type: 2}
   _authenticator: {fileID: 0}
-  _tickRate: 42
+  _tickRate: 20
   _patchLingeringProcessBug: 0
 --- !u!114 &1779854407
 MonoBehaviour:
@@ -2501,18 +2500,6 @@ MonoBehaviour:
   spawnPoints:
   - {fileID: 1819435056}
   - {fileID: 1189729151}
---- !u!114 &1779854408
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1779854403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2df2798296c0dd7489c7e25046d2c6dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VehicleConfigResync
 --- !u!114 &1779854409
 MonoBehaviour:
   m_ObjectHideFlags: 0

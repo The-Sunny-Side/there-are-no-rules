@@ -7,6 +7,9 @@ public static class Utilities
 {
     public static void DestroyAllChildren(GameObject source)
     {
+        if (source == null)
+            return;
+
         foreach (Transform child in source.transform)
         {
             UnityEngine.Object.Destroy(child.gameObject);
@@ -16,6 +19,9 @@ public static class Utilities
 
     public static void DestroyAllChildren(Transform source)
     {
+        if (source == null)
+            return;
+
         foreach (Transform child in source)
         {
             UnityEngine.Object.Destroy(child.gameObject);

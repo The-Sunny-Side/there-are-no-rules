@@ -660,16 +660,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a75e962b4b42134cb81d3ccfab779f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleNetConfig
-  _isSetup: 1
-  _prefabId: 2
-  _componentIndex: 0
-  _shouldBePooled: 0
-  _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
-  _directChildren:
-  - {fileID: 6475801358554962053}
-  _networkRules: {fileID: 0}
-  _visitiblityRules: {fileID: 0}
+  _repeatInputFactor: 0.8
+  _extrapolateInput: 1
   loader: {fileID: 4603309549907819862}
 --- !u!114 &1559176217277120749
 MonoBehaviour:
@@ -4221,7 +4213,7 @@ MonoBehaviour:
   _prefabId: 2
   _componentIndex: 3
   _shouldBePooled: 0
-  _parent: {fileID: 7807171063070212946}
+  _parent: {fileID: 0}
   _invertedPathToNearestParent: 02000000
   _directChildren: []
   _networkRules: {fileID: 0}

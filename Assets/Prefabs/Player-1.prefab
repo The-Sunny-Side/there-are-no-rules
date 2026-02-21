@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 8730406811633289246}
   - component: {fileID: 6556085553470851724}
   - component: {fileID: 9201475319759048605}
-  - component: {fileID: -2195086728090345518}
   - component: {fileID: 7139793741261796267}
   - component: {fileID: 4360163942621179187}
+  - component: {fileID: 7503685315405010670}
   m_Layer: 0
   m_Name: Player-1
   m_TagString: PlayerSphere
@@ -143,23 +143,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!114 &-2195086728090345518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1536615153988124585}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0baf2f1440b71514ab5ba4ca6368a82c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PredictionMovement
-  _repeatInputFactor: 0.8
-  _extrapolateInput: 1
-  _rigidbody: {fileID: 4360163942621179187}
-  _forwardImpulse: 500
-  _rotationSpeed: 220
 --- !u!114 &7139793741261796267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,7 +159,7 @@ MonoBehaviour:
   _floatAccuracy: 1
   _interpolationSettings: {fileID: 11400000, guid: 4a8aa8e44e23cfd4a8d4387ef3f36173, type: 2}
   _unparentGraphics: 0
-  _characterControllerPatch: 1
+  _characterControllerPatch: 0
 --- !u!114 &4360163942621179187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,6 +176,41 @@ MonoBehaviour:
   _floatAccuracy: 1
   _eventMask: 63
   _ignoreTriggerOnTrigger: 0
+--- !u!114 &7503685315405010670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536615153988124585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63ffa90f5fa0d284e82fc968c8bf28b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovementPredicted
+  _repeatInputFactor: 0
+  _extrapolateInput: 0
+  gravityForce: 100
+  dragOnGround: 0.1
+  dragInAir: 0
+  normalAlignSpeed: 3
+  alignSpeed: 8
+  _rigidbody: {fileID: 4360163942621179187}
+  rotationSpeed: 200
+  jumpForce: 10
+  sideBreak: 20
+  forwardSpeed: 10
+  minAlignment: 0
+  boostForce: 100
+  speedToStartBoostDecay: 50
+  timeToStartBoostCharge: 0.3
+  raysCount: 8
+  raySpread: 1
+  whatIsGroud:
+    serializedVersion: 2
+    m_Bits: 8
+  groundRayLength: 3
+  whenIsGroundLenght: 4
 --- !u!1 &2315482730086823503
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,7 +238,7 @@ Transform:
   m_GameObject: {fileID: 2315482730086823503}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.25, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -252,15 +270,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a75e962b4b42134cb81d3ccfab779f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleNetConfig
-  _isSetup: 0
-  _prefabId: -2147483648
-  _componentIndex: -2147483648
-  _shouldBePooled: 0
-  _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
-  _directChildren: []
-  _networkRules: {fileID: 0}
-  _visitiblityRules: {fileID: 0}
+  _repeatInputFactor: 0.8
+  _extrapolateInput: 0
   loader: {fileID: 5490354525907316849}
 --- !u!1 &5150373050439380825
 GameObject:
@@ -338,7 +349,7 @@ Transform:
   m_GameObject: {fileID: 7079017173305837497}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
