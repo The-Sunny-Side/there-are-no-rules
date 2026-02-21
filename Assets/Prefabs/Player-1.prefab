@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 7139793741261796267}
   - component: {fileID: 4360163942621179187}
   - component: {fileID: 7503685315405010670}
+  - component: {fileID: -4002540731971505960}
+  - component: {fileID: 2434318485548006272}
   m_Layer: 0
   m_Name: Player-1
   m_TagString: PlayerSphere
@@ -212,6 +214,32 @@ MonoBehaviour:
     m_Bits: 8
   groundRayLength: 4
   whenIsGroundLenght: 3
+--- !u!114 &-4002540731971505960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536615153988124585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0804d79e82c8ba45a52427f5e4d4823, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PredictedAttacks
+  _repeatInputFactor: 0.8
+  _extrapolateInput: 0
+--- !u!114 &2434318485548006272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536615153988124585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd3ff1d027cf79b479975d5cad650973, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollisionDetector
 --- !u!1 &2315482730086823503
 GameObject:
   m_ObjectHideFlags: 0

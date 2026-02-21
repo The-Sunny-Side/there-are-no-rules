@@ -62,14 +62,6 @@ public class VehicleLoader : MonoBehaviour
         if (!string.IsNullOrEmpty(data.weaponRight))
             list[VehicleElementsKeys.WeaponRight] = Resources.Load<GameObject>("weapons/" + data.weaponRight);
 
-        // Log (come facevi prima)
-        foreach (var kv in list)
-        {
-            if (kv.Value)
-                Debug.Log($"{kv.Key}: {kv.Value.name}");
-            else
-                Debug.LogWarning($"{kv.Key}: prefab non trovato in Resources");
-        }
 
         // Base/body obbligatori
         if (list.TryGetValue(VehicleElementsKeys.Body, out var bodyPrefab) && bodyPrefab &&
