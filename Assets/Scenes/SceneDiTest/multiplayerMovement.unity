@@ -2454,7 +2454,7 @@ MonoBehaviour:
     _adaptToEdgegap: 1
   _serverPort: 5000
   _maxConnections: 100
-  _address: 127.0.0.1
+  _address: 192.168.0.183
   _timeoutInSeconds: 5
   _pollEventsInUpdate: 0
 --- !u!114 &1779854406
@@ -2512,7 +2512,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4230167879cd9415b9dd61e295cb1e15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PurrnetAutoStart
-  mode: 0
+  mode: 2
 --- !u!1 &1819435055
 GameObject:
   m_ObjectHideFlags: 0
@@ -2965,7 +2965,7 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   _physicsProvider: 1
-  _updateViewMode: 2
+  _updateViewMode: 1
   _builtInSystems: 31
   _predictedPrefabs: {fileID: 11400000, guid: 0bf91f7ec72a15b41b182a8c27bcef2d, type: 2}
   _inputQueueSettings:
@@ -3475,7 +3475,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5898374542333973698}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4e8b01a75ed78d4a802039249c9f7ae, type: 3}
   m_Name: 
@@ -3537,7 +3537,7 @@ MonoBehaviour:
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 2
+  UpdateMethod: 1
   BlendUpdateMethod: 1
   LensModeOverride:
     Enabled: 1

@@ -9,8 +9,11 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     [SerializeField] private float dragInAir = 0f;
     [SerializeField] private float normalAlignSpeed = 3f;
     [SerializeField] private float alignSpeed = 8f;
+
+    [Header("Multiplayer")]
     [SerializeField] private PredictedRigidbody _rigidbody;
 
+    [SerializeField] private GameObject visuals;
 
     [Header("CARATTERISTICHE")]
     [SerializeField] private float rotationSpeed = 90f;
@@ -63,7 +66,6 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         }
 
         state.grounded = IsGrounded();
-        Debug.Log("grounded: "+state.grounded);
          if (state.grounded && input.jump)
             {
                 _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -142,7 +144,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         if (PlayerCamera.instance == null)
             return;
 
-        PlayerCamera.instance.SetTarget(transform);
+        PlayerCamera.instance.SetTarget(visuals.transform);
         _cameraAssigned = true;
     }
 
