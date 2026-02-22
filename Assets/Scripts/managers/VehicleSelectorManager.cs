@@ -13,11 +13,11 @@ public class VehicleSelectorManager : MonoBehaviour
     [SerializeField] private UiAnimator stepsBar;
     [SerializeField] private UiAnimator weaponsPanel;
     [SerializeField] private UiAnimator vehicle;
-
-    [SerializeField] private HighlightableElement[] stepButtons;
-
     [SerializeField] private GameObject[] elementsBoxes;
 
+    [SerializeField] private HighlightableElement[] stepButtons;
+    
+    [Header("UI")]
     [SerializeField] private VehicleElement[] weaponElements;
     [SerializeField] private VehicleElement[] baseElements;
     [SerializeField] private VehicleElement[] bodyElements;

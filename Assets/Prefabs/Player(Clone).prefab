@@ -4684,10 +4684,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Composer
   baseElement: {fileID: 7781065830947690619}
   bodyElement: {fileID: 101887246427666807}
-  armorLeftElement: {fileID: 7243694382559279940}
-  armorRightElement: {fileID: 1130261267254283311}
-  armorFrontElement: {fileID: 2801445725965820905}
-  armorBackElement: {fileID: 1991082324505053849}
+  weaponLeftElement: {fileID: 0}
+  weaponRightElement: {fileID: 0}
+  weaponFrontElement: {fileID: 0}
+  weaponBackElement: {fileID: 0}
   vehicle: {fileID: 8302821188733495987}
 --- !u!1 &7740306283905530258
 GameObject:

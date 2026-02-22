@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
@@ -9,17 +10,24 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject InGamePanel;
     [SerializeField] private GameObject[] gameButtons;
     [SerializeField] private TextMeshProUGUI textToShowWhenFinished;
-
+    [SerializeField] private GameObject playPanel;
+    private TMP_InputField IpField;
     public void Awake()
     {
         if (pausePanel != null)
         {
             pausePanel.SetActive(false);
         }
+
+        if (playPanel != null)
+        {
+            IpField = playPanel.transform.Find("IpField").GetComponent<TMP_InputField>();
+        }
     }
 
     public void OnPlayButtonClick()
     {
+        GameManager.Instance.SetNetworkMode(Mode.Host);
         string json = VehicleManager.Instance.GetVehicleJson();
 
         if (string.IsNullOrWhiteSpace(json))
@@ -29,9 +37,52 @@ public class MenuManager : MonoBehaviour
             return;
         }
 
-        GameManager.Instance.LoadScene("multiplayerMovement");
-
+        playPanel.GetComponent<FadeAnimator>().Show();
         AudioManager.Instance.PlayOneShot("notification_ok");
+
+        if (IpField != null)
+        {
+            IpField.text = Utilities.GetLocalIPAddress();
+            GameManager.Instance.SetIpAddress(IpField.text);
+        }
+    }
+
+    public void OnPlayConfirm()
+    {
+        GameManager.Instance.LoadScene("multiplayerMovement");
+    }
+
+    public void OnStartServerOnly()
+    {
+        GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
+        GameManager.Instance.SetNetworkMode(Mode.ServerOnly);
+        GameManager.Instance.LoadScene("multiplayerMovement");
+    }
+
+    public void OnNetworkModeChange(bool isHost)
+    {
+        if (IpField != null)
+        {
+            IpField.readOnly = isHost;
+            if (isHost)
+            {
+                IpField.text = Utilities.GetLocalIPAddress();
+            }
+
+            Image inputBg = IpField.GetComponent<Image>();
+            if (inputBg != null)
+            {
+                inputBg.color = isHost ? new Color(255, 255, 255, 0) : Color.white;
+            }
+
+
+        }
+        GameManager.Instance.SetNetworkMode(isHost ? Mode.Host : Mode.Client);
+    }
+
+    public void OnSelectedIpChange(string selectedIp)
+    {
+        GameManager.Instance.SetIpAddress(selectedIp);
     }
 
 

@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
 
     private bool paused = false;
 
+    private Mode mode = Mode.Host;
+    private string ipAddress = "127.0.0.1";
+
     void Awake()
     {
         if (Instance == null)
@@ -47,8 +50,6 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
-
-
     public void Pause()
     {
         Time.timeScale = 0f;
@@ -64,5 +65,23 @@ public class GameManager : MonoBehaviour
     public bool IsPaused()
     {
         return paused;
+    }
+
+    public void SetNetworkMode(Mode netMode) {
+        mode = netMode;
+    }
+
+    public Mode GetNetworkMode() {
+        return mode;
+    }
+
+    public void SetIpAddress(string newIp)
+    {
+        ipAddress = newIp;
+    }
+
+    public string GetIpAddress()
+    {
+        return ipAddress;
     }
 }
