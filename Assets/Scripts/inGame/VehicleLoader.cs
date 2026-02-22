@@ -1,14 +1,22 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Non legge più dal file in Awake.
+/// Non legge piu' dal file in Awake.
 /// Viene chiamato dalla rete (PurrNet) passando la config del veicolo del player.
 /// </summary>
 public class VehicleLoader : MonoBehaviour
 {
     [SerializeField] private Composer composer;
     private string _currentJson;
+
+    private void OnEnable()
+    {
+        // Force a rebuild after object re-enable/replay.
+        _currentJson = null;
+        EnsureComposer();
+    }
 
     /// <summary>
     /// Applica una configurazione veicolo ricevuta via rete.
@@ -18,8 +26,6 @@ public class VehicleLoader : MonoBehaviour
     {
         if (_currentJson == json)
             return;
-
-        _currentJson = json;
 
         if (string.IsNullOrEmpty(json))
         {
@@ -56,40 +62,66 @@ public class VehicleLoader : MonoBehaviour
         if (!string.IsNullOrEmpty(data.weaponRight))
             list[VehicleElementsKeys.WeaponRight] = Resources.Load<GameObject>("weapons/" + data.weaponRight);
 
-        // Log (come facevi prima)
-        foreach (var kv in list)
-        {
-            if (kv.Value)
-                Debug.Log($"{kv.Key}: {kv.Value.name}");
-            else
-                Debug.LogWarning($"{kv.Key}: prefab non trovato in Resources");
-        }
 
         // Base/body obbligatori
         if (list.TryGetValue(VehicleElementsKeys.Body, out var bodyPrefab) && bodyPrefab &&
             list.TryGetValue(VehicleElementsKeys.Base, out var basePrefab) && basePrefab)
         {
-            composer.baseElement = Instantiate(basePrefab);
-            composer.bodyElement = Instantiate(bodyPrefab);
+            if (!EnsureComposer())
+            {
+                Debug.LogWarning("VehicleLoader: composer non assegnato");
+                return;
+            }
 
-            // Armature: istanzia solo se presenti
-            if (list.TryGetValue(VehicleElementsKeys.WeaponBack, out var back) && back)
-                composer.weaponBackElement = Instantiate(back);
+            try
+            {
+                CleanupPreviousComposition();
 
-            if (list.TryGetValue(VehicleElementsKeys.WeaponFront, out var front) && front)
-                composer.weaponFrontElement = Instantiate(front);
+                composer.baseElement = Instantiate(basePrefab);
+                composer.bodyElement = Instantiate(bodyPrefab);
 
-            if (list.TryGetValue(VehicleElementsKeys.WeaponLeft, out var left) && left)
-                composer.weaponLeftElement = Instantiate(left);
+                // Armature: istanzia solo se presenti
+                if (list.TryGetValue(VehicleElementsKeys.WeaponBack, out var back) && back)
+                    composer.weaponBackElement = Instantiate(back);
 
-            if (list.TryGetValue(VehicleElementsKeys.WeaponRight, out var right) && right)
-                composer.weaponRightElement = Instantiate(right);
+                if (list.TryGetValue(VehicleElementsKeys.WeaponFront, out var front) && front)
+                    composer.weaponFrontElement = Instantiate(front);
 
-            composer.AlignComponents();
+                if (list.TryGetValue(VehicleElementsKeys.WeaponLeft, out var left) && left)
+                    composer.weaponLeftElement = Instantiate(left);
+
+                if (list.TryGetValue(VehicleElementsKeys.WeaponRight, out var right) && right)
+                    composer.weaponRightElement = Instantiate(right);
+
+                composer.AlignComponents();
+                _currentJson = json;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"VehicleLoader: errore durante composizione veicolo: {ex.Message}");
+            }
         }
         else
         {
             Debug.Log("VehicleLoader: Errore durante il caricamento del veicolo (base/body mancanti)");
         }
     }
+
+    private void CleanupPreviousComposition()
+    {
+        if (!EnsureComposer())
+            return;
+
+        composer.ClearRuntimeParts();
+    }
+
+    private bool EnsureComposer()
+    {
+        if (composer != null)
+            return true;
+
+        composer = GetComponentInChildren<Composer>(true);
+        return composer != null;
+    }
 }
+
