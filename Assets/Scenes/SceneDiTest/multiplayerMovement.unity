@@ -2969,7 +2969,7 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   _physicsProvider: 1
-  _updateViewMode: 1
+  _updateViewMode: 2
   _builtInSystems: 31
   _predictedPrefabs: {fileID: 11400000, guid: 0bf91f7ec72a15b41b182a8c27bcef2d, type: 2}
   _inputQueueSettings:
@@ -3464,7 +3464,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4678161769741112451}
-  - component: {fileID: 5898374542333973699}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -3472,19 +3471,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &5898374542333973699
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5898374542333973698}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4e8b01a75ed78d4a802039249c9f7ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
-  _cinemachineCamera: {fileID: 4422345525976924561}
 --- !u!114 &6362895241980486492
 MonoBehaviour:
   m_ObjectHideFlags: 0

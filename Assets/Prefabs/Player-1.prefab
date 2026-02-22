@@ -256,6 +256,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SwipeDetector
   minSwipeDistance: 50
   weaponSystem: {fileID: 3618485675438195215, guid: 4cdb0cfc476b7904990c4dc720e7d538, type: 3}
+  swipedLeft: 0
+  swipedRight: 0
+  swipedUp: 0
+  swipedDown: 0
 --- !u!1 &2315482730086823503
 GameObject:
   m_ObjectHideFlags: 0
