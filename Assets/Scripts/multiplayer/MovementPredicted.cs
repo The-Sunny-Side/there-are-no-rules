@@ -35,13 +35,13 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     private MobileInputManager _inputManager;
     public struct State : IPredictedData<State>
     {
-        public float boostAccumulato ;
-        public float driftingTime ;
+        public float boostAccumulato;
+        public float driftingTime;
         public bool grounded;
         public Vector3 smoothedNormal;
         public bool hasSmoothedNormal;
 
-        
+
 
         public void Dispose() { }
     }
@@ -56,7 +56,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
 
     protected override void Simulate(Input input, ref State state, float delta)
     {
-        CastGroundRaysAndAlign(ref state);
+        CastGroundRaysAndAlign(ref state, delta);
 
         if (Mathf.Abs(input.turn) > 0.0001f)
         {
@@ -65,11 +65,11 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         }
 
         state.grounded = IsGrounded();
-         if (state.grounded && input.jump)
-            {
-                _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                _rigidbody.AddForce(_rigidbody.transform.forward * jumpForce, ForceMode.Impulse);
-            }
+        if (state.grounded && input.jump)
+        {
+            _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            _rigidbody.AddForce(_rigidbody.transform.forward * jumpForce, ForceMode.Impulse);
+        }
         if (state.grounded)
         {
             //_rigidbody.linearDamping = dragOnGround;
@@ -106,19 +106,19 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
                     // boost decay
                     else if (_rigidbody.linearVelocity.sqrMagnitude < speedToStartBoostDecay)
                     {
-                        state.boostAccumulato = Mathf.Max(0f, state.boostAccumulato - Time.fixedDeltaTime);
+                        state.boostAccumulato = Mathf.Max(0f, state.boostAccumulato - delta);
                     }
                     // boost charge
                     else if (state.driftingTime > timeToStartBoostCharge)
                     {
-                        state.boostAccumulato = Mathf.Min(1f, state.boostAccumulato + misalignment * Time.fixedDeltaTime);
+                        state.boostAccumulato = Mathf.Min(1f, state.boostAccumulato + misalignment * delta);
                     }
                     else
                     {
-                        state.driftingTime += Time.fixedDeltaTime;
+                        state.driftingTime += delta;
                     }
 
-                    _rigidbody.linearVelocity *= Mathf.Lerp(1f, 0.9f, misalignment * Time.fixedDeltaTime * sideBreak);
+                    _rigidbody.linearVelocity *= Mathf.Lerp(1f, 0.9f, misalignment * delta * sideBreak);
                 }
             }
         }
@@ -150,11 +150,11 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     protected override void UpdateInput(ref Input input)
     {
         input.jump = _inputManager.jumpTapped;
-       
+
     }
     protected override void GetFinalInput(ref Input input)
     {
-        
+
         float turn = 0f;
         if (_inputManager.rightHeld) turn += 1f;
         if (_inputManager.leftHeld) turn -= 1f;
@@ -172,7 +172,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         return Physics.Raycast(_rigidbody.position, -_rigidbody.transform.up, out _, whenIsGroundLenght, whatIsGroud);
     }
 
-    private void CastGroundRaysAndAlign(ref State state)
+    private void CastGroundRaysAndAlign(ref State state, float delta)
     {
         Vector3 origin = _rigidbody.position;
         Vector3 down = -_rigidbody.transform.up;
@@ -189,7 +189,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
             // angolo sul piano XZ (locale)
             float angle = angleStep * i * Mathf.Deg2Rad;
 
-            // direzione “laterale” intorno all’oggetto (sul piano orizzontale)
+            // direzione ï¿½lateraleï¿½ intorno allï¿½oggetto (sul piano orizzontale)
             Vector3 radial =
                 _rigidbody.transform.right * Mathf.Cos(angle) +
                 _rigidbody.transform.forward * Mathf.Sin(angle);
@@ -235,7 +235,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
             state.smoothedNormal = Vector3.Slerp(
                 state.smoothedNormal,
                 averagedNormal,
-                normalAlignSpeed * Time.fixedDeltaTime
+                normalAlignSpeed * delta
             );
 
             // proietta forward sul piano definito dalla NORMALE SMUSSATA
@@ -251,7 +251,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
             Quaternion newRot = Quaternion.Slerp(
                 _rigidbody.rotation,
                 targetRotation,
-                alignSpeed * Time.fixedDeltaTime
+                alignSpeed * delta
             );
 
             _rigidbody.MoveRotation(newRot);
