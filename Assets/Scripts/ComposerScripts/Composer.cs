@@ -78,10 +78,10 @@ public class Composer : MonoBehaviour
         if (weaponFrontContainer) Utilities.DestroyAllChildren(weaponFrontContainer);
         if (weaponBackContainer) Utilities.DestroyAllChildren(weaponBackContainer);
 
-        AttachArmorToContainer(armorLeftElement, weaponLeftContainer);
-        AttachArmorToContainer(armorRightElement, weaponRightContainer);
-        AttachArmorToContainer(armorFrontElement, weaponFrontContainer);
-        AttachArmorToContainer(armorBackElement, weaponBackContainer);
+        AttachArmorToContainer(weaponLeftElement, weaponLeftContainer);
+        AttachArmorToContainer(weaponRightElement, weaponRightContainer);
+        AttachArmorToContainer(weaponFrontElement, weaponFrontContainer);
+        AttachArmorToContainer(weaponBackElement, weaponBackContainer);
 
         baseElement.transform.SetParent(vehicle.transform, false);
         baseElement.transform.localPosition = new Vector3(0, baseElement.transform.localPosition.y, baseElement.transform.localPosition.z);
@@ -140,10 +140,10 @@ public class Composer : MonoBehaviour
 
         baseElement = null;
         bodyElement = null;
-        armorLeftElement = null;
-        armorRightElement = null;
-        armorFrontElement = null;
-        armorBackElement = null;
+        weaponLeftElement = null;
+        weaponRightElement = null;
+        weaponFrontElement = null;
+        weaponBackElement = null;
     }
 
     private void ClearVehicleChildrenKeepingComposer()

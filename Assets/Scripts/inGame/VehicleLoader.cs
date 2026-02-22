@@ -81,17 +81,17 @@ public class VehicleLoader : MonoBehaviour
                 composer.bodyElement = Instantiate(bodyPrefab);
 
                 // Armature: istanzia solo se presenti
-                if (list.TryGetValue("armorBackElement", out var back) && back)
-                    composer.armorBackElement = Instantiate(back);
+                if (list.TryGetValue(VehicleElementsKeys.WeaponBack, out var back) && back)
+                    composer.weaponBackElement = Instantiate(back);
 
-                if (list.TryGetValue("armorFrontElement", out var front) && front)
-                    composer.armorFrontElement = Instantiate(front);
+                if (list.TryGetValue(VehicleElementsKeys.WeaponFront, out var front) && front)
+                    composer.weaponFrontElement = Instantiate(front);
 
-                if (list.TryGetValue("armorLeftElement", out var left) && left)
-                    composer.armorLeftElement = Instantiate(left);
+                if (list.TryGetValue(VehicleElementsKeys.WeaponLeft, out var left) && left)
+                    composer.weaponLeftElement = Instantiate(left);
 
-                if (list.TryGetValue("armorRightElement", out var right) && right)
-                    composer.armorRightElement = Instantiate(right);
+                if (list.TryGetValue(VehicleElementsKeys.WeaponRight, out var right) && right)
+                    composer.weaponRightElement = Instantiate(right);
 
                 composer.AlignComponents();
                 _currentJson = json;
