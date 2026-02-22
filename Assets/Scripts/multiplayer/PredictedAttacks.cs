@@ -25,22 +25,22 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
             if (_swipeDetector.swipedUp)
             {
                 input.useFront = _swipeDetector.swipedUp;
-                _swipeDetector.swipeUp = false;
+                _swipeDetector.swipedUp = false;
             }
             if (_swipeDetector.swipedDown)
             {
                 input.useBack = _swipeDetector.swipedDown;
-                _swipeDetector.swipeDown = false;
+                _swipeDetector.swipedDown = false;
             }
             if (_swipeDetector.swipedRight)
             {
                 input.useRight = _swipeDetector.swipedRight;
-                _swipeDetector.swipeRight = false;
+                _swipeDetector.swipedRight = false;
             }
             if (_swipeDetector.swipedLeft)
             {
                 input.useLeft = _swipeDetector.swipedLeft;
-                _swipeDetector.swipeLeft = false;
+                _swipeDetector.swipedLeft = false;
             }
 
         }
