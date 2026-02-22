@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 7503685315405010670}
   - component: {fileID: -4002540731971505960}
   - component: {fileID: 2434318485548006272}
+  - component: {fileID: 3379998605608418547}
   m_Layer: 0
   m_Name: Player-1
   m_TagString: PlayerSphere
@@ -241,6 +242,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollisionDetector
   pushForce: 500
+--- !u!114 &3379998605608418547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536615153988124585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fae1c52ba2bc98244bfa9d23191937d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwipeDetector
+  minSwipeDistance: 50
+  weaponSystem: {fileID: 3618485675438195215, guid: 4cdb0cfc476b7904990c4dc720e7d538, type: 3}
 --- !u!1 &2315482730086823503
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,10 +502,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Composer
   baseElement: {fileID: 0}
   bodyElement: {fileID: 0}
-  armorLeftElement: {fileID: 0}
-  armorRightElement: {fileID: 0}
-  armorFrontElement: {fileID: 0}
-  armorBackElement: {fileID: 0}
+  weaponLeftElement: {fileID: 0}
+  weaponRightElement: {fileID: 0}
+  weaponFrontElement: {fileID: 0}
+  weaponBackElement: {fileID: 0}
   vehicle: {fileID: 7079017173305837497}
 --- !u!1 &7079017173305837497
 GameObject:
