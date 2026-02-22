@@ -552,10 +552,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Composer
   baseElement: {fileID: 0}
   bodyElement: {fileID: 0}
-  armorLeftElement: {fileID: 3925080907645985337, guid: 1f42a812284932e4e90a538f38063fc2, type: 3}
-  armorRightElement: {fileID: 3925080907645985337, guid: 1f42a812284932e4e90a538f38063fc2, type: 3}
-  armorFrontElement: {fileID: 3925080907645985337, guid: 1f42a812284932e4e90a538f38063fc2, type: 3}
-  armorBackElement: {fileID: 3925080907645985337, guid: 1f42a812284932e4e90a538f38063fc2, type: 3}
+  weaponLeftElement: {fileID: 0}
+  weaponRightElement: {fileID: 0}
+  weaponFrontElement: {fileID: 0}
+  weaponBackElement: {fileID: 0}
   vehicle: {fileID: 867977513}
 --- !u!1 &219156321
 GameObject:
@@ -2988,9 +2988,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 867977514}
-  - component: {fileID: 867977515}
   - component: {fileID: 867977517}
   - component: {fileID: 867977516}
+  - component: {fileID: 867977515}
   m_Layer: 0
   m_Name: Vehicle
   m_TagString: Untagged
@@ -4094,7 +4094,7 @@ GameObject:
   - component: {fileID: 1523274377}
   - component: {fileID: 1523274380}
   m_Layer: 5
-  m_Name: ArmorFront
+  m_Name: FrontWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5769,7 +5769,7 @@ GameObject:
   - component: {fileID: 2122283008}
   - component: {fileID: 2122283009}
   m_Layer: 5
-  m_Name: ArmorSelectorPanel
+  m_Name: WeaponSelectorsPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

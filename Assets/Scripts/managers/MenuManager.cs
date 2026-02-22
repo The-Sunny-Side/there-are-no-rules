@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject InGamePanel;
     [SerializeField] private GameObject[] gameButtons;
     [SerializeField] private TextMeshProUGUI textToShowWhenFinished;
-
+    [SerializeField] private GameObject playPanel;
+    private TMP_InputField IpField;
     public void Awake()
     {
         if (pausePanel != null)
@@ -20,6 +22,7 @@ public class MenuManager : MonoBehaviour
 
     public void OnPlayButtonClick()
     {
+        GameManager.Instance.SetNetworkMode(Mode.Client);
         string json = VehicleManager.Instance.GetVehicleJson();
 
         if (string.IsNullOrWhiteSpace(json))
@@ -29,11 +32,30 @@ public class MenuManager : MonoBehaviour
             return;
         }
 
-        GameManager.Instance.LoadScene("multiplayerMovement");
-
+        playPanel.GetComponent<FadeAnimator>().Show();
         AudioManager.Instance.PlayOneShot("notification_ok");
     }
 
+    public void OnPlayAsHost()
+    {
+        GameManager.Instance.SetNetworkMode(Mode.Host);
+        GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
+        GameManager.Instance.LoadScene("multiplayerMovement");
+    }
+
+    public void OnPlayAsClient()
+    {
+        GameManager.Instance.SetNetworkMode(Mode.Client);
+        GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
+        GameManager.Instance.LoadScene("multiplayerMovement");
+    }
+
+    public void OnStartServerOnly()
+    {
+        GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
+        GameManager.Instance.SetNetworkMode(Mode.ServerOnly);
+        GameManager.Instance.LoadScene("multiplayerMovement");
+    }
 
     public void OnVehicleSelectionButtonClick()
     {

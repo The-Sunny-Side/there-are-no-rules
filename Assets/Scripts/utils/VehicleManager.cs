@@ -7,10 +7,10 @@ public class Vehicle
 {
     public string baseElement;
     public string bodyElement;
-    public string armorLeftElement;
-    public string armorRightElement;
-    public string armorFrontElement;
-    public string armorBackElement;
+    public string weaponLeft;
+    public string weaponRight;
+    public string weaponFront;
+    public string weaponBack;
 
     public bool IsValid()
     {
@@ -23,8 +23,8 @@ public class Vehicle
 public class VehicleManager : MonoBehaviour
 {
     string configPath = "";
-    private string defaultBody = "body1";
-    private string defaultBase = "base1";
+    private string defaultBody = "cube";
+    private string defaultBase = "plane";
 
     private GameObject defaultBaseElement;
     private GameObject defaultBodyElement;
@@ -47,16 +47,16 @@ public class VehicleManager : MonoBehaviour
         }
     }
 
-    public void SaveVehicleData(GameObject baseElement, GameObject bodyElement, GameObject[] armors)
+    public void SaveVehicleData(GameObject baseElement, GameObject bodyElement, GameObject[] weapons)
     {
         Vehicle dataToSave = new Vehicle();
 
         dataToSave.baseElement = baseElement.name;
         dataToSave.bodyElement = bodyElement.name;
-        dataToSave.armorFrontElement = armors[0]?.name ?? null;
-        dataToSave.armorLeftElement = armors[1]?.name ?? null;
-        dataToSave.armorBackElement = armors[2]?.name ?? null;
-        dataToSave.armorRightElement = armors[3]?.name ?? null;
+        dataToSave.weaponFront = weapons[0]?.name ?? null;
+        dataToSave.weaponLeft = weapons[1]?.name ?? null;
+        dataToSave.weaponBack = weapons[2]?.name ?? null;
+        dataToSave.weaponRight = weapons[3]?.name ?? null;
 
         string json = JsonUtility.ToJson(dataToSave, true);
         File.WriteAllText(configPath, json);
@@ -72,37 +72,42 @@ public class VehicleManager : MonoBehaviour
             string json = File.ReadAllText(configPath);
             Vehicle data = JsonUtility.FromJson<Vehicle>(json);
 
-            Debug.Log("Veicolo caricato: " + data.baseElement + " - "+data.bodyElement);
-
             GameObject bodyObj = Resources.Load<GameObject>("bodyElements/" + data.bodyElement);
             GameObject baseObj = Resources.Load<GameObject>("baseElements/" + data.baseElement);
 
-            if (data.armorRightElement != null)
+            if (data.weaponRight != null)
             {
-                GameObject armorRightObj = Resources.Load<GameObject>("armors/" + data.armorRightElement);
-                result["armorRightElement"] = armorRightObj;
+                GameObject weaponRightObj = Resources.Load<GameObject>("weapons/" + data.weaponRight);
+                result[VehicleElementsKeys.WeaponRight] = weaponRightObj;
             }
 
-            if (data.armorFrontElement != null)
+            if (data.weaponFront != null)
             {
-                GameObject armorFrontObj = Resources.Load<GameObject>("armors/" + data.armorFrontElement);
-                result["armorFrontElement"] = armorFrontObj;
+                GameObject weaponFrontObj = Resources.Load<GameObject>("weapons/" + data.weaponFront);
+                result[VehicleElementsKeys.WeaponFront] = weaponFrontObj;
             }
 
-            if (data.armorBackElement != null)
+            if (data.weaponBack != null)
             {
-                GameObject armorRightObj = Resources.Load<GameObject>("armors/" + data.armorBackElement);
-                result["armorBackElement"] = armorRightObj;
+                GameObject weaponBackObj = Resources.Load<GameObject>("weapons/" + data.weaponBack);
+                result[VehicleElementsKeys.WeaponBack] = weaponBackObj;
             }
 
-            if (data.armorLeftElement != null)
+            if (data.weaponLeft != null)
             {
-                GameObject armorLeftObj = Resources.Load<GameObject>("armors/" + data.armorLeftElement);
-                result["armorLeftElement"] = armorLeftObj;
+                GameObject weaponLeftObj = Resources.Load<GameObject>("weapons/" + data.weaponLeft);
+                result[VehicleElementsKeys.WeaponLeft] = weaponLeftObj;
             }
 
-            result["body"] = bodyObj ?? defaultBodyElement;
-            result["base"] = baseObj ?? defaultBaseElement;
+            result[VehicleElementsKeys.Body] = bodyObj ?? defaultBodyElement;
+            result[VehicleElementsKeys.Base] = baseObj ?? defaultBaseElement;
+
+            Debug.Log("Veicolo caricato:");
+            foreach(var item in result)
+            {
+                Debug.Log(item.Key, item.Value);
+            }
+
 
         }
         else

@@ -2,10 +2,10 @@ using System.Collections.Generic;
 
 public static class AnchorNames
 {
-    public const string WeaponLeftAnchor = "armorLeftAnchor";
-    public const string WeaponRightAnchor = "armorRightAnchor";
-    public const string WeaponFrontAnchor = "armorFrontAnchor";
-    public const string WeaponBackAnchor = "armorBackAnchor";
+    public const string WeaponLeftAnchor = "weaponLeftAnchor";
+    public const string WeaponRightAnchor = "weaponRightAnchor";
+    public const string WeaponFrontAnchor = "weaponFrontAnchor";
+    public const string WeaponBackAnchor = "weaponBackAnchor";
     public const string BaseAnchor = "baseAnchor";
     public const string BodyAnchor = "bodyAnchor";
     public const string StandardAnchor = "anchor";

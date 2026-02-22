@@ -13,11 +13,11 @@ public class VehicleSelectorManager : MonoBehaviour
     [SerializeField] private UiAnimator stepsBar;
     [SerializeField] private UiAnimator weaponsPanel;
     [SerializeField] private UiAnimator vehicle;
-
-    [SerializeField] private HighlightableElement[] stepButtons;
-
     [SerializeField] private GameObject[] elementsBoxes;
 
+    [SerializeField] private HighlightableElement[] stepButtons;
+    
+    [Header("UI")]
     [SerializeField] private VehicleElement[] weaponElements;
     [SerializeField] private VehicleElement[] baseElements;
     [SerializeField] private VehicleElement[] bodyElements;
@@ -36,33 +36,40 @@ public class VehicleSelectorManager : MonoBehaviour
     private int selectedBaseIndex = 0;
     private int selectedBodyIndex = 0;
 
+    private Image[] weaponIcons = new Image[4];
+
     void Awake()
     {
+        for(int i=0;i<weaponButtons.Length; i++)
+        {
+            weaponIcons[i] = weaponButtons[i].transform.Find("IconBox").Find("Icon").GetComponent<Image>();
+        }
+
         Dictionary<string, GameObject> loaded = VehicleManager.Instance.LoadVehicleData();
 
         if (loaded != null)
         {
-            if (loaded.ContainsKey("base"))
+            if (loaded.ContainsKey(VehicleElementsKeys.Base))
             {
-                int loadedBaseIndex = Array.FindIndex(baseElements, e => e.element.name == loaded["base"].name);
+                int loadedBaseIndex = Array.FindIndex(baseElements, e => e.element.name == loaded[VehicleElementsKeys.Base].name);
                 if (loadedBaseIndex != -1)
                 {
                     selectedBaseIndex = loadedBaseIndex;
                 }
             }
 
-            if (loaded.ContainsKey("body"))
+            if (loaded.ContainsKey(VehicleElementsKeys.Body))
             {
-                int loadedBodyIndex = Array.FindIndex(bodyElements, e => e.element.name == loaded["body"].name);
+                int loadedBodyIndex = Array.FindIndex(bodyElements, e => e.element.name == loaded[VehicleElementsKeys.Body].name);
                 if (loadedBodyIndex != -1)
                 {
                     selectedBodyIndex = loadedBodyIndex;
                 }
             }
 
-            if (loaded.ContainsKey("armorFrontElement"))
+            if (loaded.ContainsKey(VehicleElementsKeys.WeaponFront))
             {
-                int loadedWeaponIndex = Array.FindIndex(weaponElements, e => e.element.name == loaded["armorFrontElement"].name);
+                int loadedWeaponIndex = Array.FindIndex(weaponElements, e => e.element.name == loaded[VehicleElementsKeys.WeaponFront].name);
                 if (loadedWeaponIndex != -1)
                 {
                     selectedWeaponsIndexes[0] = loadedWeaponIndex;
@@ -70,9 +77,9 @@ public class VehicleSelectorManager : MonoBehaviour
                 }
             }
 
-            if (loaded.ContainsKey("armorLeftElement"))
+            if (loaded.ContainsKey(VehicleElementsKeys.WeaponLeft))
             {
-                int loadedWeaponIndex = Array.FindIndex(weaponElements, e => e.element.name == loaded["armorLeftElement"].name);
+                int loadedWeaponIndex = Array.FindIndex(weaponElements, e => e.element.name == loaded[VehicleElementsKeys.WeaponLeft].name);
                 if (loadedWeaponIndex != -1)
                 {
                     selectedWeaponsIndexes[1] = loadedWeaponIndex;
@@ -80,9 +87,9 @@ public class VehicleSelectorManager : MonoBehaviour
                 }
             }
 
-            if (loaded.ContainsKey("armorBackElement"))
+            if (loaded.ContainsKey(VehicleElementsKeys.WeaponBack))
             {
-                int loadedWeaponIndex = Array.FindIndex(weaponElements, e => e.element.name == loaded["armorBackElement"].name);
+                int loadedWeaponIndex = Array.FindIndex(weaponElements, e => e.element.name == loaded[VehicleElementsKeys.WeaponBack].name);
                 if (loadedWeaponIndex != -1)
                 {
                     selectedWeaponsIndexes[2] = loadedWeaponIndex;
@@ -90,9 +97,9 @@ public class VehicleSelectorManager : MonoBehaviour
                 }
             }
 
-            if (loaded.ContainsKey("armorRightElement"))
+            if (loaded.ContainsKey(VehicleElementsKeys.WeaponRight))
             {
-                int loadedWeaponIndex = Array.FindIndex(weaponElements, e => e.element.name == loaded["armorRightElement"].name);
+                int loadedWeaponIndex = Array.FindIndex(weaponElements, e => e.element.name == loaded[VehicleElementsKeys.WeaponRight].name);
                 if (loadedWeaponIndex != -1)
                 {
                     selectedWeaponsIndexes[3] = loadedWeaponIndex;
@@ -103,7 +110,7 @@ public class VehicleSelectorManager : MonoBehaviour
 
         for (int i = 0; i < weaponButtons.Length; i++)
         {
-            weaponButtons[i].transform.Find("IconBox").Find("Icon").GetComponent<Image>().sprite = weaponElements[selectedWeaponsIndexes[i]].icon;
+            weaponIcons[i].sprite = weaponElements[selectedWeaponsIndexes[i]].icon;
         }
 
         SetStep(0);
@@ -177,7 +184,7 @@ public class VehicleSelectorManager : MonoBehaviour
         }
 
         InitIcons();
-        UpdateActiveSelector();
+        UpdateVehicle();
     }
 
     public void ToggleHudVisibility()
@@ -203,37 +210,39 @@ public class VehicleSelectorManager : MonoBehaviour
     public void SetElement(int elementIndex)
     {
 
+        int indexToDisable = 0;
+
         switch (stepIndex)
         {
             case 0:
                 {
                     if (elementIndex >= baseElements.Length) return;
-                    elementsBoxes[selectedBaseIndex].GetComponent<Outline>().enabled = false;
+                    indexToDisable=selectedBaseIndex;
                     selectedBaseIndex = elementIndex;
-                    elementsBoxes[elementIndex].GetComponent<Outline>().enabled = true;
                 }
                 break;
             case 1:
                 {
                     if (elementIndex >= bodyElements.Length) return;
-                    elementsBoxes[selectedBodyIndex].GetComponent<Outline>().enabled = false;
+                    indexToDisable = selectedBodyIndex;
                     selectedBodyIndex = elementIndex;
-                    elementsBoxes[elementIndex].GetComponent<Outline>().enabled = true;
                 }
                 break;
             case 2:
                 {
                     if (elementIndex >= weaponElements.Length) return;
-                    elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = false;
-                    weaponButtons[selectedWeaponType].transform.Find("IconBox").Find("Icon").GetComponent<Image>().sprite = weaponElements[elementIndex].icon;
+                    indexToDisable = selectedWeaponsIndexes[selectedWeaponType];
+                    weaponIcons[selectedWeaponType].sprite = weaponElements[elementIndex].icon;
                     selectedWeapons[selectedWeaponType] = weaponElements[elementIndex].element;
                     selectedWeaponsIndexes[selectedWeaponType] = elementIndex;
-                    elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = true;
                 }
                 break;
         }
 
-        UpdateActiveSelector();
+        elementsBoxes[indexToDisable].GetComponent<Outline>().enabled = false;
+        elementsBoxes[elementIndex].GetComponent<Outline>().enabled = true;
+
+        UpdateVehicle();
     }
 
     public void SetWeaponType(int type)
@@ -244,7 +253,7 @@ public class VehicleSelectorManager : MonoBehaviour
         weaponButtons[selectedWeaponType].GetComponent<Outline>().enabled = true;
         elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = true;
 
-        UpdateActiveSelector();
+        UpdateVehicle();
     }
 
     public void NextStep()
@@ -273,7 +282,7 @@ public class VehicleSelectorManager : MonoBehaviour
         mr.enabled = active;
     }
 
-    public void UpdateActiveSelector()
+    public void UpdateVehicle()
     {
 
 
@@ -292,12 +301,13 @@ public class VehicleSelectorManager : MonoBehaviour
         composerComponent.baseElement = baseInstance;
         composerComponent.bodyElement = bodyInstance;
 
-        composerComponent.armorFrontElement = Instantiate(selectedWeapons[0], transform);
-        composerComponent.armorLeftElement = Instantiate(selectedWeapons[1], transform);
-        composerComponent.armorBackElement = Instantiate(selectedWeapons[2], transform);
-        composerComponent.armorRightElement = Instantiate(selectedWeapons[3], transform);
+        composerComponent.weaponFrontElement = Instantiate(selectedWeapons[0], transform);
+        composerComponent.weaponLeftElement = Instantiate(selectedWeapons[1], transform);
+        composerComponent.weaponBackElement = Instantiate(selectedWeapons[2], transform);
+        composerComponent.weaponRightElement = Instantiate(selectedWeapons[3], transform);
 
         composerComponent.AlignComponents();
+        vehicle.GetComponent<ObjectRotator>()?.SetupCollider();
 
         switch (stepIndex)
         {
@@ -309,19 +319,14 @@ public class VehicleSelectorManager : MonoBehaviour
                 break;
             case 2:
                 GameObject[] weaponsObjects = new GameObject[] {
-                    composerComponent.armorFrontElement,
-                    composerComponent.armorLeftElement,
-                    composerComponent.armorBackElement,
-                    composerComponent.armorRightElement
+                    composerComponent.weaponFrontElement,
+                    composerComponent.weaponLeftElement,
+                    composerComponent.weaponBackElement,
+                    composerComponent.weaponRightElement
                 };
                 GameObject selectedWeaponPart = weaponsObjects[selectedWeaponType];
                 HighlightSelectedPart(selectedWeaponPart);
-                Animator animator = selectedWeaponPart.GetComponent<Animator>();
-                if (animator != null)
-                {
-                    animator.SetTrigger("activate");
-                }
-
+                selectedWeaponPart.GetComponent<VehicleWeapon>()?.ActivateWeapon();
                 break;
 
         }

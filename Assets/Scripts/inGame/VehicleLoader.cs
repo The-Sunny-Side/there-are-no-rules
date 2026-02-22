@@ -38,23 +38,23 @@ public class VehicleLoader : MonoBehaviour
 
         // base / body
         if (!string.IsNullOrEmpty(data.baseElement))
-            list["base"] = Resources.Load<GameObject>("baseElements/" + data.baseElement);
+            list[VehicleElementsKeys.Base] = Resources.Load<GameObject>("baseElements/" + data.baseElement);
 
         if (!string.IsNullOrEmpty(data.bodyElement))
-            list["body"] = Resources.Load<GameObject>("bodyElements/" + data.bodyElement);
+            list[VehicleElementsKeys.Body] = Resources.Load<GameObject>("bodyElements/" + data.bodyElement);
 
-        // armors (opzionali)
-        if (!string.IsNullOrEmpty(data.armorBackElement))
-            list["armorBackElement"] = Resources.Load<GameObject>("armors/" + data.armorBackElement);
+        // weapons (opzionali)
+        if (!string.IsNullOrEmpty(data.weaponBack))
+            list[VehicleElementsKeys.WeaponBack] = Resources.Load<GameObject>("weapons/" + data.weaponBack);
 
-        if (!string.IsNullOrEmpty(data.armorFrontElement))
-            list["armorFrontElement"] = Resources.Load<GameObject>("armors/" + data.armorFrontElement);
+        if (!string.IsNullOrEmpty(data.weaponFront))
+            list[VehicleElementsKeys.WeaponFront] = Resources.Load<GameObject>("weapons/" + data.weaponFront);
 
-        if (!string.IsNullOrEmpty(data.armorLeftElement))
-            list["armorLeftElement"] = Resources.Load<GameObject>("armors/" + data.armorLeftElement);
+        if (!string.IsNullOrEmpty(data.weaponLeft))
+            list[VehicleElementsKeys.WeaponLeft] = Resources.Load<GameObject>("weapons/" + data.weaponLeft);
 
-        if (!string.IsNullOrEmpty(data.armorRightElement))
-            list["armorRightElement"] = Resources.Load<GameObject>("armors/" + data.armorRightElement);
+        if (!string.IsNullOrEmpty(data.weaponRight))
+            list[VehicleElementsKeys.WeaponRight] = Resources.Load<GameObject>("weapons/" + data.weaponRight);
 
         // Log (come facevi prima)
         foreach (var kv in list)
@@ -66,24 +66,24 @@ public class VehicleLoader : MonoBehaviour
         }
 
         // Base/body obbligatori
-        if (list.TryGetValue("body", out var bodyPrefab) && bodyPrefab &&
-            list.TryGetValue("base", out var basePrefab) && basePrefab)
+        if (list.TryGetValue(VehicleElementsKeys.Body, out var bodyPrefab) && bodyPrefab &&
+            list.TryGetValue(VehicleElementsKeys.Base, out var basePrefab) && basePrefab)
         {
             composer.baseElement = Instantiate(basePrefab);
             composer.bodyElement = Instantiate(bodyPrefab);
 
             // Armature: istanzia solo se presenti
-            if (list.TryGetValue("armorBackElement", out var back) && back)
-                composer.armorBackElement = Instantiate(back);
+            if (list.TryGetValue(VehicleElementsKeys.WeaponBack, out var back) && back)
+                composer.weaponBackElement = Instantiate(back);
 
-            if (list.TryGetValue("armorFrontElement", out var front) && front)
-                composer.armorFrontElement = Instantiate(front);
+            if (list.TryGetValue(VehicleElementsKeys.WeaponFront, out var front) && front)
+                composer.weaponFrontElement = Instantiate(front);
 
-            if (list.TryGetValue("armorLeftElement", out var left) && left)
-                composer.armorLeftElement = Instantiate(left);
+            if (list.TryGetValue(VehicleElementsKeys.WeaponLeft, out var left) && left)
+                composer.weaponLeftElement = Instantiate(left);
 
-            if (list.TryGetValue("armorRightElement", out var right) && right)
-                composer.armorRightElement = Instantiate(right);
+            if (list.TryGetValue(VehicleElementsKeys.WeaponRight, out var right) && right)
+                composer.weaponRightElement = Instantiate(right);
 
             composer.AlignComponents();
         }
