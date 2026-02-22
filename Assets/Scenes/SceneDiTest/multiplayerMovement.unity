@@ -2512,7 +2512,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4230167879cd9415b9dd61e295cb1e15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PurrnetAutoStart
-  mode: 2
+  mode: 0
 --- !u!1 &1819435055
 GameObject:
   m_ObjectHideFlags: 0

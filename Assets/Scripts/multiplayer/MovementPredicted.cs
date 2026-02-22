@@ -12,7 +12,6 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
 
     [Header("Multiplayer")]
     [SerializeField] private PredictedRigidbody _rigidbody;
-
     [SerializeField] private GameObject visuals;
 
     [Header("CARATTERISTICHE")]
