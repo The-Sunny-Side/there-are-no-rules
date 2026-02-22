@@ -9,6 +9,13 @@ public class SwipeDetector : MonoBehaviour
     private Vector2 startPos;
     private bool swiping;
 
+    public bool swipedLeft = false;
+    public bool swipedRight = false;
+
+    public bool swipedUp = false;
+
+    public bool swipedDown = false;
+
     void Start()
     {
         if (weaponSystem == null)
@@ -58,30 +65,18 @@ public class SwipeDetector : MonoBehaviour
 
     void OnSwipeLeft()
     {
-        if (weaponSystem != null)
-        {
-            weaponSystem.ActivateWeapon("left");
-        }
+        swipedLeft = true;
     }
     void OnSwipeRight()
     {
-        if (weaponSystem != null)
-        {
-            weaponSystem.ActivateWeapon("right");
-        }
+        swipedRight = true;
     }
     void OnSwipeUp()
     {
-        if (weaponSystem != null)
-        {
-            weaponSystem.ActivateWeapon("front");
-        }
+        swipedUp = true;
     }
     void OnSwipeDown()
     {
-        if (weaponSystem != null)
-        {
-            weaponSystem.ActivateWeapon("back");
-        }
+        swipedDown = true;
     }
 }

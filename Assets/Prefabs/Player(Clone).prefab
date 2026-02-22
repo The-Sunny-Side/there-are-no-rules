@@ -776,6 +776,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SwipeDetector
   minSwipeDistance: 50
   weaponSystem: {fileID: 3618485675438195215}
+  swipedLeft: 0
+  swipedRight: 0
+  swipedUp: 0
+  swipedDown: 0
 --- !u!1 &1373372129742908248
 GameObject:
   m_ObjectHideFlags: 0
@@ -4240,6 +4244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3ff1d027cf79b479975d5cad650973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollisionDetector
+  pushForce: 10
 --- !u!1 &7220585064020499192
 GameObject:
   m_ObjectHideFlags: 0

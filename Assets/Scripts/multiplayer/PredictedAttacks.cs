@@ -5,11 +5,13 @@ using UnityEngine;
 public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, PredictedAttacks.State>
 {
     private MobileInputManager _inputManager;
+    private SwipeDetector _swipeDetector;
     private Dictionary<string, string> weaponsKey = new Dictionary<string, string>();
 
     protected override void LateAwake()
     {
         _inputManager = MobileInputManager.instance;
+        _swipeDetector = this.GetComponent<SwipeDetector>();
         weaponsKey.Add("front", AnchorNames.WeaponFrontAnchor);
         weaponsKey.Add("back", AnchorNames.WeaponBackAnchor);
         weaponsKey.Add("left", AnchorNames.WeaponLeftAnchor);
@@ -18,11 +20,38 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
     }
     protected override void UpdateInput(ref Input input)
     {
+        if (Application.isMobilePlatform)
+        {
+            if (_swipeDetector.swipedUp)
+            {
+                input.useFront = _swipeDetector.swipedUp;
+                _swipeDetector.swipedUp = false;
+            }
+            if (_swipeDetector.swipedDown)
+            {
+                input.useBack = _swipeDetector.swipedDown;
+                _swipeDetector.swipedDown = false;
+            }
+            if (_swipeDetector.swipedRight)
+            {
+                input.useRight = _swipeDetector.swipedRight;
+                _swipeDetector.swipedRight = false;
+            }
+            if (_swipeDetector.swipedLeft)
+            {
+                input.useLeft = _swipeDetector.swipedLeft;
+                _swipeDetector.swipedLeft = false;
+            }
 
-        input.useFront = _inputManager.slideUpHeld;
-        input.useBack= _inputManager.slideDownHeld;
-        input.useRight = _inputManager.slideRightHeld;
-        input.useLeft=_inputManager.slideLeftHeld;
+        }
+        else
+        {
+            input.useFront = _inputManager.slideUpHeld;
+            input.useBack = _inputManager.slideDownHeld;
+            input.useRight = _inputManager.slideRightHeld;
+            input.useLeft = _inputManager.slideLeftHeld;
+        }
+
 
     }
     public struct Input : IPredictedData
@@ -59,8 +88,8 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
         {
             ActivateWeapon("right");
         }
-        
-}
+
+    }
     public void ActivateWeapon(string direction)
     {
         if (weaponsKey.TryGetValue(direction, out string partName))
