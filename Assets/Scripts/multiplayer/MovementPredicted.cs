@@ -72,7 +72,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         }
         if (state.grounded)
         {
-            //_rigidbody.linearDamping = dragOnGround;
+            _rigidbody.GetComponent<Rigidbody>().linearDamping = dragOnGround;
 
             if (Physics.Raycast(_rigidbody.position, -Vector3.up, out RaycastHit hit, whenIsGroundLenght, whatIsGroud))
             {
@@ -124,7 +124,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         }
         else
         {
-            ///_rigidbody.linearDamping = dragInAir;
+            _rigidbody.GetComponent<Rigidbody>().linearDamping = dragInAir;
             _rigidbody.AddForce(Vector3.down * gravityForce);
         }
     }
