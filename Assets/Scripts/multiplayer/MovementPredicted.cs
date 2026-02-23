@@ -58,10 +58,10 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     {
         CastGroundRaysAndAlign(ref state, delta);
 
-        if (Mathf.Abs(input.turn) > 0.0001f)
+       if (Mathf.Abs(input.turn) > 0.0001f)
         {
-            Quaternion d = Quaternion.Euler(0f, input.turn * rotationSpeed * delta, 0f);
-            _rigidbody.MoveRotation(_rigidbody.rotation * d);
+            Vector3 axis = state.hasSmoothedNormal ? state.smoothedNormal : _rigidbody.transform.up;
+            _rigidbody.AddTorque(axis * (input.turn * rotationSpeed), ForceMode.Acceleration);
         }
 
         state.grounded = IsGrounded();

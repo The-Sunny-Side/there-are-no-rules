@@ -129,7 +129,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 70
   m_LinearDamping: 0
-  m_AngularDamping: 4
+  m_AngularDamping: 5
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: PurrNet.Prediction::PurrNet.Prediction.PredictedTransform
   _graphics: {fileID: 7187076952809658435}
-  _floatAccuracy: 1
+  _floatAccuracy: 0
   _interpolationSettings: {fileID: 11400000, guid: 4a8aa8e44e23cfd4a8d4387ef3f36173, type: 2}
   _unparentGraphics: 0
   _characterControllerPatch: 0
@@ -200,7 +200,7 @@ MonoBehaviour:
   alignSpeed: 30
   _rigidbody: {fileID: 4360163942621179187}
   visuals: {fileID: 2315482730086823503}
-  rotationSpeed: 400
+  rotationSpeed: 80
   jumpForce: 800
   sideBreak: 10
   forwardSpeed: 0.5
