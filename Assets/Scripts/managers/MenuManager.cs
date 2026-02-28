@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
@@ -11,7 +10,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject[] gameButtons;
     [SerializeField] private TextMeshProUGUI textToShowWhenFinished;
     [SerializeField] private GameObject playPanel;
-    private TMP_InputField IpField;
+
     public void Awake()
     {
         if (pausePanel != null)
@@ -47,7 +46,7 @@ public class MenuManager : MonoBehaviour
     {
         GameManager.Instance.SetNetworkMode(Mode.Client);
         GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
-        GameManager.Instance.LoadScene("multiplayerMovement");
+        GameManager.Instance.LoadScene("LocalLobbyLoadingScene");
     }
 
     public void OnStartServerOnly()
@@ -111,16 +110,12 @@ public class MenuManager : MonoBehaviour
     {
         InGamePanel.SetActive(false);
         finishedGamePanel.SetActive(true);
-
         textToShowWhenFinished.text = "Hai perso, mi disp!";
     }
     public void OnWinMatch()
     {
         InGamePanel.SetActive(false);
-
         finishedGamePanel.SetActive(true);
         textToShowWhenFinished.text = "Congratulazione hai vinto!";
     }
-
-
 }

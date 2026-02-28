@@ -223,6 +223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3ff1d027cf79b479975d5cad650973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollisionDetector
+  pushForce: 50
 --- !u!114 &6720866229993928931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,15 +249,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a75e962b4b42134cb81d3ccfab779f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleNetConfig
-  _isSetup: 0
-  _prefabId: -2147483648
-  _componentIndex: -2147483648
-  _shouldBePooled: 0
-  _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
-  _directChildren: []
-  _networkRules: {fileID: 0}
-  _visitiblityRules: {fileID: 0}
+  _repeatInputFactor: 0.8
+  _extrapolateInput: 1
   loader: {fileID: 6720866229993928931}
 --- !u!114 &7685918027606414319
 MonoBehaviour:
@@ -314,6 +308,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b4c180ebd0742d4e920b98a0366be6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleWeaponSystem
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
 --- !u!114 &5883323003369229598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,6 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3ff1d027cf79b479975d5cad650973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollisionDetector
+  pushForce: 70
 --- !u!114 &1595470094853899305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,6 +344,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SwipeDetector
   minSwipeDistance: 50
   weaponSystem: {fileID: 6010306748768002747}
+  swipedLeft: 0
+  swipedRight: 0
+  swipedUp: 0
+  swipedDown: 0
 --- !u!1 &4530243595185391314
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,10 +394,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Composer
   baseElement: {fileID: 0}
   bodyElement: {fileID: 0}
-  armorLeftElement: {fileID: 0}
-  armorRightElement: {fileID: 0}
-  armorFrontElement: {fileID: 0}
-  armorBackElement: {fileID: 0}
+  weaponLeftElement: {fileID: 0}
+  weaponRightElement: {fileID: 0}
+  weaponFrontElement: {fileID: 0}
+  weaponBackElement: {fileID: 0}
   vehicle: {fileID: 3271388180623259490}
 --- !u!1 &6356348169398261335
 GameObject:

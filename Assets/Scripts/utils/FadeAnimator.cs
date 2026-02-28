@@ -12,7 +12,7 @@ public class FadeAnimator : UiAnimator
     void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
-        HideInstant();
+        if(!initiallyVisible) HideInstant();
     }
     public override void Show()
     {

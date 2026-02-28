@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 
     private bool paused = false;
 
-    private Mode mode = Mode.Client;
+    private Mode mode = Mode.Host;
     private string ipAddress = "127.0.0.1";
 
     void Awake()

@@ -417,6 +417,8 @@ MonoBehaviour:
   IsVisible: 0
   initiallyVisible: 0
   interactableOnAnimation: 0
+  showOnStart: 0
+  hideOnStart: 0
   duration: 0.1
 --- !u!225 &153745610
 CanvasGroup:
@@ -1157,6 +1159,8 @@ MonoBehaviour:
   IsVisible: 0
   initiallyVisible: 1
   interactableOnAnimation: 0
+  showOnStart: 0
+  hideOnStart: 0
   duration: 0.1
 --- !u!225 &443416193
 CanvasGroup:
@@ -1464,13 +1468,6 @@ MonoBehaviour:
   stepsBar: {fileID: 725104789}
   weaponsPanel: {fileID: 2122283009}
   vehicle: {fileID: 867977516}
-  stepButtons:
-  - element: {fileID: 1361327185}
-    highlight: {fileID: 971513308}
-  - element: {fileID: 1654209360}
-    highlight: {fileID: 1426704623}
-  - element: {fileID: 1452866208}
-    highlight: {fileID: 1893354035}
   elementsBoxes:
   - {fileID: 2139671589}
   - {fileID: 693143425}
@@ -1480,6 +1477,13 @@ MonoBehaviour:
   - {fileID: 97038015}
   - {fileID: 2007868510}
   - {fileID: 1905901936}
+  stepButtons:
+  - element: {fileID: 1361327185}
+    highlight: {fileID: 971513308}
+  - element: {fileID: 1654209360}
+    highlight: {fileID: 1426704623}
+  - element: {fileID: 1452866208}
+    highlight: {fileID: 1893354035}
   weaponElements:
   - element: {fileID: 3925080907645985337, guid: a536f05c114be2448b11828a296cb27e, type: 3}
     icon: {fileID: 21300000, guid: 0b2ca8e8f53a3cf4da8a31fddf506d35, type: 3}
@@ -2548,7 +2552,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -461, y: 216.7}
+  m_AnchoredPosition: {x: -461, y: -46.78}
   m_SizeDelta: {x: 364.6, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &725104789
@@ -2563,9 +2567,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9484b5c429b421a40b6c7efc3994dabb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlideAnimator
-  IsVisible: 1
-  initiallyVisible: 1
+  IsVisible: 0
+  initiallyVisible: 0
   interactableOnAnimation: 1
+  showOnStart: 1
+  hideOnStart: 0
   duration: 0.25
   hiddenPosition: {x: -461, y: -46.78}
   shownPosition: {x: -461, y: 216.7}
@@ -2626,7 +2632,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 230, y: -481.4}
+  m_AnchoredPosition: {x: -230, y: -481.4}
   m_SizeDelta: {x: 290, y: 389.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &729519134
@@ -2680,8 +2686,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlideAnimator
   IsVisible: 0
-  initiallyVisible: 1
+  initiallyVisible: 0
   interactableOnAnimation: 1
+  showOnStart: 1
+  hideOnStart: 0
   duration: 0.35
   hiddenPosition: {x: -230, y: -481.4}
   shownPosition: {x: 230, y: -481.4}
@@ -3046,6 +3054,8 @@ MonoBehaviour:
   IsVisible: 1
   initiallyVisible: 1
   interactableOnAnimation: 0
+  showOnStart: 0
+  hideOnStart: 0
   duration: 0.25
   hiddenPosition: {x: 0, y: -1}
   shownPosition: {x: 0, y: 0}
@@ -3096,6 +3106,7 @@ MonoBehaviour:
   InGamePanel: {fileID: 0}
   gameButtons: []
   textToShowWhenFinished: {fileID: 0}
+  playPanel: {fileID: 0}
 --- !u!4 &958793976
 Transform:
   m_ObjectHideFlags: 0
@@ -5863,6 +5874,8 @@ MonoBehaviour:
   IsVisible: 0
   initiallyVisible: 0
   interactableOnAnimation: 1
+  showOnStart: 0
+  hideOnStart: 0
   duration: 0.35
   hiddenPosition: {x: 200, y: -496}
   shownPosition: {x: -212, y: -496}

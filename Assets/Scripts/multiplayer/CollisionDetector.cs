@@ -48,6 +48,10 @@ public class CollisionDetector : PredictedIdentity<CollisionDetector.State>
             _pendingHit = true;
 
             _pendingPushDirection = (transform.position - collider.transform.position).normalized;
+
+            weaponPart.SetWeaponHitState(0);
+
+            Debug.Log($"Collision detected with {collider.gameObject.name}, applying push force in direction {_pendingPushDirection}");
         }
     }
 }

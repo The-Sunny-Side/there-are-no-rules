@@ -13,6 +13,12 @@ public abstract class UiAnimator: MonoBehaviour
     [Header("Element interactible during animation")]
     public bool interactableOnAnimation = false;
 
+    [Header("Element animation show on start")]
+    public bool showOnStart = false;
+
+    [Header("Element animation hide on start")]
+    public bool hideOnStart = false;
+
     abstract public void Show();
     abstract public void Hide();
     abstract public void ShowInstant();
@@ -22,5 +28,11 @@ public abstract class UiAnimator: MonoBehaviour
         IsVisible = visible;
         if (visible) Show();
         else Hide();
+    }
+
+    public void Start()
+    {
+        if(showOnStart) Show();
+        else if (hideOnStart) Hide();
     }
 }
