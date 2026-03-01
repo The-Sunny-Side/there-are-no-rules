@@ -5,7 +5,6 @@ using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 public class SwipeDetector : MonoBehaviour
 {
     public float minSwipeDistance = 50f;
-    [SerializeField] private VehicleWeaponSystem weaponSystem;
     private Vector2 startPos;
     private bool swiping;
 
@@ -15,14 +14,6 @@ public class SwipeDetector : MonoBehaviour
     public bool swipedUp = false;
 
     public bool swipedDown = false;
-
-    void Start()
-    {
-        if (weaponSystem == null)
-        {
-            weaponSystem = GetComponent<VehicleWeaponSystem>();
-        }
-    }
 
     void OnEnable()
     {
