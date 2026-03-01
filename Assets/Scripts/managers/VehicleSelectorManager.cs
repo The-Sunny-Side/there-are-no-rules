@@ -6,17 +6,15 @@ using UnityEngine.UI;
 public class VehicleSelectorManager : MonoBehaviour
 {
     [SerializeField] private Composer Composer;
-
-    [SerializeField] private UiAnimator prevStepButton;
-    [SerializeField] private UiAnimator nextStepButton;
     [SerializeField] private UiAnimator elementsPanel;
     [SerializeField] private UiAnimator stepsBar;
     [SerializeField] private UiAnimator weaponsPanel;
-    [SerializeField] private UiAnimator vehicle;
+    [SerializeField] private UiAnimator topButtons;
+    [SerializeField] private GameObject vehicle;
     [SerializeField] private GameObject[] elementsBoxes;
 
-    [SerializeField] private HighlightableElement[] stepButtons;
-    
+    [SerializeField] private GameObject[] stepButtons;
+
     [Header("UI")]
     [SerializeField] private VehicleElement[] weaponElements;
     [SerializeField] private VehicleElement[] baseElements;
@@ -35,14 +33,14 @@ public class VehicleSelectorManager : MonoBehaviour
     private int[] selectedWeaponsIndexes = new int[4] { 0, 0, 0, 0 };
     private int selectedBaseIndex = 0;
     private int selectedBodyIndex = 0;
-
     private Image[] weaponIcons = new Image[4];
 
     void Awake()
     {
-        for(int i=0;i<weaponButtons.Length; i++)
+        for (int i = 0; i < weaponButtons.Length; i++)
         {
-            weaponIcons[i] = weaponButtons[i].transform.Find("IconBox").Find("Icon").GetComponent<Image>();
+            GameObject buttonObj = weaponButtons[i].transform.Find("IconBox").Find("Icon").gameObject;
+            weaponIcons[i] = buttonObj.GetComponent<Image>();
         }
 
         Dictionary<string, GameObject> loaded = VehicleManager.Instance.LoadVehicleData();
@@ -139,7 +137,7 @@ public class VehicleSelectorManager : MonoBehaviour
 
         for (int i = 0; i < elementsBoxes.Length; i++)
         {
-            elementsBoxes[i].GetComponent<Outline>().enabled = false;
+            HighlightButton(elementsBoxes[i], false);
 
             if (i < actualParts.Length)
             {
@@ -148,36 +146,36 @@ public class VehicleSelectorManager : MonoBehaviour
             else
                 elementsBoxes[i].transform.Find("Icon").GetComponent<Image>().sprite = emptyPart;
         }
-
-        elementsBoxes[partIndex].GetComponent<Outline>().enabled = true;
+        HighlightButton(elementsBoxes[partIndex]);
     }
+
+    public void HighlightButton(GameObject button, bool highlight = true)
+    {
+        button.GetComponent<Image>().color = highlight ? Config.UiConfig.selectedColor : Config.UiConfig.baseColor;
+    }
+
 
     public void SetStep(int step)
     {
-        stepButtons[stepIndex].highlight.SetActive(false);
+        HighlightButton(stepButtons[stepIndex].gameObject, false);
         stepIndex = step;
-        stepButtons[stepIndex].highlight.SetActive(true);
+        HighlightButton(stepButtons[stepIndex].gameObject);
 
         switch (step)
         {
             case 0:
                 {
-                    prevStepButton.Hide();
-                    nextStepButton.Show();
                     weaponsPanel.Hide();
                 }
                 break;
             case 1:
                 {
-                    prevStepButton.Show();
-                    nextStepButton.Show();
                     weaponsPanel.Hide();
                 }
                 break;
             case 2:
                 {
-                    prevStepButton.Show();
-                    nextStepButton.Hide();
+                    HighlightButton(weaponButtons[selectedWeaponType], true);
                     weaponsPanel.Show();
                 }
                 break;
@@ -187,12 +185,11 @@ public class VehicleSelectorManager : MonoBehaviour
         UpdateVehicle();
     }
 
-    public void ToggleHudVisibility()
+    public void SetHudVisibility(bool visible)
     {
-        isVisible = !isVisible;
+        isVisible = visible;
         if (isVisible)
         {
-            vehicle.Show();
             elementsPanel.Show();
             stepsBar.Show();
             if (stepIndex == 2)
@@ -200,11 +197,15 @@ public class VehicleSelectorManager : MonoBehaviour
         }
         else
         {
-            vehicle.Hide();
             elementsPanel.Hide();
             stepsBar.Hide();
             weaponsPanel.Hide();
         }
+    }
+
+    public void ToggleHudVisibility()
+    {
+        SetHudVisibility(!isVisible);
     }
 
     public void SetElement(int elementIndex)
@@ -217,7 +218,7 @@ public class VehicleSelectorManager : MonoBehaviour
             case 0:
                 {
                     if (elementIndex >= baseElements.Length) return;
-                    indexToDisable=selectedBaseIndex;
+                    indexToDisable = selectedBaseIndex;
                     selectedBaseIndex = elementIndex;
                 }
                 break;
@@ -239,20 +240,19 @@ public class VehicleSelectorManager : MonoBehaviour
                 break;
         }
 
-        elementsBoxes[indexToDisable].GetComponent<Outline>().enabled = false;
-        elementsBoxes[elementIndex].GetComponent<Outline>().enabled = true;
+        HighlightButton(elementsBoxes[indexToDisable], false);
+        HighlightButton(elementsBoxes[elementIndex]);
 
         UpdateVehicle();
     }
 
     public void SetWeaponType(int type)
     {
-        elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = false;
-        weaponButtons[selectedWeaponType].GetComponent<Outline>().enabled = false;
+        HighlightButton(weaponButtons[selectedWeaponType], false);
+        HighlightButton(elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]], false);
         selectedWeaponType = type;
-        weaponButtons[selectedWeaponType].GetComponent<Outline>().enabled = true;
-        elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]].GetComponent<Outline>().enabled = true;
-
+        HighlightButton(weaponButtons[selectedWeaponType], true);
+        HighlightButton(elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]], true);
         UpdateVehicle();
     }
 
@@ -270,9 +270,19 @@ public class VehicleSelectorManager : MonoBehaviour
 
     public void FinalizeVehicle()
     {
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        SetHudVisibility(false);
+        topButtons.Hide();
+
+        UiLoader.Instance?.Show();
+
         GameObject baseElement = baseElements[selectedBaseIndex].element;
         GameObject bodyElement = bodyElements[selectedBodyIndex].element;
         VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement, selectedWeapons);
+        StartCoroutine(Utilities.DelayedEvent((() =>
+        {
+            GameManager.Instance?.GoToHomeScreen();
+        }), 0.7f));
     }
 
     private void HighlightSelectedPart(GameObject part, bool active = true)

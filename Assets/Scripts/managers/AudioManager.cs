@@ -32,11 +32,6 @@ public class AudioManager : MonoBehaviour
         InitLibrary();
     }
 
-    void Start()
-    {
-        Instance.PlayBackground("background_menu");
-    }
-
     private void InitLibrary()
     {
         foreach (Sound s in backgroundClips)

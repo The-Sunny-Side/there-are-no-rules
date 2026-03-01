@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
+using UnityEngine.Events;
 
 public static class Utilities
 {
@@ -46,5 +48,16 @@ public static class Utilities
             Debug.LogError("Errore IP: " + e.Message);
         }
         return localIP;
+    }
+
+    public static void DefaultCallback(){}
+    public static void DefaultCallback(string p) { }
+    public static void DefaultCallback(bool p) { }
+    public static void DefaultCallback(int p) { }
+
+    public static IEnumerator DelayedEvent(UnityAction callback = null, float timeout = 0.5f)
+    {
+        yield return new WaitForSeconds(timeout);
+        callback();
     }
 }

@@ -60,7 +60,7 @@ public class VehicleManager : MonoBehaviour
 
         string json = JsonUtility.ToJson(dataToSave, true);
         File.WriteAllText(configPath, json);
-        GameManager.Instance.GoToHomeScreen();
+
         Debug.Log("Veicolo salvato: " + json);
     }
 
