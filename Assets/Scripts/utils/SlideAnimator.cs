@@ -28,7 +28,7 @@ public class SlideAnimator : UiAnimator
         if (!IsVisible)
         {
             IsVisible = true;
-            StartAnim(shownPosition, true);
+            StartAnim(shownPosition, true, false);
         }
     }
 
@@ -37,18 +37,20 @@ public class SlideAnimator : UiAnimator
         if (IsVisible)
         {
             IsVisible = false;
-            StartAnim(hiddenPosition, noHide);
+            StartAnim(hiddenPosition, noHide, true);
         }
     }
 
-    private void StartAnim(Vector2 targetPos, bool interactable)
+    private void StartAnim(Vector2 targetPos, bool interactable, bool hide)
     {
         if (anim != null) StopCoroutine(anim);
-        anim = StartCoroutine(Slide(targetPos, interactable));
+        anim = StartCoroutine(Slide(targetPos, interactable, hide));
     }
 
-    private IEnumerator Slide(Vector2 targetPos, bool interactable)
+    private IEnumerator Slide(Vector2 targetPos, bool interactable, bool hide)
     {
+        yield return new WaitForSeconds(hide ? onHideDelay : onShowDelay);
+
         canvasGroup.interactable = interactableOnAnimation;
         canvasGroup.blocksRaycasts = interactableOnAnimation;
 
@@ -57,9 +59,9 @@ public class SlideAnimator : UiAnimator
 
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime; // prova con deltaTime normale
+            elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
-            t = Mathf.SmoothStep(0f, 1f, t); // easing
+            t = Mathf.SmoothStep(0f, 1f, t);
 
             rectTransform.anchoredPosition =
                 Vector2.LerpUnclamped(startPos, targetPos, t);

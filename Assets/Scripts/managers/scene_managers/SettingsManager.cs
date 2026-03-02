@@ -8,8 +8,8 @@ public class SettingsManager : MonoBehaviour
 
     void Start()
     {
-        volumeSlider.value=AudioManager.Instance.volume;
-        audioToggle.SetIsOnWithoutNotify(AudioManager.Instance.audioEnabled);
+        volumeSlider.value=AudioManager.Instance?.volume??0;
+        audioToggle.SetIsOnWithoutNotify(AudioManager.Instance?.audioEnabled??false);
 
         volumeSlider.onValueChanged.AddListener(UpdateVolume);
         audioToggle.onValueChanged.AddListener(OnToggleAudio);
@@ -23,19 +23,19 @@ public class SettingsManager : MonoBehaviour
 
     public void UpdateVolume(float volume)
     {
-        AudioManager.Instance.SetVolume(volume);
+        AudioManager.Instance?.SetVolume(volume);
     }
 
     public void OnBackButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.LoadScene("MainScene");
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        GameManager.Instance?.LoadScene("MainScene");
     }
 
     public void OnToggleAudio(bool isOn)
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
-        AudioManager.Instance.ToggleAudio();
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.ToggleAudio();
 
     }
 }

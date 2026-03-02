@@ -5,16 +5,9 @@ public class VehicleWeaponPart : MonoBehaviour
 
     public VehicleWeapon mainWeapon;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void SetWeaponHitState(int state)
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        mainWeapon.SetWeaponHitState(state);
     }
 
     public void SetMainWeapon(VehicleWeapon weapon)

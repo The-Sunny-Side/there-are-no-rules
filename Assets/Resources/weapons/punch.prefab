@@ -117,9 +117,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -244,7 +244,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VeichleWeapon
   isHitting: 0
-  weaponParts: []
 --- !u!1 &5934514489664304774 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1449689828313570946, guid: 68b3e72aa0a04154ea41882296af2e69, type: 3}

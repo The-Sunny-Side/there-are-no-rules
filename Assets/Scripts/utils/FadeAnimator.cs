@@ -1,10 +1,14 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class FadeAnimator : UiAnimator
 {
     [SerializeField] private float duration = 0.25f;
+
+    private float maxAlpha = 1f;
+    private float minAlpha = 0f;
 
     private CanvasGroup canvasGroup;
     private Coroutine anim;
@@ -12,46 +16,49 @@ public class FadeAnimator : UiAnimator
     void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
-        HideInstant();
+        if (!initiallyVisible) HideInstant();
     }
     public override void Show()
     {
-        IsVisible=true;
-        StartAnim(1f, true);
+        IsVisible = true;
+        StartAnim(false, interactableOnAnimation);
     }
 
     public override void Hide()
     {
-        IsVisible=false;
-        StartAnim(0f, false);
+        IsVisible = false;
+        StartAnim(true, interactableOnAnimation);
     }
 
-    private void StartAnim(float targetAlpha, bool interactable)
+    private void StartAnim(bool hide, bool interactable)
     {
         if (anim != null) StopCoroutine(anim);
-        anim = StartCoroutine(Fade(targetAlpha, interactable));
+        anim = StartCoroutine(Fade(hide, interactableOnAnimation, hide ? onHide : onShow));
     }
 
-    private IEnumerator Fade(float target, bool interactable)
+    private IEnumerator Fade(bool hide, bool interactable, UnityEvent onEnd)
     {
+        yield return new WaitForSeconds(hide?onHideDelay:onShowDelay);
+
         float start = canvasGroup.alpha;
         float t = 0f;
 
         while (t < duration)
         {
             t += Time.unscaledDeltaTime;
-            canvasGroup.alpha = Mathf.Lerp(start, target, t / duration);
+            canvasGroup.alpha = Mathf.Lerp(start, hide ? minAlpha : maxAlpha, t / duration);
             yield return null;
         }
 
-        canvasGroup.alpha = target;
+        canvasGroup.alpha = hide ? minAlpha : maxAlpha;
         canvasGroup.interactable = interactable;
         canvasGroup.blocksRaycasts = interactable;
+        onEnd?.Invoke();
     }
 
     public override void HideInstant()
     {
-        IsVisible=false;
+        IsVisible = false;
         if (canvasGroup != null)
         {
             canvasGroup.alpha = 0f;
@@ -62,7 +69,7 @@ public class FadeAnimator : UiAnimator
 
     public override void ShowInstant()
     {
-        IsVisible=true;
+        IsVisible = true;
         if (canvasGroup != null)
         {
             canvasGroup.alpha = 1f;

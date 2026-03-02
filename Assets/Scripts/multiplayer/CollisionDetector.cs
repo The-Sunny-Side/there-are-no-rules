@@ -39,15 +39,36 @@ public class CollisionDetector : PredictedIdentity<CollisionDetector.State>
         _pendingPushDirection = Vector3.zero;
     }
 
-    private void OnTriggerEnter(Collider collider)
+    private void OnCollisionEnter(Collision col)
     {
-        VehicleWeaponPart weaponPart = collider.gameObject.GetComponent<VehicleWeaponPart>();
+        HandleWeaponContact(col.collider, "OnCollisionEnter");
+    }
 
-        if (weaponPart && weaponPart.IsHitting())
-        {
-            _pendingHit = true;
+    private void HandleWeaponContact(Collider otherCollider, string source)
+    {
+        if (!otherCollider)
+            return;
 
-            _pendingPushDirection = (transform.position - collider.transform.position).normalized;
-        }
+        VehicleWeaponPart weaponPart = otherCollider.GetComponent<VehicleWeaponPart>();
+        if (!weaponPart)
+            weaponPart = otherCollider.GetComponentInParent<VehicleWeaponPart>();
+
+        if (!weaponPart)
+            return;
+
+        if (weaponPart.transform.root == transform.root)
+            return;
+
+        Debug.Log($"{source}: {otherCollider.gameObject.name} is weapon: true");
+
+        if (!weaponPart.IsHitting())
+            return;
+
+        Vector3 hitPoint = otherCollider.ClosestPoint(transform.position);
+
+        _pendingHit = true;
+        _pendingPushDirection = (transform.position - hitPoint).normalized;
+        weaponPart.SetWeaponHitState(0);
+        Debug.Log($"Hit from {otherCollider.gameObject.name}, applying push force in direction {_pendingPushDirection}");
     }
 }

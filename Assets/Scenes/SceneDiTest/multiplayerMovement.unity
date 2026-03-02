@@ -1354,6 +1354,7 @@ MonoBehaviour:
   gameButtons: []
   textToShowWhenFinished: {fileID: 967953790}
   playPanel: {fileID: 0}
+  menuButtons: {fileID: 0}
 --- !u!4 &1118415734
 Transform:
   m_ObjectHideFlags: 0
@@ -1428,7 +1429,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SwipeDetector
   minSwipeDistance: 50
-  weaponSystem: {fileID: 0}
   swipedLeft: 0
   swipedRight: 0
   swipedUp: 0

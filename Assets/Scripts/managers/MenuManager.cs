@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
@@ -11,7 +11,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject[] gameButtons;
     [SerializeField] private TextMeshProUGUI textToShowWhenFinished;
     [SerializeField] private GameObject playPanel;
-    private TMP_InputField IpField;
+    [SerializeField] private UiAnimator menuButtons;
+
     public void Awake()
     {
         if (pausePanel != null)
@@ -23,62 +24,83 @@ public class MenuManager : MonoBehaviour
     public void OnPlayButtonClick()
     {
         GameManager.Instance.SetNetworkMode(Mode.Client);
+        AudioManager.Instance?.PlayOneShot("notification_ok");
         string json = VehicleManager.Instance.GetVehicleJson();
 
         if (string.IsNullOrWhiteSpace(json))
         {
-            GameManager.Instance.LoadScene("VehicleSelectionScene");
-            AudioManager.Instance.PlayOneShot("notification_ok");
+            UiLoader.Instance?.Show();
+            StartCoroutine(Utilities.DelayedEvent((() =>
+            {
+                GameManager.Instance?.LoadSceneAsync("VehicleSelectionScene");
+            })));
+
             return;
         }
 
-        playPanel.GetComponent<FadeAnimator>().Show();
-        AudioManager.Instance.PlayOneShot("notification_ok");
+        playPanel?.GetComponent<FadeAnimator>()?.Show();
     }
 
     public void OnPlayAsHost()
     {
         GameManager.Instance.SetNetworkMode(Mode.Host);
         GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
-        GameManager.Instance.LoadScene("multiplayerMovement");
+        GameManager.Instance?.LoadScene("multiplayerMovement");
     }
 
     public void OnPlayAsClient()
     {
-        GameManager.Instance.SetNetworkMode(Mode.Client);
-        GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
-        GameManager.Instance.LoadScene("multiplayerMovement");
+        menuButtons.Hide();
+        playPanel?.GetComponent<FadeAnimator>()?.Hide();
+        GameManager.Instance?.SetNetworkMode(Mode.Client);
+        GameManager.Instance?.SetIpAddress(Utilities.GetLocalIPAddress());
+        UiLoader.Instance?.Show();
+        StartCoroutine(Utilities.DelayedEvent((() =>
+        { GameManager.Instance?.LoadSceneAsync("LocalLobbyLoadingScene");
+        })));
     }
 
     public void OnStartServerOnly()
     {
-        GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
-        GameManager.Instance.SetNetworkMode(Mode.ServerOnly);
-        GameManager.Instance.LoadScene("multiplayerMovement");
+        playPanel?.GetComponent<FadeAnimator>()?.Hide();
+        GameManager.Instance?.SetIpAddress(Utilities.GetLocalIPAddress());
+        GameManager.Instance?.SetNetworkMode(Mode.ServerOnly);
+        GameManager.Instance?.LoadScene("multiplayerMovement");
     }
 
     public void OnVehicleSelectionButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.LoadScene("VehicleSelectionScene");
+        menuButtons?.Hide();
+        playPanel?.GetComponent<FadeAnimator>()?.Hide();
+        UiLoader.Instance?.Show();
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        StartCoroutine(Utilities.DelayedEvent((() =>
+        {
+            GameManager.Instance?.LoadSceneAsync("VehicleSelectionScene");
+        }), 0.8f));
     }
 
     public void OnExitButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.ExitGame();
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        GameManager.Instance?.ExitGame();
     }
 
     public void GoToHomeScreen()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.GoToHomeScreen();
+        GameManager.Instance?.Resume();
+        UiLoader.Instance?.Show();
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        StartCoroutine(Utilities.DelayedEvent((() =>
+        {
+            GameManager.Instance?.GoToHomeScreen();
+        }), 0.7f));
     }
 
     public void OnPauseButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.Pause();
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        GameManager.Instance?.Pause();
         if (pausePanel != null)
         {
             pausePanel.SetActive(true);
@@ -87,8 +109,8 @@ public class MenuManager : MonoBehaviour
 
     public void OnResumeButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.Resume();
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        GameManager.Instance?.Resume();
         if (pausePanel != null)
         {
             pausePanel.SetActive(false);
@@ -97,30 +119,27 @@ public class MenuManager : MonoBehaviour
 
     public void OnRestartButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.LoadScene("multiplayerMovement");
+        GameManager.Instance?.Resume();
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        GameManager.Instance?.LoadScene("multiplayerMovement");
     }
 
     public void OnSettingsButtonClick()
     {
-        AudioManager.Instance.PlayOneShot("notification_ok");
-        GameManager.Instance.LoadScene("SettingsScene");
+        AudioManager.Instance?.PlayOneShot("notification_ok");
+        GameManager.Instance?.LoadSceneAsync("SettingsScene");
     }
 
     public void OnLoseMatch()
     {
         InGamePanel.SetActive(false);
         finishedGamePanel.SetActive(true);
-
         textToShowWhenFinished.text = "Hai perso, mi disp!";
     }
     public void OnWinMatch()
     {
         InGamePanel.SetActive(false);
-
         finishedGamePanel.SetActive(true);
         textToShowWhenFinished.text = "Congratulazione hai vinto!";
     }
-
-
 }

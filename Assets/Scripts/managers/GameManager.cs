@@ -5,9 +5,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public bool isLoading = false;
+
     private bool paused = false;
 
-    private Mode mode = Mode.Client;
+    private Mode mode = Mode.Host;
     private string ipAddress = "127.0.0.1";
 
     void Awake()
@@ -16,6 +18,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            isLoading = true;
         }
         else
         {
@@ -35,10 +38,15 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(scene);
     }
 
-    public void GoToHomeScreen()
+    public void LoadSceneAsync(string scene)
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadSceneAsync(scene);
+    }
+
+    public void GoToHomeScreen()
+    {
+        LoadSceneAsync("MainScene");
     }
 
     public void ExitGame()

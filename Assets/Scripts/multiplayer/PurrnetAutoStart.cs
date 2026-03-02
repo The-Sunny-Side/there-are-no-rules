@@ -48,15 +48,7 @@ public class PurrnetAutoStart : MonoBehaviour
         }
         else
         {
-            // Client: cerca server sulla rete
-            yield return StartCoroutine(DiscoverServer(foundIP =>
-            {
-                UDPTransport udpTransport = _nm.GetComponent<UDPTransport>();
-                if (udpTransport != null)
-                    udpTransport.address = foundIP;
-
-                _nm.StartClient();
-            }));
+            _nm.StartClient();
         }
     }
 
@@ -88,55 +80,6 @@ public class PurrnetAutoStart : MonoBehaviour
         });
         _discoveryThread.IsBackground = true;
         _discoveryThread.Start();
-    }
-
-    // CLIENT: manda broadcast e aspetta risposta
-    private IEnumerator DiscoverServer(Action<string> onFound)
-    {
-        Debug.Log("[Discovery] Cerco server...");
-        string foundIP = null;
-
-        Thread t = new Thread(() =>
-        {
-            try
-            {
-                UdpClient client = new UdpClient();
-                client.EnableBroadcast = true;
-                client.Client.ReceiveTimeout = 3000;
-
-                byte[] data = System.Text.Encoding.UTF8.GetBytes("DISCOVER");
-                client.Send(data, data.Length, new IPEndPoint(IPAddress.Broadcast, DISCOVERY_PORT));
-
-                IPEndPoint ep = new IPEndPoint(IPAddress.Any, 0);
-                byte[] response = client.Receive(ref ep);
-                string message = System.Text.Encoding.UTF8.GetString(response);
-
-                if (message.StartsWith("SERVER:"))
-                    foundIP = message.Replace("SERVER:", "");
-
-                client.Close();
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("[Discovery] Nessun server trovato: " + e.Message);
-            }
-        });
-
-        t.IsBackground = true;
-        t.Start();
-
-        while (t.IsAlive)
-            yield return null;
-
-        if (foundIP != null)
-        {
-            Debug.Log("[Discovery] Server trovato: " + foundIP);
-            onFound(foundIP);
-        }
-        else
-        {
-            Debug.LogWarning("[Discovery] Nessun server trovato");
-        }
     }
 
     private void OnDestroy()
