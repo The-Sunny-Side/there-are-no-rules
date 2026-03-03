@@ -329,6 +329,7 @@ GameObject:
   - component: {fileID: 297237336}
   - component: {fileID: 297237338}
   - component: {fileID: 297237337}
+  - component: {fileID: 297237339}
   m_Layer: 5
   m_Name: MenuButton
   m_TagString: Untagged
@@ -450,6 +451,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 297237334}
   m_CullTransparentMesh: 1
+--- !u!114 &297237339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297237334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1defb2ef13310ee46abb688bf6511455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InitComponentUi
+  componentType: 0
+  isSelected: 0
 --- !u!1 &524239529
 GameObject:
   m_ObjectHideFlags: 0
@@ -1752,6 +1767,7 @@ GameObject:
   - component: {fileID: 1463248582}
   - component: {fileID: 1463248584}
   - component: {fileID: 1463248583}
+  - component: {fileID: 1463248585}
   m_Layer: 5
   m_Name: RetryButton
   m_TagString: Untagged
@@ -1873,6 +1889,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463248580}
   m_CullTransparentMesh: 1
+--- !u!114 &1463248585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1463248580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1defb2ef13310ee46abb688bf6511455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InitComponentUi
+  componentType: 0
+  isSelected: 0
 --- !u!1 &1616717573
 GameObject:
   m_ObjectHideFlags: 0

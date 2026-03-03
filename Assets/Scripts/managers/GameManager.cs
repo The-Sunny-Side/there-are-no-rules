@@ -34,13 +34,11 @@ public class GameManager : MonoBehaviour
 
     public void LoadScene(string scene)
     {
-        Time.timeScale = 1f;
         SceneManager.LoadScene(scene);
     }
 
     public void LoadSceneAsync(string scene)
     {
-        Time.timeScale = 1f;
         SceneManager.LoadSceneAsync(scene);
     }
 
@@ -60,13 +58,11 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
-        Time.timeScale = 0f;
         paused = true;
     }
 
     public void Resume()
     {
-        Time.timeScale = 1f;
         paused = false;
     }
 

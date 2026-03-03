@@ -39,6 +39,7 @@ public class FadeAnimator : UiAnimator
     private IEnumerator Fade(bool hide, bool interactable, UnityEvent onEnd)
     {
         yield return new WaitForSeconds(hide?onHideDelay:onShowDelay);
+        canvasGroup.interactable = interactableOnAnimation;
 
         float start = canvasGroup.alpha;
         float t = 0f;
@@ -51,8 +52,8 @@ public class FadeAnimator : UiAnimator
         }
 
         canvasGroup.alpha = hide ? minAlpha : maxAlpha;
-        canvasGroup.interactable = interactable;
-        canvasGroup.blocksRaycasts = interactable;
+        canvasGroup.interactable = !hide;
+        canvasGroup.blocksRaycasts = !hide;
         onEnd?.Invoke();
     }
 

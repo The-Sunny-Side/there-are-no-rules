@@ -1,10 +1,12 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public enum UiComponentType
 {
     Button,
-    Panel
+    Panel,
+    TextTitle
 }
 
 public class InitComponentUi : MonoBehaviour
@@ -15,18 +17,30 @@ public class InitComponentUi : MonoBehaviour
 
     private void Awake()
     {
-        Image componentImage = GetComponent<Image>();
-
-        if (componentImage != null)
+        if (componentType == UiComponentType.TextTitle)
         {
-            switch (componentType)
+            TextMeshProUGUI componentText = GetComponent<TextMeshProUGUI>();
+            if (componentText != null && Config.UiConfig)
             {
-                case UiComponentType.Button:
-                    componentImage.color = isSelected? Config.UiConfig.selectedColor: Config.UiConfig.baseColor;
-                    break;
-                case UiComponentType.Panel:
-                    componentImage.color = Config.UiConfig.panelColor;
-                    break;
+                componentText.color = Config.UiConfig.baseColor;
+            }
+        }
+
+        else
+        {
+            Image componentImage = GetComponent<Image>();
+
+            if (componentImage != null && Config.UiConfig)
+            {
+                switch (componentType)
+                {
+                    case UiComponentType.Button:
+                        componentImage.color = isSelected ? Config.UiConfig.selectedColor : Config.UiConfig.baseColor;
+                        break;
+                    case UiComponentType.Panel:
+                        componentImage.color = Config.UiConfig.panelColor;
+                        break;
+                }
             }
         }
     }

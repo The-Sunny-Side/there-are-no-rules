@@ -164,26 +164,4 @@ public class Composer : MonoBehaviour
             Destroy(child.gameObject);
         }
     }
-
-#if UNITY_EDITOR
-    public void SaveVehiclePrefab()
-    {
-        const string folderPath = "Assets/Prefabs/composedVehicles";
-
-        if (!AssetDatabase.IsValidFolder(folderPath))
-        {
-            AssetDatabase.CreateFolder("Assets", "composedVehicles");
-        }
-
-        string prefabPath = AssetDatabase.GenerateUniqueAssetPath(
-            folderPath + "/vehicle.prefab");
-
-        PrefabUtility.SaveAsPrefabAsset(vehicle, "Assets/Prefabs/composedVehicles/vehicle.prefab");
-        AssetDatabase.SaveAssets();
-        Debug.Log("Prefab salvato in: " + prefabPath);
-    }
-#else
-//todo: implement runtime saving
-    public void SaveVehiclePrefab() { }
-#endif
 }

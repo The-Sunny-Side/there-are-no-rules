@@ -24,7 +24,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 50756497408
-    m_Key: weapons
+    m_Key: weapon_button
     m_Metadata:
       m_Items: []
   - m_Id: 53461823488
@@ -65,6 +65,22 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 40876089978880
     m_Key: loading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 768750099017728
+    m_Key: close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 769437243453440
+    m_Key: audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791536687296512
+    m_Key: it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791584795963392
+    m_Key: en
     m_Metadata:
       m_Items: []
   m_Metadata:

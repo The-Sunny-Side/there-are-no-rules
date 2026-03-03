@@ -27,7 +27,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 50756497408
-    m_Localized: Armi
+    m_Localized: Mods
     m_Metadata:
       m_Items: []
   - m_Id: 53461823488
@@ -68,6 +68,22 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 40876089978880
     m_Localized: Caricamento in corso...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 768750099017728
+    m_Localized: Chiudi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 769437243453440
+    m_Localized: Audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791536687296512
+    m_Localized: Italiano
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791584795963392
+    m_Localized: Inglese
     m_Metadata:
       m_Items: []
   references:

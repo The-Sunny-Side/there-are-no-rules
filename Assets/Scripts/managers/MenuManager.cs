@@ -77,7 +77,7 @@ public class MenuManager : MonoBehaviour
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.LoadSceneAsync("VehicleSelectionScene");
-        }), 0.8f));
+        }), 0.6f));
     }
 
     public void OnExitButtonClick()
@@ -94,7 +94,7 @@ public class MenuManager : MonoBehaviour
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToHomeScreen();
-        }), 0.7f));
+        }), 0.6f));
     }
 
     public void OnPauseButtonClick()
@@ -127,7 +127,7 @@ public class MenuManager : MonoBehaviour
     public void OnSettingsButtonClick()
     {
         AudioManager.Instance?.PlayOneShot("notification_ok");
-        GameManager.Instance?.LoadSceneAsync("SettingsScene");
+        SettingsModal.Instance?.Show();
     }
 
     public void OnLoseMatch()

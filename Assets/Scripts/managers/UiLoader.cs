@@ -1,23 +1,31 @@
-using System.Collections;
-using System.Threading;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UiLoader : MonoBehaviour
 {
     public static UiLoader Instance;
+    [SerializeField] private UiConfig uiConfig;
+    [SerializeField] private GameObject topElement;
+    [SerializeField] private GameObject bottomElement;
 
-    private UiAnimator loaderAnimator;
+    private List<UiAnimator> animators;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            if (loaderAnimator == null)
-                loaderAnimator = GetComponent<UiAnimator>();
-
+            animators = new List<UiAnimator>();
+            animators.Add(topElement.GetComponent<UiAnimator>());
+            animators.Add(bottomElement.GetComponent<UiAnimator>());
+            topElement.GetComponent<Image>().color = uiConfig.loaderPrimaryColor;
+            topElement.transform.Find("Text").GetComponent<Image>().color = uiConfig.loaderSecondaryColor;
+            bottomElement.GetComponent<Image>().color = uiConfig.loaderSecondaryColor;
+            bottomElement.transform.Find("Text").GetComponent<Image>().color = uiConfig.loaderPrimaryColor;
             SceneManager.sceneLoaded += onSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
             DontDestroyOnLoad(gameObject);
@@ -45,15 +53,17 @@ public class UiLoader : MonoBehaviour
     {
         UnityEvent onShowEvent = new UnityEvent();
         onShowEvent.AddListener(callback ?? new UnityAction(Utilities.DefaultCallback));
-        loaderAnimator.onShow = onShowEvent;
-        loaderAnimator?.Show();
+        animators[0].onShow = onShowEvent;
+        foreach(UiAnimator animator in animators)
+            animator?.Show();
     }
 
     public void Hide(UnityAction callback = null)
     {
         UnityEvent onHideEvent = new UnityEvent();
         onHideEvent.AddListener(callback ?? new UnityAction(Utilities.DefaultCallback));
-        loaderAnimator.onHide = onHideEvent; 
-        loaderAnimator?.Hide();
+        animators[0].onHide = onHideEvent;
+        foreach (UiAnimator animator in animators)
+            animator?.Hide();
     }
 }

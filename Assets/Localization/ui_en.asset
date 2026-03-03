@@ -27,7 +27,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 50756497408
-    m_Localized: Weapons
+    m_Localized: Mods
     m_Metadata:
       m_Items: []
   - m_Id: 53461823488
@@ -68,6 +68,22 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 40876089978880
     m_Localized: Loading....
+    m_Metadata:
+      m_Items: []
+  - m_Id: 768750099017728
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 769437243453440
+    m_Localized: Sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791536687296512
+    m_Localized: Italian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791584795963392
+    m_Localized: English
     m_Metadata:
       m_Items: []
   references:

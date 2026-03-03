@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UiConfig
   baseColor: {r: 1, g: 0.843, b: 0.208, a: 1}
   selectedColor: {r: 0.318, g: 0.706, b: 0.984, a: 1}
+  panelColor: {r: 0.318, g: 0.706, b: 0.984, a: 1}
+  loaderPrimaryColor: {r: 1, g: 0.843, b: 0.208, a: 1}
+  loaderSecondaryColor: {r: 0, g: 0, b: 0, a: 1}

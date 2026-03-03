@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SceneDiTest/ScriptingMovementScene.unity
     guid: 005eeae615710134894db421d7f3a70c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SettingsScene.unity
     guid: 4d604dc4883f37c4a9baf9337d81f410
   - enabled: 0

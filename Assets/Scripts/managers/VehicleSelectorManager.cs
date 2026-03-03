@@ -43,7 +43,7 @@ public class VehicleSelectorManager : MonoBehaviour
             weaponIcons[i] = buttonObj.GetComponent<Image>();
         }
 
-        Dictionary<string, GameObject> loaded = VehicleManager.Instance.LoadVehicleData();
+        Dictionary<string, GameObject> loaded = VehicleManager.Instance?.LoadVehicleData();
 
         if (loaded != null)
         {
@@ -110,6 +110,11 @@ public class VehicleSelectorManager : MonoBehaviour
         {
             weaponIcons[i].sprite = weaponElements[selectedWeaponsIndexes[i]].icon;
         }
+
+        StartCoroutine(Utilities.DelayedEvent(() =>
+        {
+            SetHudVisibility(true);
+        }, 0.1f));
 
         SetStep(0);
     }
@@ -282,7 +287,7 @@ public class VehicleSelectorManager : MonoBehaviour
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToHomeScreen();
-        }), 0.7f));
+        }), 0.6f));
     }
 
     private void HighlightSelectedPart(GameObject part, bool active = true)
