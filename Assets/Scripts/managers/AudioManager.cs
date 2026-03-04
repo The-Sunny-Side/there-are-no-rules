@@ -14,6 +14,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource musicSource;
     private AudioSource sfxSource;
     public float volume;
+    private float savedVolume;
     public bool audioEnabled = true;
 
     private void Awake()
@@ -29,6 +30,7 @@ public class AudioManager : MonoBehaviour
         sfxSource.loop = false;
 
         volume = 0.3f;
+        savedVolume = volume;
         InitLibrary();
     }
 
@@ -72,7 +74,7 @@ public class AudioManager : MonoBehaviour
         audioEnabled = !audioEnabled;
         if (audioEnabled)
         {
-            SetVolume(volume);
+            SetVolume(savedVolume);
         }
         else
         {

@@ -45,7 +45,11 @@ public class MenuManager : MonoBehaviour
     {
         GameManager.Instance.SetNetworkMode(Mode.Host);
         GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
-        GameManager.Instance?.LoadScene("multiplayerMovement");
+        UiLoader.Instance?.Show();
+        StartCoroutine(Utilities.DelayedEvent((() =>
+        {
+            GameManager.Instance?.LoadSceneAsync("multiplayerMovement");
+        }), 0.6f));
     }
 
     public void OnPlayAsClient()
@@ -57,7 +61,7 @@ public class MenuManager : MonoBehaviour
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         { GameManager.Instance?.LoadSceneAsync("LocalLobbyLoadingScene");
-        })));
+        }), 0.6f));
     }
 
     public void OnStartServerOnly()
@@ -65,7 +69,11 @@ public class MenuManager : MonoBehaviour
         playPanel?.GetComponent<FadeAnimator>()?.Hide();
         GameManager.Instance?.SetIpAddress(Utilities.GetLocalIPAddress());
         GameManager.Instance?.SetNetworkMode(Mode.ServerOnly);
-        GameManager.Instance?.LoadScene("multiplayerMovement");
+        UiLoader.Instance?.Show();
+        StartCoroutine(Utilities.DelayedEvent((() =>
+        {
+            GameManager.Instance?.LoadSceneAsync("multiplayerMovement");
+        }), 0.6f));
     }
 
     public void OnVehicleSelectionButtonClick()

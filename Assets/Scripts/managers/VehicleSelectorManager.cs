@@ -283,7 +283,7 @@ public class VehicleSelectorManager : MonoBehaviour
 
         GameObject baseElement = baseElements[selectedBaseIndex].element;
         GameObject bodyElement = bodyElements[selectedBodyIndex].element;
-        VehicleManager.Instance.SaveVehicleData(baseElement, bodyElement, selectedWeapons);
+        VehicleManager.Instance?.SaveVehicleData(baseElement, bodyElement, selectedWeapons);
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToHomeScreen();
