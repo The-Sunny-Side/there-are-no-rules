@@ -12,7 +12,7 @@ public class MobileInputManager : MonoBehaviour
     public bool slideDownHeld => slideDownAction.WasPressedThisFrame();
     public bool slideLeftHeld => slideLeftAction.WasPressedThisFrame();
     public bool slideRightHeld => slideRightAction.WasPressedThisFrame();
-    public bool jumpTapped => jumpAction.WasPressedThisFrame();
+    public bool jumpTapped => jumpAction.IsPressed();
 
     private InputAction leftRotateAction;
     private InputAction rightRotateAction;
