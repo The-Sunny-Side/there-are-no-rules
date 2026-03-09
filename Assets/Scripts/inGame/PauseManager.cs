@@ -1,11 +1,11 @@
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class PauseManager : MonoBehaviour
 {
     [SerializeField] private UiAnimator overlay;
     [SerializeField] private UiAnimator pausePanel;
+    [SerializeField] private UiAnimator gamePanel;
 
     private Canvas canvas;
 
@@ -39,8 +39,9 @@ public class PauseManager : MonoBehaviour
 
     public void OnRestartClick()
     {
-        pausePanel.Hide();
-        overlay.Hide();
+        pausePanel?.Hide();
+        overlay?.Hide();
+        gamePanel?.Hide();
         UiLoader.Instance?.Show();
         AudioManager.Instance?.PlayOneShot("notification_ok");
         StartCoroutine(Utilities.DelayedEvent((() =>
@@ -52,8 +53,9 @@ public class PauseManager : MonoBehaviour
 
     public void OnHomeButtonClick()
     {
-        pausePanel.Hide();
-        overlay.Hide();
+        pausePanel?.Hide();
+        overlay?.Hide();
+        gamePanel?.Hide();
         UiLoader.Instance?.Show();
         AudioManager.Instance?.PlayOneShot("notification_ok");
         StartCoroutine(Utilities.DelayedEvent((() =>
