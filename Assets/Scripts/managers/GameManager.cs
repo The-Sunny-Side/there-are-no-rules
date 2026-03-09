@@ -5,8 +5,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public bool isLoading = false;
-
     private bool paused = false;
 
     private Mode mode = Mode.Host;
@@ -18,7 +16,6 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            isLoading = true;
         }
         else
         {

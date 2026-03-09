@@ -86,6 +86,18 @@ MonoBehaviour:
     m_Localized: Inglese
     m_Metadata:
       m_Items: []
+  - m_Id: 1799137654910976
+    m_Localized: Pausa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1799225366196224
+    m_Localized: Ricomincia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1895822745841664
+    m_Localized: Riprendi
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

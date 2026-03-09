@@ -20,9 +20,9 @@ public class InitComponentUi : MonoBehaviour
         if (componentType == UiComponentType.TextTitle)
         {
             TextMeshProUGUI componentText = GetComponent<TextMeshProUGUI>();
-            if (componentText != null && Config.UiConfig)
+            if (componentText != null && GameConfig.UiConfig)
             {
-                componentText.color = Config.UiConfig.baseColor;
+                componentText.color = GameConfig.UiConfig.baseColor;
             }
         }
 
@@ -30,15 +30,15 @@ public class InitComponentUi : MonoBehaviour
         {
             Image componentImage = GetComponent<Image>();
 
-            if (componentImage != null && Config.UiConfig)
+            if (componentImage != null && GameConfig.UiConfig)
             {
                 switch (componentType)
                 {
                     case UiComponentType.Button:
-                        componentImage.color = isSelected ? Config.UiConfig.selectedColor : Config.UiConfig.baseColor;
+                        componentImage.color = isSelected ? GameConfig.UiConfig.selectedColor : GameConfig.UiConfig.baseColor;
                         break;
                     case UiComponentType.Panel:
-                        componentImage.color = Config.UiConfig.panelColor;
+                        componentImage.color = GameConfig.UiConfig.panelColor;
                         break;
                 }
             }

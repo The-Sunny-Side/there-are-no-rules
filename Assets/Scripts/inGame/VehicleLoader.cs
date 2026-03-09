@@ -44,23 +44,23 @@ public class VehicleLoader : MonoBehaviour
 
         // base / body
         if (!string.IsNullOrEmpty(data.baseElement))
-            list[VehicleElementsKeys.Base] = Resources.Load<GameObject>("baseElements/" + data.baseElement);
+            list[VehicleElementsKeys.Base] = GameConfig.VehiclePrefabRegistry.GetBase(data.baseElement).element;
 
         if (!string.IsNullOrEmpty(data.bodyElement))
-            list[VehicleElementsKeys.Body] = Resources.Load<GameObject>("bodyElements/" + data.bodyElement);
+            list[VehicleElementsKeys.Body] = GameConfig.VehiclePrefabRegistry.GetBody(data.bodyElement).element;
 
         // weapons (opzionali)
         if (!string.IsNullOrEmpty(data.weaponBack))
-            list[VehicleElementsKeys.WeaponBack] = Resources.Load<GameObject>("weapons/" + data.weaponBack);
+            list[VehicleElementsKeys.WeaponBack] = GameConfig.VehiclePrefabRegistry.GetWeapon(data.weaponBack).element;
 
         if (!string.IsNullOrEmpty(data.weaponFront))
-            list[VehicleElementsKeys.WeaponFront] = Resources.Load<GameObject>("weapons/" + data.weaponFront);
+            list[VehicleElementsKeys.WeaponFront] = GameConfig.VehiclePrefabRegistry.GetWeapon(data.weaponFront).element;
 
         if (!string.IsNullOrEmpty(data.weaponLeft))
-            list[VehicleElementsKeys.WeaponLeft] = Resources.Load<GameObject>("weapons/" + data.weaponLeft);
+            list[VehicleElementsKeys.WeaponLeft] = GameConfig.VehiclePrefabRegistry.GetWeapon(data.weaponLeft).element;
 
         if (!string.IsNullOrEmpty(data.weaponRight))
-            list[VehicleElementsKeys.WeaponRight] = Resources.Load<GameObject>("weapons/" + data.weaponRight);
+            list[VehicleElementsKeys.WeaponRight] = GameConfig.VehiclePrefabRegistry.GetWeapon(data.weaponRight).element;
 
 
         // Base/body obbligatori
