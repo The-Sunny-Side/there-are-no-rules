@@ -83,6 +83,18 @@ MonoBehaviour:
     m_Key: en
     m_Metadata:
       m_Items: []
+  - m_Id: 1799137654910976
+    m_Key: pause_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1799225366196224
+    m_Key: restart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1895822745841664
+    m_Key: resume
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

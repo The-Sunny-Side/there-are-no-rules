@@ -31,14 +31,17 @@ public class VehicleManager : MonoBehaviour
 
     public static VehicleManager Instance { get; private set; }
 
+    [SerializeField]
+    public VehiclePrefabRegistry vehiclePrefabRegistry;
+
     void Awake()
     {
         if (Instance == null)
         {
             configPath = Application.persistentDataPath + "/vehicle_config.json";
             Instance = this;
-            defaultBaseElement = Resources.Load<GameObject>("bodyElements/" + defaultBase);
-            defaultBodyElement = Resources.Load<GameObject>("bodyElements/" + defaultBody);
+            defaultBaseElement = vehiclePrefabRegistry.GetBase(defaultBase).element;
+            defaultBodyElement = vehiclePrefabRegistry.GetBody(defaultBody).element;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -72,30 +75,30 @@ public class VehicleManager : MonoBehaviour
             string json = File.ReadAllText(configPath);
             Vehicle data = JsonUtility.FromJson<Vehicle>(json);
 
-            GameObject bodyObj = Resources.Load<GameObject>("bodyElements/" + data.bodyElement);
-            GameObject baseObj = Resources.Load<GameObject>("baseElements/" + data.baseElement);
+            GameObject bodyObj = vehiclePrefabRegistry.GetBody(data.bodyElement).element;
+            GameObject baseObj = vehiclePrefabRegistry.GetBase(data.baseElement).element;
 
             if (data.weaponRight != null)
             {
-                GameObject weaponRightObj = Resources.Load<GameObject>("weapons/" + data.weaponRight);
+                GameObject weaponRightObj = vehiclePrefabRegistry.GetWeapon(data.weaponRight).element;
                 result[VehicleElementsKeys.WeaponRight] = weaponRightObj;
             }
 
             if (data.weaponFront != null)
             {
-                GameObject weaponFrontObj = Resources.Load<GameObject>("weapons/" + data.weaponFront);
+                GameObject weaponFrontObj = vehiclePrefabRegistry.GetWeapon(data.weaponFront).element;
                 result[VehicleElementsKeys.WeaponFront] = weaponFrontObj;
             }
 
             if (data.weaponBack != null)
             {
-                GameObject weaponBackObj = Resources.Load<GameObject>("weapons/" + data.weaponBack);
+                GameObject weaponBackObj = vehiclePrefabRegistry.GetWeapon(data.weaponBack).element;
                 result[VehicleElementsKeys.WeaponBack] = weaponBackObj;
             }
 
             if (data.weaponLeft != null)
             {
-                GameObject weaponLeftObj = Resources.Load<GameObject>("weapons/" + data.weaponLeft);
+                GameObject weaponLeftObj = vehiclePrefabRegistry.GetWeapon(data.weaponLeft).element;
                 result[VehicleElementsKeys.WeaponLeft] = weaponLeftObj;
             }
 

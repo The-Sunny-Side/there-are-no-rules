@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 878ae59a10e04c2498ccf91d333bfb53, type: 3}
+  m_Name: VehiclePartsRegistry
+  m_EditorClassIdentifier: Assembly-CSharp::VehiclePrefabRegistry
+  EmptyPart:
+    element: {fileID: 3925080907645985337, guid: f5b6d38cca50a0f46ab4d630730215d3, type: 3}
+    icon: {fileID: 21300000, guid: 0b2ca8e8f53a3cf4da8a31fddf506d35, type: 3}
+  baseElements:
+  - element: {fileID: 2450203625896656481, guid: 55106b1f9d8a910418186c22810dd5d3, type: 3}
+    icon: {fileID: 21300000, guid: ea27d14f941557945b735d6d981e90b1, type: 3}
+    key: plane
+  - element: {fileID: 5647684242856359959, guid: 08bec28cca7afe24db3d0e6e59de0617, type: 3}
+    icon: {fileID: 21300000, guid: bb344af776d149a419ea719add676789, type: 3}
+    key: boat
+  - element: {fileID: 7977349255659494426, guid: f718d4612419597478b355d53d8c23ff, type: 3}
+    icon: {fileID: 21300000, guid: 886b121bf32d8414b91e5e1e0f9bc9e7, type: 3}
+    key: sled
+  bodyElements:
+  - element: {fileID: 5577811924372296200, guid: 8b22e44df2c4b454b8609a8f9759cdd4, type: 3}
+    icon: {fileID: 21300000, guid: 04791d26c71f4864a8d3701047e52a95, type: 3}
+    key: cube
+  - element: {fileID: 4007014680358456326, guid: daf1dade928ac22448da554809be96a6, type: 3}
+    icon: {fileID: 21300000, guid: a2ddb7cc56fab8b4288b9f36ad1ddef8, type: 3}
+    key: piano
+  - element: {fileID: 7968280193111092051, guid: f595d3a7b0cffe34aa952d8c0eef2f69, type: 3}
+    icon: {fileID: 21300000, guid: 2bf1eeaec3a837449b1b5451da6afa76, type: 3}
+    key: wc
+  weapons:
+  - element: {fileID: 3925080907645985337, guid: 965d393dd41f0244bb7dfd4d5840a65a, type: 3}
+    icon: {fileID: 21300000, guid: 7511ba900fd4f5d46a134ccc53f72909, type: 3}
+    key: empty
+  - element: {fileID: 3853782094996777641, guid: 2f7e68cb26ad3dc4490fcce171563ca2, type: 3}
+    icon: {fileID: 21300000, guid: 73dcaa6125c01854d8e427d783aec677, type: 3}
+    key: punch

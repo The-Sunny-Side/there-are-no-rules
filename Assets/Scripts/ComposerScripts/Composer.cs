@@ -19,7 +19,7 @@ public class Composer : MonoBehaviour
 
     private void Awake()
     {
-        GameObject defaultElement = Resources.Load<GameObject>("/icons/empty");
+        GameObject defaultElement = GameConfig.VehiclePrefabRegistry.EmptyPart.element;
         weaponLeftElement = defaultElement;
         weaponBackElement = defaultElement;
         weaponFrontElement = defaultElement;
