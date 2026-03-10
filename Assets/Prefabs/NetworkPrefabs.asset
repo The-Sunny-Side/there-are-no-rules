@@ -19,19 +19,7 @@ MonoBehaviour:
   linkedNetworkPrefabs:
   - {fileID: 0}
   prefabs:
-  - guid: ceb5241381b44804b9669f19ec77b443
-    prefab: {fileID: 2167701170252393990, guid: ceb5241381b44804b9669f19ec77b443, type: 3}
-    pooled: 0
-    warmupCount: 5
   - guid: 93928d0b3291d7941b13d3a706cbcc1d
     prefab: {fileID: 4034496886005207943, guid: 93928d0b3291d7941b13d3a706cbcc1d, type: 3}
-    pooled: 0
-    warmupCount: 5
-  - guid: b063805dd7b30504e9027fe572db78bb
-    prefab: {fileID: 3486102010061806348, guid: b063805dd7b30504e9027fe572db78bb, type: 3}
-    pooled: 0
-    warmupCount: 5
-  - guid: 4cdb0cfc476b7904990c4dc720e7d538
-    prefab: {fileID: 1183922827171309663, guid: 4cdb0cfc476b7904990c4dc720e7d538, type: 3}
     pooled: 0
     warmupCount: 5
