@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 9d96d2e521c04fe488b93a46dfee1093, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -645,6 +645,10 @@ MonoBehaviour:
   interactableOnAnimation: 1
   showOnStart: 1
   hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
   onShow:
     m_PersistentCalls:
       m_Calls: []
@@ -920,6 +924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f36d8e14a28e3ae4e8d124439f4275f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UiLoader
+  noHiding: 0
   uiConfig: {fileID: 11400000, guid: a7291db95d6859c45a06a0326c5db632, type: 2}
   topElement: {fileID: 3561712384259428691}
   bottomElement: {fileID: 1638608029414089601}
@@ -1148,6 +1153,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8721955425997098522}
   - component: {fileID: 64627778616760384}
+  - component: {fileID: 8721955425997098523}
   m_Layer: 0
   m_Name: Config
   m_TagString: Untagged
@@ -1220,6 +1226,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8721955425997098523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6604568260444305806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2395a1b9160989046b8126a4dcbd68c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyBoxAnimator
+  speed: 2
 --- !u!114 &8766886042081277701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1267,6 +1286,10 @@ MonoBehaviour:
   interactableOnAnimation: 1
   showOnStart: 1
   hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
   onShow:
     m_PersistentCalls:
       m_Calls: []

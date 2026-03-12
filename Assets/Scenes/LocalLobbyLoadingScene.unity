@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 9d96d2e521c04fe488b93a46dfee1093, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -295,6 +295,10 @@ MonoBehaviour:
   interactableOnAnimation: 1
   showOnStart: 0
   hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
   onShow:
     m_PersistentCalls:
       m_Calls: []
@@ -1646,6 +1650,7 @@ GameObject:
   - component: {fileID: 1878175483}
   - component: {fileID: 1878175485}
   - component: {fileID: 1878175484}
+  - component: {fileID: 1878175486}
   m_Layer: 0
   m_Name: ServerDiscovery
   m_TagString: Untagged
@@ -1725,6 +1730,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServerConnectionSceneManager
   ServerConnectionButtons: {fileID: 165419143}
+--- !u!114 &1878175486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1878175482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2395a1b9160989046b8126a4dcbd68c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyBoxAnimator
+  speed: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
