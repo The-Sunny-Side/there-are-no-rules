@@ -1171,7 +1171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2395a1b9160989046b8126a4dcbd68c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyBoxAnimator
-  speed: 2
+  speed: 3.24
 --- !u!1 &354245551
 GameObject:
   m_ObjectHideFlags: 0

@@ -346,6 +346,7 @@ GameObject:
   - component: {fileID: 1930049543}
   - component: {fileID: 1930049544}
   - component: {fileID: 1930049546}
+  - component: {fileID: 1930049547}
   m_Layer: 0
   m_Name: Init
   m_TagString: Untagged
@@ -394,6 +395,19 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &1930049547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930049542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2395a1b9160989046b8126a4dcbd68c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyBoxAnimator
+  speed: 3.24
 --- !u!1 &1987836112
 GameObject:
   m_ObjectHideFlags: 0
@@ -1153,7 +1167,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8721955425997098522}
   - component: {fileID: 64627778616760384}
-  - component: {fileID: 8721955425997098523}
   m_Layer: 0
   m_Name: Config
   m_TagString: Untagged
@@ -1226,19 +1239,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8721955425997098523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6604568260444305806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2395a1b9160989046b8126a4dcbd68c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SkyBoxAnimator
-  speed: 2
 --- !u!114 &8766886042081277701
 MonoBehaviour:
   m_ObjectHideFlags: 0
