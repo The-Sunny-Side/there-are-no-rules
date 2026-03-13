@@ -1,17 +1,47 @@
-using UnityEngine;
+using NUnit.Framework;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class MainSceneManager : MonoBehaviour
 {
     [SerializeField] private UiAnimator menu;
     [SerializeField] private GameObject playPanel;
     [SerializeField] private UiAnimator menuButtons;
+    [SerializeField] private Composer composer;
+
+    public void Start()
+    {
+        Dictionary<string, GameObject> list = VehicleManager.Instance?.LoadVehicleData();
+
+        if (list.TryGetValue(VehicleElementsKeys.Body, out var bodyPrefab) && bodyPrefab &&
+             list.TryGetValue(VehicleElementsKeys.Base, out var basePrefab) && basePrefab)
+        {
+            composer.baseElement = Instantiate(basePrefab);
+            composer.bodyElement = Instantiate(bodyPrefab);
+
+            if (list.TryGetValue(VehicleElementsKeys.WeaponBack, out var back) && back)
+                composer.weaponBackElement = Instantiate(back);
+
+            if (list.TryGetValue(VehicleElementsKeys.WeaponFront, out var front) && front)
+                composer.weaponFrontElement = Instantiate(front);
+
+            if (list.TryGetValue(VehicleElementsKeys.WeaponLeft, out var left) && left)
+                composer.weaponLeftElement = Instantiate(left);
+
+            if (list.TryGetValue(VehicleElementsKeys.WeaponRight, out var right) && right)
+                composer.weaponRightElement = Instantiate(right);
+
+            composer.AlignComponents();
+        }
+    }
 
     public void OnPlayButtonClick()
     {
-        GameManager.Instance.SetNetworkMode(Mode.Client);
+        GameManager.Instance?.SetNetworkMode(Mode.Client);
         AudioManager.Instance?.PlayOneShot("notification_ok");
-        string json = VehicleManager.Instance.GetVehicleJson();
+        string json = VehicleManager.Instance?.GetVehicleJson();
 
         if (string.IsNullOrWhiteSpace(json))
         {
