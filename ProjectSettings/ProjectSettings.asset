@@ -20,7 +20,7 @@ PlayerSettings:
   m_ShowUnitySplashScreen: 1
   m_ShowUnitySplashLogo: 1
   m_SplashScreenOverlayOpacity: 1
-  m_SplashScreenAnimation: 1
+  m_SplashScreenAnimation: 0
   m_SplashScreenLogoStyle: 1
   m_SplashScreenDrawMode: 0
   m_SplashScreenBackgroundAnimationZoom: 1
@@ -268,7 +268,7 @@ PlayerSettings:
   useCustomGradleSettingsTemplate: 0
   useCustomProguardFile: 0
   AndroidTargetArchitectures: 2
-  AndroidSplashScreenScale: 0
+  AndroidSplashScreenScale: 1
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: 
   AndroidKeyaliasName: 
@@ -525,6 +525,9 @@ PlayerSettings:
       m_SubKind: 
   m_BuildTargetBatching:
   - m_BuildTarget: Android
+    m_StaticBatching: 1
+    m_DynamicBatching: 0
+  - m_BuildTarget: Standalone
     m_StaticBatching: 1
     m_DynamicBatching: 0
   m_BuildTargetShaderSettings: []
@@ -795,9 +798,9 @@ PlayerSettings:
   ps4IncludedModules: []
   ps4attribVROutputEnabled: 0
   monoEnv: 
-  splashScreenBackgroundSourceLandscape: {fileID: 0}
+  splashScreenBackgroundSourceLandscape: {fileID: 21300000, guid: f6fe9be652b9e98449edbb22cdc822f0, type: 3}
   splashScreenBackgroundSourcePortrait: {fileID: 0}
-  blurSplashScreenBackground: 1
+  blurSplashScreenBackground: 0
   spritePackerPolicy: 
   webGLMemorySize: 32
   webGLExceptionSupport: 1

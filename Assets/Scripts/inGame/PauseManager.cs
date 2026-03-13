@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class PauseManager : MonoBehaviour
 {
     [SerializeField] private UiAnimator overlay;
+    [SerializeField] private UiAnimator hudPanel;
     [SerializeField] private UiAnimator pausePanel;
     [SerializeField] private UiAnimator gamePanel;
 
@@ -41,6 +42,7 @@ public class PauseManager : MonoBehaviour
     {
         pausePanel?.Hide();
         overlay?.Hide();
+        hudPanel?.Hide();
         gamePanel?.Hide();
         UiLoader.Instance?.Show();
         AudioManager.Instance?.PlayOneShot("notification_ok");
@@ -55,6 +57,7 @@ public class PauseManager : MonoBehaviour
     {
         pausePanel?.Hide();
         overlay?.Hide();
+        hudPanel?.Hide();
         gamePanel?.Hide();
         UiLoader.Instance?.Show();
         AudioManager.Instance?.PlayOneShot("notification_ok");

@@ -3905,6 +3905,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseManager
   overlay: {fileID: 8500633166679907110}
+  hudPanel: {fileID: 6603493650660644841}
   pausePanel: {fileID: 194017098086126630}
   gamePanel: {fileID: 218314210}
 --- !u!4 &5255748150506414904
@@ -4236,6 +4237,7 @@ GameObject:
   - component: {fileID: 4822241935473139614}
   - component: {fileID: 1896437223901576343}
   - component: {fileID: 878162893661275378}
+  - component: {fileID: 6603493650660644841}
   m_Layer: 5
   m_Name: TopPanel
   m_TagString: Untagged
@@ -4545,6 +4547,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -91}
   m_SizeDelta: {x: 0, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6603493650660644841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5911505244586384913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff19dbb567300c94cb593e4c6b05c5d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeAnimator
+  IsVisible: 0
+  initiallyVisible: 0
+  interactableOnAnimation: 0
+  showOnStart: 1
+  hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
+  onShow:
+    m_PersistentCalls:
+      m_Calls: []
+  onHide:
+    m_PersistentCalls:
+      m_Calls: []
+  animationDelay: 0
+  onShowDelay: 0.2
+  onHideDelay: 0
+  duration: 0.25
 --- !u!222 &6650406959476183629
 CanvasRenderer:
   m_ObjectHideFlags: 0
