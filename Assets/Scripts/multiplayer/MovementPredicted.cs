@@ -33,6 +33,13 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
 
     private bool _cameraAssigned;
     private MobileInputManager _inputManager;
+    protected override void LateAwake()
+    {
+        _inputManager = MobileInputManager.instance;
+        _rigidbody = GetComponent<PredictedRigidbody>();
+
+        TryAssignLocalCamera();
+    }
     public struct State : IPredictedData<State>
     {
         public float boostAccumulato;
@@ -48,7 +55,8 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
 
     public struct Input : IPredictedData
     {
-        public float turn;
+        public float horizontalTurn;
+        public float verticalTurn;
         public bool jump;
 
         public void Dispose() { }
@@ -57,14 +65,18 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     protected override void Simulate(Input input, ref State state, float delta)
     {
         CastGroundRaysAndAlign(ref state, delta);
-
-       if (Mathf.Abs(input.turn) > 0.0001f)
+        state.grounded = IsGrounded();
+        if (Mathf.Abs(input.horizontalTurn) > 0.0001f)
         {
             Vector3 axis = state.hasSmoothedNormal ? state.smoothedNormal : _rigidbody.transform.up;
-            _rigidbody.AddTorque(axis * (input.turn * rotationSpeed), ForceMode.Acceleration);
+            _rigidbody.AddTorque(axis * (input.horizontalTurn * rotationSpeed), ForceMode.Acceleration);
+        }
+        if (Mathf.Abs(input.verticalTurn) > 0.0001f && !state.grounded)
+        {
+            Vector3 axis = _rigidbody.transform.right;
+            _rigidbody.AddTorque(axis * (input.verticalTurn * rotationSpeed), ForceMode.Acceleration);
         }
 
-        state.grounded = IsGrounded();
         if (state.grounded && input.jump)
         {
             _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -129,12 +141,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         }
     }
 
-    protected override void LateAwake()
-    {
-        _inputManager = MobileInputManager.instance;
-
-        TryAssignLocalCamera();
-    }
+  
     private void TryAssignLocalCamera()
     {
         if (_cameraAssigned || !isOwner)
@@ -154,17 +161,19 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     }
     protected override void GetFinalInput(ref Input input)
     {
+        float horizontalTurn = _inputManager.rotateHorizontal;
+        input.horizontalTurn = horizontalTurn;
 
-        float turn = 0f;
-        if (_inputManager.rightHeld) turn += 1f;
-        if (_inputManager.leftHeld) turn -= 1f;
-        input.turn = turn;
+        float verticalTurn= _inputManager.rotateVertical;
+        input.verticalTurn = verticalTurn;
 
     }
 
     protected override void SanitizeInput(ref Input input)
     {
-        input.turn = Mathf.Clamp(input.turn, -1f, 1f);
+        input.horizontalTurn = Mathf.Clamp(input.horizontalTurn, -1f, 1f);
+        input.verticalTurn = Mathf.Clamp(input.verticalTurn, -1f, 1f);
+
 
     }
     private bool IsGrounded()
