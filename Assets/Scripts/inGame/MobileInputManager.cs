@@ -28,6 +28,8 @@ public class MobileInputManager : MonoBehaviour
     public bool slideLeftHeld => slideLeftAction.IsPressed();
     public bool slideRightHeld => slideRightAction.IsPressed();
     public bool jumpTapped => jumpAction.IsPressed();
+    public Vector2 weaponSelectAxis => ReadWeaponSelectRaw();
+
 
     private InputAction rotateAction;
     private InputAction leftRotateAction;
@@ -37,6 +39,7 @@ public class MobileInputManager : MonoBehaviour
     private InputAction slideLeftAction;
     private InputAction slideRightAction;
     private InputAction slideDownAction;
+    private InputAction weaponSelectAction;
 
     void Awake()
     {
@@ -56,6 +59,7 @@ public class MobileInputManager : MonoBehaviour
         slideDownAction = map.FindAction("SlideDown", true);
         slideLeftAction = map.FindAction("SlideLeft", true);
         slideRightAction = map.FindAction("SlideRight", true);
+        weaponSelectAction = map.FindAction("WeaponSelect", true);
     }
 
     void OnEnable()
@@ -68,6 +72,7 @@ public class MobileInputManager : MonoBehaviour
         slideDownAction.Enable();
         slideLeftAction.Enable();   
         slideRightAction.Enable();
+        weaponSelectAction.Enable();
     }
 
     void OnDisable()
@@ -80,6 +85,7 @@ public class MobileInputManager : MonoBehaviour
         slideDownAction.Disable();
         slideLeftAction.Disable();
         slideRightAction.Disable();
+        weaponSelectAction.Disable();
     }
 
     private Vector2 ReadRotateAxisRaw()
@@ -97,5 +103,11 @@ public class MobileInputManager : MonoBehaviour
             return rotateAction.ReadValue<Vector2>();
 
         return new Vector2(0f, 0f);
+    }
+
+    private Vector2 ReadWeaponSelectRaw()
+    {
+        if (weaponSelectAction == null) return Vector2.zero;
+        return weaponSelectAction.ReadValue<Vector2>();
     }
 }
