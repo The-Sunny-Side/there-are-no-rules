@@ -4,23 +4,23 @@ public class VehicleWeapon : MonoBehaviour
 {
     public bool isHitting = false;
 
-    private Animator animator;
+    private Animator _animator;
 
-    private void Start()
+    private void Awake()
     {
-        animator = GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
     }
 
     public void ActivateWeapon()
     {
-        if (animator != null && !isHitting)
+        if (_animator != null && !isHitting)
         {
-            animator.SetTrigger("activate");
+            _animator.SetTrigger("activate");
         }
     }
 
     public void SetWeaponHitState(int state)
     {
-        isHitting = state==1;
+        isHitting = state == 1;
     }
 }
