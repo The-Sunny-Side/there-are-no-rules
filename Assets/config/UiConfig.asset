@@ -17,3 +17,6 @@ MonoBehaviour:
   panelColor: {r: 0.318, g: 0.706, b: 0.984, a: 1}
   loaderPrimaryColor: {r: 1, g: 0.843, b: 0.208, a: 1}
   loaderSecondaryColor: {r: 0, g: 0, b: 0, a: 1}
+  primaryColor: {r: 1, g: 0.843, b: 0.208, a: 1}
+  secondaryColor: {r: 0.318, g: 0.706, b: 0.984, a: 1}
+  stickColor: {r: 0.047995716, g: 0.11374725, b: 0.23773581, a: 1}

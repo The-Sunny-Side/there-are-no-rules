@@ -11,7 +11,6 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
     protected override void LateAwake()
     {
         _inputManager = MobileInputManager.instance;
-        _swipeDetector = this.GetComponent<SwipeDetector>();
         weaponsKey.Add("front", AnchorNames.WeaponFrontAnchor);
         weaponsKey.Add("back", AnchorNames.WeaponBackAnchor);
         weaponsKey.Add("left", AnchorNames.WeaponLeftAnchor);
@@ -20,39 +19,10 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
     }
     protected override void UpdateInput(ref Input input)
     {
-        if (Application.isMobilePlatform)
-        {
-            if (_swipeDetector.swipedUp)
-            {
-                input.useFront = _swipeDetector.swipedUp;
-                _swipeDetector.swipedUp = false;
-            }
-            if (_swipeDetector.swipedDown)
-            {
-                input.useBack = _swipeDetector.swipedDown;
-                _swipeDetector.swipedDown = false;
-            }
-            if (_swipeDetector.swipedRight)
-            {
-                input.useRight = _swipeDetector.swipedRight;
-                _swipeDetector.swipedRight = false;
-            }
-            if (_swipeDetector.swipedLeft)
-            {
-                input.useLeft = _swipeDetector.swipedLeft;
-                _swipeDetector.swipedLeft = false;
-            }
-
-        }
-        else
-        {
-            input.useFront = _inputManager.slideUpHeld;
-            input.useBack = _inputManager.slideDownHeld;
-            input.useRight = _inputManager.slideRightHeld;
-            input.useLeft = _inputManager.slideLeftHeld;
-        }
-
-
+            input.useFront = _inputManager.weaponSelectAxis.y>0;
+            input.useBack = _inputManager.weaponSelectAxis.y<0;
+            input.useRight = _inputManager.weaponSelectAxis.x > 0;
+            input.useLeft = _inputManager.weaponSelectAxis.x < 0;
     }
     public struct Input : IPredictedData
     {

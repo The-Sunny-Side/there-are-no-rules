@@ -199,9 +199,8 @@ MonoBehaviour:
   normalAlignSpeed: 5
   alignSpeed: 30
   _rigidbody: {fileID: 4360163942621179187}
-  _transform: {fileID: 0}
   visuals: {fileID: 2315482730086823503}
-  rotationSpeed: 20
+  rotationSpeed: 61
   jumpForce: 800
   sideBreak: 10
   forwardSpeed: 0.5

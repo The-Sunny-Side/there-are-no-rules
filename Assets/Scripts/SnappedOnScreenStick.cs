@@ -1,68 +1,66 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem.OnScreen;
+using UnityEngine.UI;
 
-public class SnappedOnScreenStick : OnScreenStick, IPointerDownHandler, IDragHandler, IPointerUpHandler
+public class SnappedOnScreenStick : OnScreenControl, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     [SerializeField] private float deadzonePixels = 20f;
-    [SerializeField] private float snapDistance = 60f;
+    [SerializeField] private float snapDistance = 40f;
+    [SerializeField] private RectTransform knobVisual;
 
-    private RectTransform _knobRect;
-    private RectTransform _backgroundRect;
-    private Vector2 _backgroundCenter;
+    [InputControl(layout = "Vector2")]
+    [SerializeField] private new string controlPath;
+    [SerializeField] private Image[] weaponIcons;
 
-    protected override void OnEnable()
+    private void Awake()
     {
-        base.OnEnable();
-        _knobRect = GetComponent<RectTransform>();
-        _backgroundRect = _knobRect.parent as RectTransform;
+        Dictionary<string, VehicleElement> data  = VehicleManager.Instance?.LoadVehicleConfig();
 
-        // Il centro del background in coordinate locali del suo parent
-        // dipende dal pivot: pivot (0.5, 0.5) = anchoredPosition è già il centro
-        // ma lo calcoliamo esplicitamente per essere sicuri
-        _backgroundCenter = _backgroundRect.anchoredPosition
-                          + new Vector2(
-                              _backgroundRect.rect.width * (0.5f - _backgroundRect.pivot.x),
-                              _backgroundRect.rect.height * (0.5f - _backgroundRect.pivot.y)
-                            );
+        if(data != null)
+        {
+            weaponIcons[0].sprite = data[VehicleElementsKeys.WeaponFront].icon;
+            weaponIcons[1].sprite = data[VehicleElementsKeys.WeaponLeft].icon;
+            weaponIcons[2].sprite = data[VehicleElementsKeys.WeaponBack].icon;
+            weaponIcons[3].sprite = data[VehicleElementsKeys.WeaponRight].icon;
+        }
     }
 
-    public new void OnPointerDown(PointerEventData eventData)
+    protected override string controlPathInternal
     {
-        base.OnPointerDown(eventData);
+        get => controlPath;
+        set => controlPath = value;
     }
 
-    public new void OnDrag(PointerEventData eventData)
+    private Vector2 _pointerStartPos;
+
+    public void OnPointerDown(PointerEventData eventData)
     {
-        // Converti il touch in coordinate locali del PARENT del background
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-               _backgroundRect.parent as RectTransform,
-               eventData.position,
-               eventData.pressEventCamera,
-               out Vector2 localPoint
-           );
+        _pointerStartPos = eventData.position;
+    }
 
-        Vector2 delta = localPoint - _backgroundCenter;
-
-        Debug.Log($"touch={eventData.position} | localPoint={localPoint} | center={_backgroundCenter} | delta={delta} | magnitude={delta.magnitude}");
+    public void OnDrag(PointerEventData eventData)
+    {
+        Vector2 delta = eventData.position - _pointerStartPos;
 
         if (delta.magnitude < deadzonePixels)
         {
-            _knobRect.anchoredPosition = Vector2.zero;
+            knobVisual.anchoredPosition = Vector2.zero;
             SendValueToControl(Vector2.zero);
             return;
         }
 
         Vector2 snapped = SnapToCardinal(delta.normalized);
-        _knobRect.anchoredPosition = snapped * snapDistance;
+        knobVisual.anchoredPosition = snapped * snapDistance;
         SendValueToControl(snapped);
     }
 
-    public new void OnPointerUp(PointerEventData eventData)
+    public void OnPointerUp(PointerEventData eventData)
     {
-        _knobRect.anchoredPosition = Vector2.zero;
+        knobVisual.anchoredPosition = Vector2.zero;
         SendValueToControl(Vector2.zero);
-        base.OnPointerUp(eventData);
     }
 
     private Vector2 SnapToCardinal(Vector2 input)
