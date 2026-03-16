@@ -4,8 +4,23 @@ using UnityEngine.InputSystem;
 public class MobileInputManager : MonoBehaviour
 {
     [SerializeField] private InputActionAsset inputActions;
+    [SerializeField, Range(0f, 1f)] private float rotateDeadzone = 0.1f;
 
     public static MobileInputManager instance;
+    public Vector2 rotateAxis
+    {
+        get
+        {
+            Vector2 axis = ReadRotateAxisRaw();
+            if (axis.sqrMagnitude < rotateDeadzone * rotateDeadzone)
+                return Vector2.zero;
+
+            return axis;
+        }
+    }
+
+    public float rotateHorizontal => rotateAxis.x;
+    public float rotateVertical => rotateAxis.y;
     public bool leftHeld => leftRotateAction.IsPressed();
     public bool rightHeld => rightRotateAction.IsPressed();
     public bool slideUpHeld => slideUpAction.IsPressed();
@@ -13,7 +28,10 @@ public class MobileInputManager : MonoBehaviour
     public bool slideLeftHeld => slideLeftAction.IsPressed();
     public bool slideRightHeld => slideRightAction.IsPressed();
     public bool jumpTapped => jumpAction.IsPressed();
+    public Vector2 weaponSelectAxis => ReadWeaponSelectRaw();
 
+
+    private InputAction rotateAction;
     private InputAction leftRotateAction;
     private InputAction rightRotateAction;
     private InputAction jumpAction;
@@ -21,6 +39,7 @@ public class MobileInputManager : MonoBehaviour
     private InputAction slideLeftAction;
     private InputAction slideRightAction;
     private InputAction slideDownAction;
+    private InputAction weaponSelectAction;
 
     void Awake()
     {
@@ -32,6 +51,7 @@ public class MobileInputManager : MonoBehaviour
         instance = this;
 
         var map = inputActions.FindActionMap("Match", true);
+        rotateAction = map.FindAction("Rotate", false);
         leftRotateAction = map.FindAction("LeftRotate", true);
         rightRotateAction = map.FindAction("RightRotate", true);
         jumpAction = map.FindAction("Jump", true);
@@ -39,10 +59,12 @@ public class MobileInputManager : MonoBehaviour
         slideDownAction = map.FindAction("SlideDown", true);
         slideLeftAction = map.FindAction("SlideLeft", true);
         slideRightAction = map.FindAction("SlideRight", true);
+        weaponSelectAction = map.FindAction("WeaponSelect", true);
     }
 
     void OnEnable()
     {
+        rotateAction?.Enable();
         leftRotateAction.Enable();
         rightRotateAction.Enable();
         jumpAction.Enable();
@@ -50,10 +72,12 @@ public class MobileInputManager : MonoBehaviour
         slideDownAction.Enable();
         slideLeftAction.Enable();   
         slideRightAction.Enable();
+        weaponSelectAction.Enable();
     }
 
     void OnDisable()
     {
+        rotateAction?.Disable();
         leftRotateAction.Disable();
         rightRotateAction.Disable();
         jumpAction.Disable();
@@ -61,5 +85,29 @@ public class MobileInputManager : MonoBehaviour
         slideDownAction.Disable();
         slideLeftAction.Disable();
         slideRightAction.Disable();
+        weaponSelectAction.Disable();
+    }
+
+    private Vector2 ReadRotateAxisRaw()
+    {
+        float axisX = 0f;
+        if (rightRotateAction.IsPressed())
+            axisX += 1f;
+
+        if (leftRotateAction.IsPressed())
+            axisX -= 1f;
+        if (axisX != 0f) 
+            return new Vector2(axisX, 0f);
+
+        if (rotateAction != null)
+            return rotateAction.ReadValue<Vector2>();
+
+        return new Vector2(0f, 0f);
+    }
+
+    private Vector2 ReadWeaponSelectRaw()
+    {
+        if (weaponSelectAction == null) return Vector2.zero;
+        return weaponSelectAction.ReadValue<Vector2>();
     }
 }

@@ -4,9 +4,14 @@ using UnityEngine.UI;
 
 public enum UiComponentType
 {
+    Primary,
+    Secondary,
+    Stick,
     Button,
     Panel,
-    TextTitle
+    TextTitle,
+    Yellow,
+    Blue,
 }
 
 public class InitComponentUi : MonoBehaviour
@@ -39,6 +44,15 @@ public class InitComponentUi : MonoBehaviour
                         break;
                     case UiComponentType.Panel:
                         componentImage.color = GameConfig.UiConfig.panelColor;
+                        break;
+                    case UiComponentType.Primary:
+                        componentImage.color = GameConfig.UiConfig.primaryColor;
+                        break;
+                    case UiComponentType.Secondary:
+                        componentImage.color = GameConfig.UiConfig.secondaryColor;
+                        break;
+                    case UiComponentType.Stick:
+                        componentImage.color = GameConfig.UiConfig.stickColor;
                         break;
                 }
             }

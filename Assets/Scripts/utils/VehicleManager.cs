@@ -67,6 +67,51 @@ public class VehicleManager : MonoBehaviour
         Debug.Log("Veicolo salvato: " + json);
     }
 
+    public Dictionary<string, VehicleElement> LoadVehicleConfig()
+    {
+        Dictionary<string, VehicleElement> result = new Dictionary<string, VehicleElement>();
+        if (File.Exists(configPath))
+        {
+            string json = File.ReadAllText(configPath);
+            Vehicle data = JsonUtility.FromJson<Vehicle>(json);
+
+            VehicleElement bodyObj = vehiclePrefabRegistry.GetBody(data.bodyElement);
+            VehicleElement baseObj = vehiclePrefabRegistry.GetBase(data.baseElement);
+
+            if (data.weaponRight != null)
+            {
+                VehicleElement weaponRightObj = vehiclePrefabRegistry.GetWeapon(data.weaponRight);
+                result[VehicleElementsKeys.WeaponRight] = weaponRightObj;
+            }
+
+            if (data.weaponFront != null)
+            {
+                VehicleElement weaponFrontObj = vehiclePrefabRegistry.GetWeapon(data.weaponFront);
+                result[VehicleElementsKeys.WeaponFront] = weaponFrontObj;
+            }
+
+            if (data.weaponBack != null)
+            {
+                VehicleElement weaponBackObj = vehiclePrefabRegistry.GetWeapon(data.weaponBack);
+                result[VehicleElementsKeys.WeaponBack] = weaponBackObj;
+            }
+
+            if (data.weaponLeft != null)
+            {
+                VehicleElement weaponLeftObj = vehiclePrefabRegistry.GetWeapon(data.weaponLeft);
+                result[VehicleElementsKeys.WeaponLeft] = weaponLeftObj;
+            }
+
+            result[VehicleElementsKeys.Body] = bodyObj ?? vehiclePrefabRegistry.GetBody(defaultBody);
+            result[VehicleElementsKeys.Base] = baseObj ?? vehiclePrefabRegistry.GetBody(defaultBase);
+        }
+        else
+        {
+            Debug.LogWarning("File di salvataggio non trovato");
+        }
+        return result;
+    }
+
     public Dictionary<string, GameObject> LoadVehicleData()
     {
         Dictionary<string, GameObject> result = new Dictionary<string, GameObject>();
