@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PivotWeaponBehaviour : MonoBehaviour
 {
-    [SerializeField] private Transform pivotFront;
+    [SerializeField] private Transform rotationPivot;
+    [SerializeField] private bool availableRotation = true;
     [Min(0f)]
     [SerializeField] private float rotationLerpSpeed = 8f;
     [Min(1)]
@@ -19,17 +21,28 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        AutoAssignPivotFront();
+        AutoAssignRotationPivot();
         CacheDefaultRotation();
     }
 
     private void OnValidate()
     {
-        AutoAssignPivotFront();
+        AutoAssignRotationPivot();
     }
 
     private void Update()
     {
+        if (rotationPivot == null)
+        {
+            return;
+        }
+
+        if (!availableRotation)
+        {
+            ReturnPivotToDefault();
+            return;
+        }
+
         Vector3 origin = transform.position;
         CastRaysAndAling(origin, out Vector3 targetPoint, out bool foundTarget);
 
@@ -40,11 +53,6 @@ public class PivotWeaponBehaviour : MonoBehaviour
         else
         {
             DrawSearchRays(origin);
-        }
-
-        if (pivotFront == null)
-        {
-            return;
         }
 
         if (foundTarget)
@@ -156,7 +164,7 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void RotatePivotTowards(Vector3 targetPoint)
     {
-        Vector3 directionToTarget = targetPoint - pivotFront.position;
+        Vector3 directionToTarget = targetPoint - rotationPivot.position;
         if (directionToTarget.sqrMagnitude <= Mathf.Epsilon)
         {
             return;
@@ -166,8 +174,8 @@ public class PivotWeaponBehaviour : MonoBehaviour
         Quaternion targetLocalRotation = GetLocalRotation(targetRotation);
         float lerpFactor = rotationLerpSpeed * Time.deltaTime;
 
-        pivotFront.localRotation = Quaternion.Slerp(
-            pivotFront.localRotation,
+        rotationPivot.localRotation = Quaternion.Slerp(
+            rotationPivot.localRotation,
             targetLocalRotation,
             lerpFactor);
     }
@@ -175,41 +183,59 @@ public class PivotWeaponBehaviour : MonoBehaviour
     private void ReturnPivotToDefault()
     {
         float lerpFactor = rotationLerpSpeed * Time.deltaTime;
-        pivotFront.localRotation = Quaternion.Slerp(
-            pivotFront.localRotation,
+        rotationPivot.localRotation = Quaternion.Slerp(
+            rotationPivot.localRotation,
             defaultLocalRotation,
             lerpFactor);
     }
 
-    private void AutoAssignPivotFront()
+    private void AutoAssignRotationPivot()
     {
-        if (pivotFront != null)
+        Transform childPivot = FindChildPivot();
+        if (childPivot != null)
         {
+            if (rotationPivot == null || rotationPivot == transform)
+            {
+                rotationPivot = childPivot;
+            }
+
             return;
         }
 
-        Transform childPivot = transform.Find("pivotFront");
-        if (childPivot != null)
+        if (rotationPivot == null)
         {
-            pivotFront = childPivot;
+            rotationPivot = transform;
         }
+    }
+
+    private Transform FindChildPivot()
+    {
+        foreach (Transform child in transform)
+        {
+            if (child.name.StartsWith("pivot"))
+            {
+                return child;
+            }
+        }
+
+        return null;
     }
 
     private void CacheDefaultRotation()
     {
-        if (pivotFront != null)
+        if (rotationPivot != null)
         {
-            defaultLocalRotation = pivotFront.localRotation;
+            defaultLocalRotation = rotationPivot.localRotation;
         }
     }
 
     private Quaternion GetLocalRotation(Quaternion worldRotation)
     {
-        if (pivotFront.parent == null)
+        if (rotationPivot.parent == null)
         {
             return worldRotation;
         }
 
-        return Quaternion.Inverse(pivotFront.parent.rotation) * worldRotation;
+        return Quaternion.Inverse(rotationPivot.parent.rotation) * worldRotation;
     }
 }
