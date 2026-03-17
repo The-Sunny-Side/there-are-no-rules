@@ -30,7 +30,17 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void Update()
     {
-        CastRaysAndAling(out Vector3 targetPoint, out bool foundTarget);
+        Vector3 origin = transform.position;
+        CastRaysAndAling(origin, out Vector3 targetPoint, out bool foundTarget);
+
+        if (foundTarget)
+        {
+            DrawDirectionRay(origin, targetPoint);
+        }
+        else
+        {
+            DrawSearchRays(origin);
+        }
 
         if (pivotFront == null)
         {
@@ -47,9 +57,8 @@ public class PivotWeaponBehaviour : MonoBehaviour
         }
     }
 
-    private void CastRaysAndAling(out Vector3 targetPoint, out bool foundTarget)
+    private void CastRaysAndAling(Vector3 origin, out Vector3 targetPoint, out bool foundTarget)
     {
-        Vector3 origin = transform.position;
         Vector3 direction = transform.forward;
         Vector3 right = transform.right;
         Vector3 up = transform.up;
@@ -94,8 +103,6 @@ public class PivotWeaponBehaviour : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(origin, dir, out hit, RayLenght, PlayerMask, QueryTriggerInteraction.Ignore))
         {
-            Debug.DrawRay(origin, dir * hit.distance, Color.yellow);
-
             if (hit.distance < closestHitDistance)
             {
                 closestHitDistance = hit.distance;
@@ -103,10 +110,48 @@ public class PivotWeaponBehaviour : MonoBehaviour
                 foundTarget = true;
             }
         }
-        else
+    }
+
+    private void DrawSearchRays(Vector3 origin)
+    {
+        Vector3 direction = transform.forward;
+        Vector3 right = transform.right;
+        Vector3 up = transform.up;
+        int safeRaysCount = Mathf.Max(1, raysCount);
+        int safeRingsCount = Mathf.Max(1, ringsCount);
+
+        Debug.DrawRay(origin, direction * RayLenght, Color.red);
+
+        for (int ring = 1; ring <= safeRingsCount; ring++)
         {
-            Debug.DrawRay(origin, dir * RayLenght, Color.red);
+            float ringPercent = (float)ring / safeRingsCount;
+            float currentSpread = raySpread * ringPercent;
+            int raysInRing = Mathf.Max(1, Mathf.RoundToInt(safeRaysCount * ringPercent));
+            float angleStep = 360f / raysInRing;
+            float angleOffset = ring % 2 == 0 ? angleStep * 0.5f : 0f;
+
+            for (int i = 0; i < raysInRing; i++)
+            {
+                float angle = (angleOffset + angleStep * i) * Mathf.Deg2Rad;
+                Vector3 radial =
+                    right * Mathf.Cos(angle) +
+                    up * Mathf.Sin(angle);
+                Vector3 dir = (direction + radial * currentSpread).normalized;
+
+                Debug.DrawRay(origin, dir * RayLenght, Color.red);
+            }
         }
+    }
+
+    private void DrawDirectionRay(Vector3 origin, Vector3 targetPoint)
+    {
+        Vector3 directionToTarget = targetPoint - origin;
+        if (directionToTarget.sqrMagnitude <= Mathf.Epsilon)
+        {
+            return;
+        }
+
+        Debug.DrawRay(origin, directionToTarget, Color.yellow);
     }
 
     private void RotatePivotTowards(Vector3 targetPoint)
