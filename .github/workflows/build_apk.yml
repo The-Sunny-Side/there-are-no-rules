@@ -22,17 +22,10 @@ jobs:
           restore-keys: |
             Library-Android-
 
-      - name: Activate Unity license
-        uses: buildalon/activate-unity-license@v2
-        with:
-          license: 'Personal'
-          username: ${{ secrets.UNITY_USERNAME }}
-          password: ${{ secrets.UNITY_PASSWORD }}
-
       - name: Build Android APK
         uses: game-ci/unity-builder@v4
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_USERNAME }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: Android
