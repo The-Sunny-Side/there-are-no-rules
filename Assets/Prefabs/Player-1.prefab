@@ -200,11 +200,13 @@ MonoBehaviour:
   alignSpeed: 30
   _rigidbody: {fileID: 4360163942621179187}
   visuals: {fileID: 2315482730086823503}
-  rotationSpeed: 40
+  rotationSpeed: 50
+  airRotationMultiplier: 0.35
   jumpForce: 300
   sideBreak: 10
   forwardSpeed: 0.5
-  groundedAcceleration: 10
+  groundedAcceleration: 20
+  groundedSteerDeadzone: 0.1
   minAlignment: 0
   boostForce: 0
   speedToStartBoostDecay: 50
