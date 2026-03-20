@@ -206,6 +206,9 @@ MonoBehaviour:
   sideBreak: 10
   forwardSpeed: 0.5
   groundedAcceleration: 20
+  groundedDeceleration: 20
+  groundedDriveDeadzone: 0.15
+  groundedBrakeDeadzone: 0.2
   groundedSteerDeadzone: 0.1
   minAlignment: 0
   boostForce: 0

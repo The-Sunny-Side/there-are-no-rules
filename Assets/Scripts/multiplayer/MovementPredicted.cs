@@ -21,6 +21,9 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     [SerializeField] private float sideBreak = 20f;
     [SerializeField] private float forwardSpeed = 10f;
     [SerializeField] private float groundedAcceleration = 30f;
+    [SerializeField] private float groundedDeceleration = 45f;
+    [SerializeField, Range(0f, 1f)] private float groundedDriveDeadzone = 0.15f;
+    [SerializeField, Range(0f, 1f)] private float groundedBrakeDeadzone = 0.2f;
     [SerializeField, Range(0f, 1f)] private float groundedSteerDeadzone = 0.2f;
     [SerializeField] private float minAlignment = 0f;
     [SerializeField] private float boostForce = 100f;
@@ -100,48 +103,65 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
 
                 // forward proiettato sulla pendenza
                 Vector3 forwardOnSlope = Vector3.ProjectOnPlane(_rigidbody.transform.forward, slopeNormal).normalized;
-                float inputMagnitude = Mathf.Clamp01(moveInput.magnitude);
+                float rawInputMagnitude = Mathf.Clamp01(moveInput.magnitude);
+                bool hasDriveInput = rawInputMagnitude >= groundedDriveDeadzone;
+                bool isBrakeInput = moveInput.y < -groundedBrakeDeadzone;
 
-                if (inputMagnitude > 0.0001f)
-                    _rigidbody.AddForce(forwardOnSlope * (groundedAcceleration * inputMagnitude), ForceMode.Acceleration);
-
-                float alignment = Mathf.Clamp01(Vector3.Dot(forwardOnSlope, slopeDirection));
-                alignment = Mathf.Max(alignment, minAlignment);
-
-                Vector3 slideForce = forwardOnSlope * gravityForce * alignment * forwardSpeed;
-                Debug.DrawRay(_rigidbody.position, slideForce * 5f, Color.cyan);
-
-                _rigidbody.AddForce(slideForce);
-
-                if (_rigidbody.linearVelocity.sqrMagnitude > 0.1f)
+                if (isBrakeInput)
                 {
-                    Vector3 velDir = _rigidbody.linearVelocity.normalized;
-                    float dirAlignment = Vector3.Dot(velDir, forwardOnSlope);
-                    float misalignment = 1f - Mathf.Max(0f, dirAlignment);
+                    Vector3 groundVelocity = Vector3.ProjectOnPlane(_rigidbody.linearVelocity, slopeNormal);
+                    if (groundVelocity.sqrMagnitude > 0.0001f)
+                        _rigidbody.AddForce(-groundVelocity.normalized * groundedDeceleration, ForceMode.Acceleration);
 
-                    // boost release
-                    if (misalignment < 0.3f)
-                    {
-                        _rigidbody.AddForce(slideForce * state.boostAccumulato * boostForce, ForceMode.Impulse);
-                        state.boostAccumulato = 0f;
-                        state.driftingTime = 0f;
-                    }
-                    // boost decay
-                    else if (_rigidbody.linearVelocity.sqrMagnitude < speedToStartBoostDecay)
-                    {
-                        state.boostAccumulato = Mathf.Max(0f, state.boostAccumulato - delta);
-                    }
-                    // boost charge
-                    else if (state.driftingTime > timeToStartBoostCharge)
-                    {
-                        state.boostAccumulato = Mathf.Min(1f, state.boostAccumulato + misalignment * delta);
-                    }
-                    else
-                    {
-                        state.driftingTime += delta;
-                    }
+                    state.driftingTime = 0f;
+                }
+                else if (hasDriveInput)
+                {
+                    float driveInputMagnitude = Mathf.InverseLerp(groundedDriveDeadzone, 1f, rawInputMagnitude);
+                    _rigidbody.AddForce(forwardOnSlope * (groundedAcceleration * driveInputMagnitude), ForceMode.Acceleration);
 
-                    _rigidbody.linearVelocity *= Mathf.Lerp(1f, 0.9f, misalignment * delta * sideBreak);
+                    float alignment = Mathf.Clamp01(Vector3.Dot(forwardOnSlope, slopeDirection));
+                    alignment = Mathf.Max(alignment, minAlignment);
+
+                    Vector3 slideForce = forwardOnSlope * gravityForce * alignment * forwardSpeed;
+                    Debug.DrawRay(_rigidbody.position, slideForce * 5f, Color.cyan);
+
+                    _rigidbody.AddForce(slideForce);
+
+                    if (_rigidbody.linearVelocity.sqrMagnitude > 0.1f)
+                    {
+                        Vector3 velDir = _rigidbody.linearVelocity.normalized;
+                        float dirAlignment = Vector3.Dot(velDir, forwardOnSlope);
+                        float misalignment = 1f - Mathf.Max(0f, dirAlignment);
+
+                        // boost release
+                        if (misalignment < 0.3f)
+                        {
+                            _rigidbody.AddForce(slideForce * state.boostAccumulato * boostForce, ForceMode.Impulse);
+                            state.boostAccumulato = 0f;
+                            state.driftingTime = 0f;
+                        }
+                        // boost decay
+                        else if (_rigidbody.linearVelocity.sqrMagnitude < speedToStartBoostDecay)
+                        {
+                            state.boostAccumulato = Mathf.Max(0f, state.boostAccumulato - delta);
+                        }
+                        // boost charge
+                        else if (state.driftingTime > timeToStartBoostCharge)
+                        {
+                            state.boostAccumulato = Mathf.Min(1f, state.boostAccumulato + misalignment * delta);
+                        }
+                        else
+                        {
+                            state.driftingTime += delta;
+                        }
+
+                        _rigidbody.linearVelocity *= Mathf.Lerp(1f, 0.9f, misalignment * delta * sideBreak);
+                    }
+                }
+                else
+                {
+                    state.driftingTime = 0f;
                 }
             }
         }
