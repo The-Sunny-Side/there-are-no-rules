@@ -138,10 +138,8 @@ MonoBehaviour:
   rotationPivot: {fileID: 9182736450918273}
   availableRotation: 1
   rotationLerpSpeed: 8
-  raysCount: 16
-  ringsCount: 3
-  raySpread: 0.4
-  RayLenght: 15
+  detectionRadius: 20
+  coneAngle: 25
   PlayerMask:
     serializedVersion: 2
     m_Bits: 128
