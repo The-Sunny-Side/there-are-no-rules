@@ -19,6 +19,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float sideBreak = 20f;
     [SerializeField] private float forwardSpeed = 10f;
+    [SerializeField] private float groundedAcceleration = 30f;
     [SerializeField] private float minAlignment = 0f;
     [SerializeField] private float boostForce = 100f;
     [SerializeField] private float speedToStartBoostDecay = 50f;
@@ -64,14 +65,17 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
 
     protected override void Simulate(Input input, ref State state, float delta)
     {
-        CastGroundRaysAndAlign(ref state, delta);
         state.grounded = IsGrounded();
-        if (Mathf.Abs(input.horizontalTurn) > 0.0001f)
+        Vector2 moveInput = new Vector2(input.horizontalTurn, input.verticalTurn);
+
+        CastGroundRaysAndAlign(ref state, moveInput, delta);
+
+        if (!state.grounded && Mathf.Abs(input.horizontalTurn) > 0.0001f)
         {
             Vector3 axis = state.hasSmoothedNormal ? state.smoothedNormal : _rigidbody.transform.up;
             _rigidbody.AddTorque(axis * (input.horizontalTurn * rotationSpeed), ForceMode.Acceleration);
         }
-        if (Mathf.Abs(input.verticalTurn) > 0.0001f && !state.grounded)
+        if (!state.grounded && Mathf.Abs(input.verticalTurn) > 0.0001f)
         {
             Vector3 axis = _rigidbody.transform.right;
             _rigidbody.AddTorque(axis * (input.verticalTurn * rotationSpeed), ForceMode.Acceleration);
@@ -93,6 +97,10 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
 
                 // forward proiettato sulla pendenza
                 Vector3 forwardOnSlope = Vector3.ProjectOnPlane(_rigidbody.transform.forward, slopeNormal).normalized;
+                float inputMagnitude = Mathf.Clamp01(moveInput.magnitude);
+
+                if (inputMagnitude > 0.0001f)
+                    _rigidbody.AddForce(forwardOnSlope * (groundedAcceleration * inputMagnitude), ForceMode.Acceleration);
 
                 float alignment = Mathf.Clamp01(Vector3.Dot(forwardOnSlope, slopeDirection));
                 alignment = Mathf.Max(alignment, minAlignment);
@@ -181,7 +189,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         return Physics.Raycast(_rigidbody.position, -_rigidbody.transform.up, out _, whenIsGroundLenght, whatIsGroud);
     }
 
-    private void CastGroundRaysAndAlign(ref State state, float delta)
+    private void CastGroundRaysAndAlign(ref State state, Vector2 moveInput, float delta)
     {
         Vector3 origin = _rigidbody.position;
         Vector3 down = -_rigidbody.transform.up;
@@ -253,6 +261,24 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
             // fallback nel caso raro in cui forwardProjected diventi quasi zero
             if (forwardProjected.sqrMagnitude < 0.0001f)
                 forwardProjected = Vector3.ProjectOnPlane(_rigidbody.transform.up, state.smoothedNormal).normalized;
+
+            if (state.grounded && moveInput.sqrMagnitude > 0.0001f)
+            {
+                Vector3 desiredDirection =
+                    _rigidbody.transform.right * moveInput.x +
+                    _rigidbody.transform.forward * moveInput.y;
+
+                desiredDirection = Vector3.ProjectOnPlane(desiredDirection, state.smoothedNormal).normalized;
+
+                if (desiredDirection.sqrMagnitude > 0.0001f)
+                {
+                    forwardProjected = Vector3.RotateTowards(
+                        forwardProjected,
+                        desiredDirection,
+                        rotationSpeed * Mathf.Deg2Rad * delta,
+                        0f);
+                }
+            }
 
             Quaternion targetRotation = Quaternion.LookRotation(forwardProjected, state.smoothedNormal);
 
