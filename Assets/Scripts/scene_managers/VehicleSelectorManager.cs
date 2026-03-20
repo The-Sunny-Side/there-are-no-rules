@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static VehiclePrefabRegistry;
 
 public class VehicleSelectorManager : MonoBehaviour
 {
@@ -18,13 +19,14 @@ public class VehicleSelectorManager : MonoBehaviour
     /** 0 = Top - 1 = Left - 2 = Back - 3 = Right **/
     [SerializeField] private int selectedWeaponType = 0;
     [SerializeField] private GameObject[] selectedWeapons;
+    [SerializeField] private VehicleEntry[] selectedWeaponsElements;
     [SerializeField] private GameObject[] weaponButtons;
     [SerializeField] private bool isVisible = true;
 
 
-    private VehicleElement[] weaponElements;
-    private VehicleElement[] baseElements;
-    private VehicleElement[] bodyElements;
+    private VehicleEntry[] weaponElements;
+    private VehicleEntry[] baseElements;
+    private VehicleEntry[] bodyElements;
     private Sprite emptyPart;
     private int stepIndex = 0;
     private int[] selectedWeaponsIndexes = new int[4] { 0, 0, 0, 0 };
@@ -74,6 +76,7 @@ public class VehicleSelectorManager : MonoBehaviour
                 {
                     selectedWeaponsIndexes[0] = loadedWeaponIndex;
                     selectedWeapons[0] = weaponElements[loadedWeaponIndex].element;
+                    selectedWeaponsElements[0] = weaponElements[loadedWeaponIndex];
                 }
             }
 
@@ -84,6 +87,7 @@ public class VehicleSelectorManager : MonoBehaviour
                 {
                     selectedWeaponsIndexes[1] = loadedWeaponIndex;
                     selectedWeapons[1] = weaponElements[loadedWeaponIndex].element;
+                    selectedWeaponsElements[1] = weaponElements[loadedWeaponIndex];
                 }
             }
 
@@ -94,6 +98,7 @@ public class VehicleSelectorManager : MonoBehaviour
                 {
                     selectedWeaponsIndexes[2] = loadedWeaponIndex;
                     selectedWeapons[2] = weaponElements[loadedWeaponIndex].element;
+                    selectedWeaponsElements[2] = weaponElements[loadedWeaponIndex];
                 }
             }
 
@@ -104,13 +109,14 @@ public class VehicleSelectorManager : MonoBehaviour
                 {
                     selectedWeaponsIndexes[3] = loadedWeaponIndex;
                     selectedWeapons[3] = weaponElements[loadedWeaponIndex].element;
+                    selectedWeaponsElements[3] = weaponElements[loadedWeaponIndex];
                 }
             }
         }
 
         for (int i = 0; i < weaponButtons.Length; i++)
         {
-            weaponIcons[i].sprite = weaponElements[selectedWeaponsIndexes[i]].icon;
+            weaponIcons[i].sprite = selectedWeaponsElements[i].icon;
         }
 
         StartCoroutine(Utilities.DelayedEvent(() =>
@@ -242,6 +248,7 @@ public class VehicleSelectorManager : MonoBehaviour
                     indexToDisable = selectedWeaponsIndexes[selectedWeaponType];
                     weaponIcons[selectedWeaponType].sprite = weaponElements[elementIndex].icon;
                     selectedWeapons[selectedWeaponType] = weaponElements[elementIndex].element;
+                    selectedWeaponsElements[selectedWeaponType] = weaponElements[elementIndex];
                     selectedWeaponsIndexes[selectedWeaponType] = elementIndex;
                 }
                 break;
@@ -283,9 +290,9 @@ public class VehicleSelectorManager : MonoBehaviour
 
         UiLoader.Instance?.Show();
 
-        GameObject baseElement = baseElements[selectedBaseIndex].element;
-        GameObject bodyElement = bodyElements[selectedBodyIndex].element;
-        VehicleManager.Instance?.SaveVehicleData(baseElement, bodyElement, selectedWeapons);
+        VehicleEntry baseElement = baseElements[selectedBaseIndex];
+        VehicleEntry bodyElement = bodyElements[selectedBodyIndex];
+        VehicleManager.Instance?.SaveVehicleData(baseElement, bodyElement, selectedWeaponsElements);
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToHomeScreen();

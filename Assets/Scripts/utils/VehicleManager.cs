@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using static VehiclePrefabRegistry;
 
 [System.Serializable]
 public class Vehicle
@@ -42,6 +43,21 @@ public class VehicleManager : MonoBehaviour
             Instance = this;
             defaultBaseElement = vehiclePrefabRegistry.GetBase(defaultBase).element;
             defaultBodyElement = vehiclePrefabRegistry.GetBody(defaultBody).element;
+
+            if(!File.Exists(configPath))
+            {
+                Vehicle defaultVehicle = new Vehicle
+                {
+                    baseElement = defaultBase,
+                    bodyElement = defaultBody,
+                    weaponFront = "empty",
+                    weaponLeft = "empty",
+                    weaponBack = "empty",
+                    weaponRight = "empty"
+                };
+                string json = JsonUtility.ToJson(defaultVehicle, true);
+                File.WriteAllText(configPath, json);
+            }
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -50,16 +66,16 @@ public class VehicleManager : MonoBehaviour
         }
     }
 
-    public void SaveVehicleData(GameObject baseElement, GameObject bodyElement, GameObject[] weapons)
+    public void SaveVehicleData(VehicleEntry baseElement, VehicleEntry bodyElement, VehicleEntry[] weapons)
     {
         Vehicle dataToSave = new Vehicle();
 
-        dataToSave.baseElement = baseElement.name;
-        dataToSave.bodyElement = bodyElement.name;
-        dataToSave.weaponFront = weapons[0]?.name ?? null;
-        dataToSave.weaponLeft = weapons[1]?.name ?? null;
-        dataToSave.weaponBack = weapons[2]?.name ?? null;
-        dataToSave.weaponRight = weapons[3]?.name ?? null;
+        dataToSave.baseElement = baseElement.key;
+        dataToSave.bodyElement = bodyElement.key;
+        dataToSave.weaponFront = weapons[0]?.key ?? null;
+        dataToSave.weaponLeft = weapons[1]?.key ?? null;
+        dataToSave.weaponBack = weapons[2]?.key ?? null;
+        dataToSave.weaponRight = weapons[3]?.key ?? null;
 
         string json = JsonUtility.ToJson(dataToSave, true);
         File.WriteAllText(configPath, json);
@@ -103,7 +119,7 @@ public class VehicleManager : MonoBehaviour
             }
 
             result[VehicleElementsKeys.Body] = bodyObj ?? vehiclePrefabRegistry.GetBody(defaultBody);
-            result[VehicleElementsKeys.Base] = baseObj ?? vehiclePrefabRegistry.GetBody(defaultBase);
+            result[VehicleElementsKeys.Base] = baseObj ?? vehiclePrefabRegistry.GetBase(defaultBase);
         }
         else
         {
@@ -123,7 +139,8 @@ public class VehicleManager : MonoBehaviour
             GameObject bodyObj = vehiclePrefabRegistry.GetBody(data.bodyElement).element;
             GameObject baseObj = vehiclePrefabRegistry.GetBase(data.baseElement).element;
 
-            if (data.weaponRight != null)
+
+            if (data.weaponRight != null && vehiclePrefabRegistry.GetWeapon(data.weaponRight).element)
             {
                 GameObject weaponRightObj = vehiclePrefabRegistry.GetWeapon(data.weaponRight).element;
                 result[VehicleElementsKeys.WeaponRight] = weaponRightObj;

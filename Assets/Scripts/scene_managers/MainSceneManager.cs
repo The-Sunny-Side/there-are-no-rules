@@ -13,7 +13,9 @@ public class MainSceneManager : MonoBehaviour
 
     public void Start()
     {
+    
         Dictionary<string, GameObject> list = VehicleManager.Instance?.LoadVehicleData();
+
 
         if (list.TryGetValue(VehicleElementsKeys.Body, out var bodyPrefab) && bodyPrefab &&
              list.TryGetValue(VehicleElementsKeys.Base, out var basePrefab) && basePrefab)

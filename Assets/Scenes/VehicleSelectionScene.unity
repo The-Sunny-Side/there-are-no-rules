@@ -579,6 +579,10 @@ MonoBehaviour:
   interactableOnAnimation: 1
   showOnStart: 0
   hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
   onShow:
     m_PersistentCalls:
       m_Calls: []
@@ -1026,51 +1030,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
---- !u!1 &318256832
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 318256834}
-  - component: {fileID: 318256833}
-  m_Layer: 0
-  m_Name: VehicleManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &318256833
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 318256832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 919c988bd4ebe2c4e94381c72fb3fcc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VehicleManager
-  vehiclePrefabRegistry: {fileID: 11400000, guid: e191f8b72e231d049be738646e1a71bd, type: 2}
---- !u!4 &318256834
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 318256832}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 363.58783, y: 0, z: 3099.062}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &334718517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2245,6 +2204,19 @@ MonoBehaviour:
   - {fileID: 3925080907645985337, guid: a536f05c114be2448b11828a296cb27e, type: 3}
   - {fileID: 3925080907645985337, guid: a536f05c114be2448b11828a296cb27e, type: 3}
   - {fileID: 3925080907645985337, guid: a536f05c114be2448b11828a296cb27e, type: 3}
+  selectedWeaponsElements:
+  - element: {fileID: 0}
+    icon: {fileID: 0}
+    key: 
+  - element: {fileID: 0}
+    icon: {fileID: 0}
+    key: 
+  - element: {fileID: 0}
+    icon: {fileID: 0}
+    key: 
+  - element: {fileID: 0}
+    icon: {fileID: 0}
+    key: 
   weaponButtons:
   - {fileID: 1523274375}
   - {fileID: 1914086051}
@@ -2749,6 +2721,10 @@ MonoBehaviour:
   interactableOnAnimation: 1
   showOnStart: 1
   hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
   onShow:
     m_PersistentCalls:
       m_Calls: []
@@ -3426,6 +3402,10 @@ MonoBehaviour:
   interactableOnAnimation: 1
   showOnStart: 0
   hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
   onShow:
     m_PersistentCalls:
       m_Calls: []
@@ -3733,6 +3713,10 @@ MonoBehaviour:
   interactableOnAnimation: 1
   showOnStart: 0
   hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
   onShow:
     m_PersistentCalls:
       m_Calls: []
@@ -4213,6 +4197,10 @@ MonoBehaviour:
   interactableOnAnimation: 1
   showOnStart: 0
   hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
   onShow:
     m_PersistentCalls:
       m_Calls: []
@@ -7360,6 +7348,10 @@ MonoBehaviour:
   interactableOnAnimation: 1
   showOnStart: 0
   hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
   onShow:
     m_PersistentCalls:
       m_Calls: []
@@ -7543,7 +7535,6 @@ SceneRoots:
   - {fileID: 621389725}
   - {fileID: 830064929}
   - {fileID: 79744997}
-  - {fileID: 318256834}
   - {fileID: 2100852264}
   - {fileID: 2056147093}
   - {fileID: 580046112}
