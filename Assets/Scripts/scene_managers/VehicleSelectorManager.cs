@@ -123,7 +123,10 @@ public class VehicleSelectorManager : MonoBehaviour
         {
             SetHudVisibility(true);
         }, 0.1f));
+    }
 
+    void Start()
+    {
         SetStep(0);
     }
 
