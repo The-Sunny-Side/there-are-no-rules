@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PivotWeaponBehaviour : MonoBehaviour
 {
@@ -7,14 +6,10 @@ public class PivotWeaponBehaviour : MonoBehaviour
     [SerializeField] private bool availableRotation = true;
     [Min(0f)]
     [SerializeField] private float rotationLerpSpeed = 8f;
-    [Min(1)]
-    [SerializeField] private int raysCount = 8;
-    [Min(1)]
-    [SerializeField] private int ringsCount = 3;
     [Min(0f)]
-    [SerializeField] private float raySpread = 0.25f;
-    [Min(0f)]
-    [SerializeField] private float RayLenght = .5f;
+    [SerializeField] private float detectionRadius = 20f;
+    [Range(1f, 180f)]
+    [SerializeField] private float coneAngle = 25f;
     [SerializeField] private LayerMask PlayerMask;
 
     private Quaternion defaultLocalRotation;
@@ -32,143 +27,138 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if (rotationPivot == null)
-        {
-            return;
-        }
+        if (rotationPivot == null) return;
 
         if (!availableRotation)
         {
             ReturnPivotToDefault();
+            DrawSearchCone();
             return;
         }
 
-        Vector3 origin = transform.position;
-        CastRaysAndAling(origin, out Vector3 targetPoint, out bool foundTarget);
+        bool foundTarget = DetectTarget(out Vector3 targetPoint);
 
         if (foundTarget)
         {
-            DrawDirectionRay(origin, targetPoint);
-        }
-        else
-        {
-            DrawSearchRays(origin);
-        }
-
-        if (foundTarget)
-        {
+            DrawTargetLine(targetPoint);
             RotatePivotTowards(targetPoint);
         }
         else
         {
+            DrawSearchCone();
             ReturnPivotToDefault();
         }
     }
 
-    private void CastRaysAndAling(Vector3 origin, out Vector3 targetPoint, out bool foundTarget)
+    private bool DetectTarget(out Vector3 targetPoint)
     {
-        Vector3 direction = transform.forward;
-        Vector3 right = transform.right;
-        Vector3 up = transform.up;
-        int safeRaysCount = Mathf.Max(1, raysCount);
-        int safeRingsCount = Mathf.Max(1, ringsCount);
-        float closestHitDistance = float.MaxValue;
-
         targetPoint = Vector3.zero;
-        foundTarget = false;
 
-        EvaluateRay(origin, direction, ref foundTarget, ref closestHitDistance, ref targetPoint);
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position, detectionRadius, PlayerMask, QueryTriggerInteraction.Ignore);
 
-        for (int ring = 1; ring <= safeRingsCount; ring++)
+        float closestDistance = float.MaxValue;
+        bool found = false;
+
+        foreach (Collider col in hits)
         {
-            float ringPercent = (float)ring / safeRingsCount;
-            float currentSpread = raySpread * ringPercent;
-            int raysInRing = Mathf.Max(1, Mathf.RoundToInt(safeRaysCount * ringPercent));
-            float angleStep = 360f / raysInRing;
-            float angleOffset = ring % 2 == 0 ? angleStep * 0.5f : 0f;
+            Vector3 toTarget = col.bounds.center - transform.position;
+            if (Vector3.Angle(transform.forward, toTarget) > coneAngle) continue;
 
-            for (int i = 0; i < raysInRing; i++)
+            float dist = toTarget.magnitude;
+            if (dist < closestDistance)
             {
-                float angle = (angleOffset + angleStep * i) * Mathf.Deg2Rad;
-
-                Vector3 radial =
-                    right * Mathf.Cos(angle) +
-                    up * Mathf.Sin(angle);
-                Vector3 dir = (direction + radial * currentSpread).normalized;
-
-                EvaluateRay(origin, dir, ref foundTarget, ref closestHitDistance, ref targetPoint);
+                closestDistance = dist;
+                targetPoint = col.bounds.center;
+                found = true;
             }
         }
+
+        return found;
     }
 
-    private void EvaluateRay(
-        Vector3 origin,
-        Vector3 dir,
-        ref bool foundTarget,
-        ref float closestHitDistance,
-        ref Vector3 targetPoint)
+    private void DrawSearchCone()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(origin, dir, out hit, RayLenght, PlayerMask, QueryTriggerInteraction.Ignore))
-        {
-            if (hit.distance < closestHitDistance)
-            {
-                closestHitDistance = hit.distance;
-                targetPoint = hit.collider.bounds.center;
-                foundTarget = true;
-            }
-        }
-    }
-
-    private void DrawSearchRays(Vector3 origin)
-    {
-        Vector3 direction = transform.forward;
+        Vector3 origin = transform.position;
+        Vector3 forward = transform.forward;
         Vector3 right = transform.right;
         Vector3 up = transform.up;
-        int safeRaysCount = Mathf.Max(1, raysCount);
-        int safeRingsCount = Mathf.Max(1, ringsCount);
 
-        Debug.DrawRay(origin, direction * RayLenght, Color.red);
+        float coneRad = coneAngle * Mathf.Deg2Rad;
+        float cosAngle = Mathf.Cos(coneRad);
+        float sinAngle = Mathf.Sin(coneRad);
 
-        for (int ring = 1; ring <= safeRingsCount; ring++)
+        const int perimeterRays = 16;
+        Vector3 prevEdge = Vector3.zero;
+
+        for (int i = 0; i <= perimeterRays; i++)
         {
-            float ringPercent = (float)ring / safeRingsCount;
-            float currentSpread = raySpread * ringPercent;
-            int raysInRing = Mathf.Max(1, Mathf.RoundToInt(safeRaysCount * ringPercent));
-            float angleStep = 360f / raysInRing;
-            float angleOffset = ring % 2 == 0 ? angleStep * 0.5f : 0f;
+            float a = (360f / perimeterRays * i) * Mathf.Deg2Rad;
+            Vector3 radial = right * Mathf.Cos(a) + up * Mathf.Sin(a);
+            Vector3 edgeDir = (forward * cosAngle + radial * sinAngle).normalized;
+            Vector3 edgePoint = origin + edgeDir * detectionRadius;
 
-            for (int i = 0; i < raysInRing; i++)
-            {
-                float angle = (angleOffset + angleStep * i) * Mathf.Deg2Rad;
-                Vector3 radial =
-                    right * Mathf.Cos(angle) +
-                    up * Mathf.Sin(angle);
-                Vector3 dir = (direction + radial * currentSpread).normalized;
+            Debug.DrawRay(origin, edgeDir * detectionRadius, Color.red);
 
-                Debug.DrawRay(origin, dir * RayLenght, Color.red);
-            }
+            if (i > 0)
+                Debug.DrawLine(prevEdge, edgePoint, Color.red);
+
+            prevEdge = edgePoint;
         }
+
+        Debug.DrawRay(origin, forward * detectionRadius, Color.red);
     }
 
-    private void DrawDirectionRay(Vector3 origin, Vector3 targetPoint)
+    private void DrawTargetLine(Vector3 targetPoint)
     {
-        Vector3 directionToTarget = targetPoint - origin;
-        if (directionToTarget.sqrMagnitude <= Mathf.Epsilon)
+        Vector3 dir = targetPoint - transform.position;
+        if (dir.sqrMagnitude > Mathf.Epsilon)
+            Debug.DrawRay(transform.position, dir, Color.yellow);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying)
+            DrawSearchConeGizmos();
+    }
+
+    private void DrawSearchConeGizmos()
+    {
+        Vector3 origin = transform.position;
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
+        Vector3 up = transform.up;
+
+        float coneRad = coneAngle * Mathf.Deg2Rad;
+        float cosAngle = Mathf.Cos(coneRad);
+        float sinAngle = Mathf.Sin(coneRad);
+
+        Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
+        const int perimeterRays = 16;
+        Vector3 prevEdge = Vector3.zero;
+
+        for (int i = 0; i <= perimeterRays; i++)
         {
-            return;
+            float a = (360f / perimeterRays * i) * Mathf.Deg2Rad;
+            Vector3 radial = right * Mathf.Cos(a) + up * Mathf.Sin(a);
+            Vector3 edgeDir = (forward * cosAngle + radial * sinAngle).normalized;
+            Vector3 edgePoint = origin + edgeDir * detectionRadius;
+
+            Gizmos.DrawLine(origin, edgePoint);
+
+            if (i > 0)
+                Gizmos.DrawLine(prevEdge, edgePoint);
+
+            prevEdge = edgePoint;
         }
 
-        Debug.DrawRay(origin, directionToTarget, Color.yellow);
+        Gizmos.DrawLine(origin, origin + forward * detectionRadius);
     }
 
     private void RotatePivotTowards(Vector3 targetPoint)
     {
         Vector3 directionToTarget = targetPoint - rotationPivot.position;
-        if (directionToTarget.sqrMagnitude <= Mathf.Epsilon)
-        {
-            return;
-        }
+        if (directionToTarget.sqrMagnitude <= Mathf.Epsilon) return;
 
         Quaternion targetRotation = Quaternion.LookRotation(directionToTarget.normalized, transform.up);
         Quaternion targetLocalRotation = GetLocalRotation(targetRotation);
@@ -195,17 +185,12 @@ public class PivotWeaponBehaviour : MonoBehaviour
         if (childPivot != null)
         {
             if (rotationPivot == null || rotationPivot == transform)
-            {
                 rotationPivot = childPivot;
-            }
-
             return;
         }
 
         if (rotationPivot == null)
-        {
             rotationPivot = transform;
-        }
     }
 
     private Transform FindChildPivot()
@@ -213,29 +198,21 @@ public class PivotWeaponBehaviour : MonoBehaviour
         foreach (Transform child in transform)
         {
             if (child.name.StartsWith("pivot"))
-            {
                 return child;
-            }
         }
-
         return null;
     }
 
     private void CacheDefaultRotation()
     {
         if (rotationPivot != null)
-        {
             defaultLocalRotation = rotationPivot.localRotation;
-        }
     }
 
     private Quaternion GetLocalRotation(Quaternion worldRotation)
     {
         if (rotationPivot.parent == null)
-        {
             return worldRotation;
-        }
-
         return Quaternion.Inverse(rotationPivot.parent.rotation) * worldRotation;
     }
 }
