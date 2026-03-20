@@ -16,10 +16,12 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
 
     [Header("CARATTERISTICHE")]
     [SerializeField] private float rotationSpeed = 90f;
+    [SerializeField, Range(0f, 1f)] private float airRotationMultiplier = 0.35f;
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float sideBreak = 20f;
     [SerializeField] private float forwardSpeed = 10f;
     [SerializeField] private float groundedAcceleration = 30f;
+    [SerializeField, Range(0f, 1f)] private float groundedSteerDeadzone = 0.2f;
     [SerializeField] private float minAlignment = 0f;
     [SerializeField] private float boostForce = 100f;
     [SerializeField] private float speedToStartBoostDecay = 50f;
@@ -67,18 +69,19 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     {
         state.grounded = IsGrounded();
         Vector2 moveInput = new Vector2(input.horizontalTurn, input.verticalTurn);
+        float airRotationSpeed = rotationSpeed * airRotationMultiplier;
 
         CastGroundRaysAndAlign(ref state, moveInput, delta);
 
         if (!state.grounded && Mathf.Abs(input.horizontalTurn) > 0.0001f)
         {
             Vector3 axis = state.hasSmoothedNormal ? state.smoothedNormal : _rigidbody.transform.up;
-            _rigidbody.AddTorque(axis * (input.horizontalTurn * rotationSpeed), ForceMode.Acceleration);
+            _rigidbody.AddTorque(axis * (input.horizontalTurn * airRotationSpeed), ForceMode.Acceleration);
         }
         if (!state.grounded && Mathf.Abs(input.verticalTurn) > 0.0001f)
         {
             Vector3 axis = _rigidbody.transform.right;
-            _rigidbody.AddTorque(axis * (input.verticalTurn * rotationSpeed), ForceMode.Acceleration);
+            _rigidbody.AddTorque(axis * (input.verticalTurn * airRotationSpeed), ForceMode.Acceleration);
         }
 
         if (state.grounded && input.jump)
@@ -264,18 +267,20 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
 
             if (state.grounded && moveInput.sqrMagnitude > 0.0001f)
             {
+                float steerStrength = Mathf.InverseLerp(groundedSteerDeadzone, 1f, Mathf.Abs(moveInput.x));
+
                 Vector3 desiredDirection =
-                    _rigidbody.transform.right * moveInput.x +
+                    _rigidbody.transform.right * (Mathf.Sign(moveInput.x) * steerStrength) +
                     _rigidbody.transform.forward * moveInput.y;
 
                 desiredDirection = Vector3.ProjectOnPlane(desiredDirection, state.smoothedNormal).normalized;
 
-                if (desiredDirection.sqrMagnitude > 0.0001f)
+                if (desiredDirection.sqrMagnitude > 0.0001f && steerStrength > 0f)
                 {
                     forwardProjected = Vector3.RotateTowards(
                         forwardProjected,
                         desiredDirection,
-                        rotationSpeed * Mathf.Deg2Rad * delta,
+                        rotationSpeed * steerStrength * Mathf.Deg2Rad * delta,
                         0f);
                 }
             }
