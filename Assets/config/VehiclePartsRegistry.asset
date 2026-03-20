@@ -39,6 +39,6 @@ MonoBehaviour:
   - element: {fileID: 3925080907645985337, guid: 965d393dd41f0244bb7dfd4d5840a65a, type: 3}
     icon: {fileID: 21300000, guid: 7511ba900fd4f5d46a134ccc53f72909, type: 3}
     key: empty
-  - element: {fileID: 3853782094996777641, guid: 2f7e68cb26ad3dc4490fcce171563ca2, type: 3}
+  - element: {fileID: 4827364910283746, guid: b3c4d5e6f7a8b3c4d5e6f7a8b3c4d5e6, type: 3}
     icon: {fileID: 21300000, guid: 73dcaa6125c01854d8e427d783aec677, type: 3}
     key: punch
