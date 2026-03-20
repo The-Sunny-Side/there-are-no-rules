@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 7391028374651029}
   - component: {fileID: 1827364509182736}
   m_Layer: 0
-  m_Name: punch2
+  m_Name: punch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
