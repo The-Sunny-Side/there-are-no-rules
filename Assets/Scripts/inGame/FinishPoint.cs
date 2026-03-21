@@ -7,63 +7,46 @@ public class FinishPoint : NetworkBehaviour
     [SerializeField] private NetworkManager netManager;
     [SerializeField] private MenuManager menuManager;
 
-    private readonly List<PlayerID> playerList = new();
-
-    private bool _raceEnded;
+    private readonly List<PlayerID> _playerList = new();
+    private readonly List<PlayerID> _finishOrder = new();
 
     void Start()
     {
-        netManager.onPlayerJoined += UpdateList;
-        netManager.onPlayerLeft += RemovePlayer;
+        netManager.onPlayerJoined += OnPlayerJoined;
+        netManager.onPlayerLeft += OnPlayerLeft;
     }
 
-    private void RemovePlayer(PlayerID player, bool asserver)
+    private void OnPlayerJoined(PlayerID player, bool isReconnect, bool asServer)
     {
-        if (!asserver) return;
-        playerList.Remove(player);
+        if (!asServer) return;
+        if (!_playerList.Contains(player))
+            _playerList.Add(player);
     }
 
-    private void UpdateList(PlayerID player, bool isreconnect, bool asserver)
+    private void OnPlayerLeft(PlayerID player, bool asServer)
     {
-        if (!asserver) return;
-        if (!playerList.Contains(player))
-            playerList.Add(player);
+        if (!asServer) return;
+        _playerList.Remove(player);
     }
 
     void OnTriggerEnter(Collider collider)
     {
         if (!isServer) return;
-        if (_raceEnded) return;
-
-        if (!collider.gameObject.CompareTag("PlayerSphere"))
-            return;
+        if (!collider.gameObject.CompareTag("PlayerSphere")) return;
 
         var movement = collider.gameObject.GetComponentInParent<MovementPredicted>();
-        if (!movement) return;
+        if (movement == null || !movement.owner.HasValue) return;
 
-        if (!movement.owner.HasValue) return;
-        PlayerID winningId = movement.owner.Value;
+        PlayerID finishedId = movement.owner.Value;
+        if (_finishOrder.Contains(finishedId)) return;
 
-        _raceEnded = true;
-
-        Congrats(winningId);
-
-        foreach (var p in playerList)
-            if (!p.Equals(winningId))
-                LoseMessage(p);
+        _finishOrder.Add(finishedId);
+        RpcOnPlayerFinished(_finishOrder.ToArray(), _playerList.Count);
     }
 
-    [TargetRpc]
-    private void Congrats(PlayerID target)
+    [ObserversRpc]
+    private void RpcOnPlayerFinished(PlayerID[] finishOrder, int totalPlayers)
     {
-        Debug.Log("hai vinto");
-        menuManager.OnWinMatch();
-    }
-
-    [TargetRpc]
-    private void LoseMessage(PlayerID target)
-    {
-        Debug.Log("hai perso");
-        menuManager.OnLoseMatch();
+        menuManager.OnPlayerFinished(finishOrder, localPlayer, totalPlayers);
     }
 }

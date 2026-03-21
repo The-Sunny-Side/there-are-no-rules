@@ -1,6 +1,5 @@
-using NUnit.Framework;
+using PurrNet;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 
 public class MenuManager : MonoBehaviour
@@ -141,16 +140,40 @@ public class MenuManager : MonoBehaviour
         SettingsModal.Instance?.Show();
     }
 
-    public void OnLoseMatch()
+    private bool _finishPanelShown;
+
+    public void OnPlayerFinished(PlayerID[] finishOrder, PlayerID? localPlayerId, int totalPlayers)
     {
-        InGamePanel.SetActive(false);
-        finishedGamePanel.SetActive(true);
-        textToShowWhenFinished.text = "Hai perso, mi disp!";
-    }
-    public void OnWinMatch()
-    {
-        InGamePanel.SetActive(false);
-        finishedGamePanel.SetActive(true);
-        textToShowWhenFinished.text = "Congratulazione hai vinto!";
+        // mostra il pannello solo quando arriva il giocatore locale
+        if (!_finishPanelShown)
+        {
+            foreach (var id in finishOrder)
+            {
+                if (localPlayerId.HasValue && id == localPlayerId.Value)
+                {
+                    _finishPanelShown = true;
+                    InGamePanel.SetActive(false);
+                    finishedGamePanel.SetActive(true);
+                    break;
+                }
+            }
+        }
+
+        if (!_finishPanelShown) return;
+
+        // aggiorna la classifica
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < finishOrder.Length; i++)
+        {
+            bool isMe = localPlayerId.HasValue && finishOrder[i] == localPlayerId.Value;
+            string label = isMe ? "Tu" : $"Avversario {i + 1}";
+            sb.AppendLine($"{i + 1}°  {label}");
+        }
+
+        int remaining = totalPlayers - finishOrder.Length;
+        if (remaining > 0)
+            sb.AppendLine($"\n({remaining} ancora in gara...)");
+
+        textToShowWhenFinished.text = sb.ToString();
     }
 }
