@@ -38,10 +38,11 @@ public class FinishPoint : NetworkBehaviour
         if (!collider.gameObject.CompareTag("PlayerSphere"))
             return;
 
-        var identity = collider.gameObject.GetComponentInParent<NetworkIdentity>();
-        if (!identity) return;
+        var movement = collider.gameObject.GetComponentInParent<MovementPredicted>();
+        if (!movement) return;
 
-        PlayerID winningId = identity.owner.GetValueOrDefault();
+        if (!movement.owner.HasValue) return;
+        PlayerID winningId = movement.owner.Value;
 
         _raceEnded = true;
 
