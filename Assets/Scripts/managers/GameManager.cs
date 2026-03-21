@@ -44,6 +44,21 @@ public class GameManager : MonoBehaviour
         LoadSceneAsync("MainScene");
     }
 
+    public void GoToPlayScreen()
+    {
+        LoadSceneAsync("multiplayerMovement");
+    }
+
+    public void GoToVehicleScreen()
+    {
+        LoadSceneAsync("VehicleSelectionScene");
+    }
+
+    public void GoToLocalLobbyScreen()
+    {
+        LoadSceneAsync("LocalLobbyLoadingScene");
+    }
+
     public void ExitGame()
     {
         Application.Quit();

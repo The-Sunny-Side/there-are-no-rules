@@ -45,7 +45,7 @@ public class PauseManager : MonoBehaviour
         hudPanel?.Hide();
         gamePanel?.Hide();
         UiLoader.Instance?.Show();
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance.LoadSceneAsync(SceneManager.GetActiveScene().name);
@@ -60,7 +60,7 @@ public class PauseManager : MonoBehaviour
         hudPanel?.Hide();
         gamePanel?.Hide();
         UiLoader.Instance?.Show();
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToHomeScreen();

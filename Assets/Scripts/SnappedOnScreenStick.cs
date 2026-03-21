@@ -17,7 +17,7 @@ public class SnappedOnScreenStick : OnScreenControl, IPointerDownHandler, IDragH
 
     private void Awake()
     {
-        Dictionary<string, VehicleElement> data  = VehicleManager.Instance?.LoadVehicleConfig();
+        Dictionary<string, VehicleEntry> data  = VehicleManager.Instance?.LoadVehicleConfig();
 
         if(data != null)
         {

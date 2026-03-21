@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,11 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Vehicle/PrefabRegistry")]
 public class VehiclePrefabRegistry : ScriptableObject
 {
-    [Serializable]
-    public class VehicleEntry: VehicleElement
-    {
-        public string key;
-    }
+
 
     [SerializeField]
     public VehicleElement EmptyPart;

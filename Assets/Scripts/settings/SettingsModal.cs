@@ -73,7 +73,7 @@ public class SettingsModal : MonoBehaviour
 
     public void OnConfirm()
     {
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         Hide();
     }
 
@@ -103,7 +103,7 @@ public class SettingsModal : MonoBehaviour
 
     public void OnToggleAudio(bool isOn)
     {
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         AudioManager.Instance?.ToggleAudio();
     }
 }

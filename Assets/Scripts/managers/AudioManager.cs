@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private Sound[] backgroundClips;
     [SerializeField] private Sound[] oneShotClips;
 
+    [SerializeField] private AudioClip buttonTapAudio;
     private Dictionary<string, AudioClip> backgroundLibrary = new();
     private Dictionary<string, AudioClip> oneShotLibrary = new();
 
@@ -60,6 +61,14 @@ public class AudioManager : MonoBehaviour
 
         Debug.Log($"Playing SFX: {name}");
         sfxSource.PlayOneShot(clip, volume);
+    }
+
+    public void PlayButtonAudio()
+    {
+        if (!audioEnabled)
+            return;
+
+        sfxSource.PlayOneShot(buttonTapAudio, volume);
     }
 
     public void SetVolume(float newVolume)

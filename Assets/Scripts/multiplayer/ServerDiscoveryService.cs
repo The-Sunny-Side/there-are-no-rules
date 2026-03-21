@@ -39,7 +39,7 @@ public class ServerDiscoveryService : MonoBehaviour
                 GameManager.Instance.SetIpAddress(foundIP);
                 GameManager.Instance.SetNetworkMode(Mode.Client);
 
-                GameManager.Instance.LoadScene("multiplayerMovement");
+                GameManager.Instance.GoToPlayScreen();
             }
         }));
 
