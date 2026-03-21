@@ -145,7 +145,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 2, y: 0.8}
-  m_SizeDelta: {x: 91.8, y: 38.4}
+  m_SizeDelta: {x: 100, y: 38.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3915751172534663554
 CanvasRenderer:
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sbeng
+  m_text: Sbreng
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9ed19f5af49814b43b4039814553aa33, type: 2}
   m_sharedMaterial: {fileID: -5343956022204426543, guid: 9ed19f5af49814b43b4039814553aa33, type: 2}
