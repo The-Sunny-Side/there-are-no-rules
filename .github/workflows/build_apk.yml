@@ -47,12 +47,12 @@ jobs:
           targetPlatform: Android
           androidExportType: androidPackage
           unityVersion: auto
-          buildName: ${{ github.event.inputs.app_name }}-${{ github.event.inputs.version }}
+          buildName: ${{ github.event.inputs.app_name }}
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.inputs.app_name }}
+          name: ${{ github.event.inputs.app_name }}-${{ github.event.inputs.version }}
           path: build/Android/*.apk
           retention-days: 90
 
@@ -61,7 +61,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.version }}
-          name: ${{ github.event.inputs.app_name }}
+          name: ${{ github.event.inputs.app_name }}-${{ github.event.inputs.version }}
           files: build/Android/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
