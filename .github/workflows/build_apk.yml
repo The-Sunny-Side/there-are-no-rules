@@ -52,7 +52,7 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.inputs.app_name }}-${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.app_name }}
           path: build/Android/*.apk
           retention-days: 90
 
