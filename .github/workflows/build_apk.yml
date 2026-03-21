@@ -2,6 +2,21 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
+    inputs:
+      app_name:
+        description: 'App base name'
+        required: true
+        type: string
+        default: 'there-are-no-rules'
+      version:
+        description: 'Build version (e.g. 1.0.0)'
+        required: true
+        type: string
+      create_release:
+        description: 'Create a GitHub release?'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -32,10 +47,21 @@ jobs:
           targetPlatform: Android
           androidExportType: androidPackage
           unityVersion: auto
+          buildName: ${{ github.event.inputs.app_name }}-${{ github.event.inputs.version }}
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: APK-${{ github.run_number }}
+          name: ${{ github.event.inputs.app_name }}-${{ github.event.inputs.version }}
           path: build/Android/*.apk
-          retention-days: 14
+          retention-days: 90
+
+      - name: Create GitHub Release
+        if: ${{ github.event.inputs.create_release == 'true' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.app_name }}-${{ github.event.inputs.version }}
+          files: build/Android/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
