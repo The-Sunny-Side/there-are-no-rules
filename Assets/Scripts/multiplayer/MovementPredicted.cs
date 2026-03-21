@@ -15,26 +15,45 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     [SerializeField] private GameObject visuals;
 
     [Header("CARATTERISTICHE")]
+    [Tooltip("Velocità di rotazione sinistra/destra (gradi/sec)")]
     [SerializeField] private float rotationSpeed = 90f;
+    [Tooltip("Moltiplicatore della rotazione in aria (0 = nessuna sterzata, 1 = sterzata piena)")]
     [SerializeField, Range(0f, 1f)] private float airRotationMultiplier = 0.35f;
+    [Tooltip("Forza applicata verso l'alto al salto")]
     [SerializeField] private float jumpForce = 10f;
+    [Tooltip("Forza di frenata laterale per ridurre lo scivolamento di lato")]
     [SerializeField] private float sideBreak = 20f;
+    [Tooltip("Velocità massima in avanti a terra")]
     [SerializeField] private float forwardSpeed = 10f;
+    [Tooltip("Tasso di accelerazione a terra: più alto = risposta più immediata al gas")]
     [SerializeField] private float groundedAcceleration = 30f;
+    [Tooltip("Forza di frenata quando si spinge l'analogico indietro a terra")]
     [SerializeField] private float groundedDeceleration = 45f;
+    [Tooltip("Soglia minima dell'input sotto cui non si applica accelerazione (evita micro-input accidentali)")]
     [SerializeField, Range(0f, 1f)] private float groundedDriveDeadzone = 0.15f;
+    [Tooltip("Soglia minima dell'input freno sotto cui non si applica decelerazione forzata")]
     [SerializeField, Range(0f, 1f)] private float groundedBrakeDeadzone = 0.2f;
+    [Tooltip("Soglia minima dell'input sterzata sotto cui non si ruota (elimina il drift dello stick)")]
     [SerializeField, Range(0f, 1f)] private float groundedSteerDeadzone = 0.2f;
+    [Tooltip("Allineamento minimo con la slope")]
     [SerializeField] private float minAlignment = 0f;
+    [Tooltip("Forza del boost applicata al rilascio")]
     [SerializeField] private float boostForce = 100f;
+    [Tooltip("Velocità oltre cui il boost inizia a decadere (non si accumula più boost sopra questa soglia)")]
     [SerializeField] private float speedToStartBoostDecay = 50f;
+    [Tooltip("Secondi di pressione continua del freno necessari prima di iniziare a caricare il boost")]
     [SerializeField] private float timeToStartBoostCharge = 0.3f;
 
     [Header("ALLINEAMENTO TERRENO")]
+    [Tooltip("Numero di raggi usati per rilevare la normale del terreno (più raggi = più preciso ma più costoso)")]
     [SerializeField] private int raysCount = 8;
+    [Tooltip("Raggio della distribuzione dei raggi attorno al centro del personaggio")]
     [SerializeField] private float raySpread = 0.25f;
+    [Tooltip("Layer che viene considerato come terreno")]
     [SerializeField] private LayerMask whatIsGroud;
+    [Tooltip("Lunghezza dei raggi usati per calcolare la normale del terreno")]
     [SerializeField] private float groundRayLength = .5f;
+    [Tooltip("Lunghezza del raggio usato per determinare se il personaggio è a terra")]
     [SerializeField] private float whenIsGroundLenght = .5f;
 
     private bool _cameraAssigned;
@@ -172,7 +191,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         }
     }
 
-  
+
     private void TryAssignLocalCamera()
     {
         if (_cameraAssigned || !isOwner)
@@ -195,7 +214,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         float horizontalTurn = _inputManager.rotateHorizontal;
         input.horizontalTurn = horizontalTurn;
 
-        float verticalTurn= _inputManager.rotateVertical;
+        float verticalTurn = _inputManager.rotateVertical;
         input.verticalTurn = verticalTurn;
 
     }
