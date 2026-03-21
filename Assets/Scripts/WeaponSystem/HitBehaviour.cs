@@ -39,6 +39,7 @@ public class HitBehaviour : MonoBehaviour
         {
             pushDirection = (otherCollider.transform.position - transform.position).normalized;
         }
+        EffectsManager.Instance.SpawnBalloon(hitPoint);
 
         hittedBody.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         _weaponPart.SetWeaponHitState(0);
