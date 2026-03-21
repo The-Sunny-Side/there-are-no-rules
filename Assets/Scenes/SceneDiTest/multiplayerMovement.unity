@@ -4203,7 +4203,7 @@ MonoBehaviour:
   overlay: {fileID: 8500633166679907110}
   hudPanel: {fileID: 6603493650660644841}
   pausePanel: {fileID: 194017098086126630}
-  gamePanel: {fileID: 0}
+  gamePanel: {fileID: 1564431404}
 --- !u!4 &5255748150506414904
 Transform:
   m_ObjectHideFlags: 0
