@@ -13,6 +13,8 @@ public class Vehicle
     public string weaponFront;
     public string weaponBack;
 
+    private Dictionary<string, VehicleEntry> savedVehicle = new Dictionary<string, VehicleEntry>();
+
     public bool IsValid()
     {
         if (string.IsNullOrWhiteSpace(baseElement) || baseElement == "empty") return false;
@@ -34,6 +36,9 @@ public class VehicleManager : MonoBehaviour
 
     [SerializeField]
     public VehiclePrefabRegistry vehiclePrefabRegistry;
+
+    private bool resyncVehicle = true;
+    private Dictionary<string, VehicleEntry> savedVehicle = new Dictionary<string, VehicleEntry>();
 
     void Awake()
     {
@@ -57,6 +62,9 @@ public class VehicleManager : MonoBehaviour
                 };
                 string json = JsonUtility.ToJson(defaultVehicle, true);
                 File.WriteAllText(configPath, json);
+            }else {                 string json = File.ReadAllText(configPath);
+                Vehicle data = JsonUtility.FromJson<Vehicle>(json);
+                savedVehicle = GetVehicleElements(data);
             }
             DontDestroyOnLoad(gameObject);
         }
@@ -80,107 +88,66 @@ public class VehicleManager : MonoBehaviour
         string json = JsonUtility.ToJson(dataToSave, true);
         File.WriteAllText(configPath, json);
 
+        savedVehicle= GetVehicleElements(dataToSave);
         Debug.Log("Veicolo salvato: " + json);
     }
 
-    public Dictionary<string, VehicleElement> LoadVehicleConfig()
+    private Dictionary<string, VehicleEntry> GetVehicleElements(Vehicle data)
     {
-        Dictionary<string, VehicleElement> result = new Dictionary<string, VehicleElement>();
-        if (File.Exists(configPath))
+        Dictionary<string, VehicleEntry> result = new Dictionary<string, VehicleEntry>();
+
+        VehicleEntry bodyObj = vehiclePrefabRegistry.GetBody(data.bodyElement);
+        VehicleEntry baseObj = vehiclePrefabRegistry.GetBase(data.baseElement);
+
+        if (data.weaponRight != null)
         {
-            string json = File.ReadAllText(configPath);
-            Vehicle data = JsonUtility.FromJson<Vehicle>(json);
-
-            VehicleElement bodyObj = vehiclePrefabRegistry.GetBody(data.bodyElement);
-            VehicleElement baseObj = vehiclePrefabRegistry.GetBase(data.baseElement);
-
-            if (data.weaponRight != null)
-            {
-                VehicleElement weaponRightObj = vehiclePrefabRegistry.GetWeapon(data.weaponRight);
-                result[VehicleElementsKeys.WeaponRight] = weaponRightObj;
-            }
-
-            if (data.weaponFront != null)
-            {
-                VehicleElement weaponFrontObj = vehiclePrefabRegistry.GetWeapon(data.weaponFront);
-                result[VehicleElementsKeys.WeaponFront] = weaponFrontObj;
-            }
-
-            if (data.weaponBack != null)
-            {
-                VehicleElement weaponBackObj = vehiclePrefabRegistry.GetWeapon(data.weaponBack);
-                result[VehicleElementsKeys.WeaponBack] = weaponBackObj;
-            }
-
-            if (data.weaponLeft != null)
-            {
-                VehicleElement weaponLeftObj = vehiclePrefabRegistry.GetWeapon(data.weaponLeft);
-                result[VehicleElementsKeys.WeaponLeft] = weaponLeftObj;
-            }
-
-            result[VehicleElementsKeys.Body] = bodyObj ?? vehiclePrefabRegistry.GetBody(defaultBody);
-            result[VehicleElementsKeys.Base] = baseObj ?? vehiclePrefabRegistry.GetBase(defaultBase);
+            VehicleEntry weaponRightObj = vehiclePrefabRegistry.GetWeapon(data.weaponRight);
+            result[VehicleElementsKeys.WeaponRight] = weaponRightObj;
         }
-        else
+
+        if (data.weaponFront != null)
         {
-            Debug.LogWarning("File di salvataggio non trovato");
+            VehicleEntry weaponFrontObj = vehiclePrefabRegistry.GetWeapon(data.weaponFront);
+            result[VehicleElementsKeys.WeaponFront] = weaponFrontObj;
         }
+
+        if (data.weaponBack != null)
+        {
+            VehicleEntry weaponBackObj = vehiclePrefabRegistry.GetWeapon(data.weaponBack);
+            result[VehicleElementsKeys.WeaponBack] = weaponBackObj;
+        }
+
+        if (data.weaponLeft != null)
+        {
+            VehicleEntry weaponLeftObj = vehiclePrefabRegistry.GetWeapon(data.weaponLeft);
+            result[VehicleElementsKeys.WeaponLeft] = weaponLeftObj;
+        }
+
+        result[VehicleElementsKeys.Body] = bodyObj ?? vehiclePrefabRegistry.GetBody(defaultBody);
+        result[VehicleElementsKeys.Base] = baseObj ?? vehiclePrefabRegistry.GetBase(defaultBase);
+
         return result;
     }
 
-    public Dictionary<string, GameObject> LoadVehicleData()
+    public Dictionary<string, VehicleEntry> LoadVehicleConfig()
     {
-        Dictionary<string, GameObject> result = new Dictionary<string, GameObject>();
-        if (File.Exists(configPath))
+        if (resyncVehicle)
         {
-            string json = File.ReadAllText(configPath);
-            Vehicle data = JsonUtility.FromJson<Vehicle>(json);
-
-            GameObject bodyObj = vehiclePrefabRegistry.GetBody(data.bodyElement).element;
-            GameObject baseObj = vehiclePrefabRegistry.GetBase(data.baseElement).element;
-
-
-            if (data.weaponRight != null && vehiclePrefabRegistry.GetWeapon(data.weaponRight).element)
+            if (File.Exists(configPath))
             {
-                GameObject weaponRightObj = vehiclePrefabRegistry.GetWeapon(data.weaponRight).element;
-                result[VehicleElementsKeys.WeaponRight] = weaponRightObj;
+                string json = File.ReadAllText(configPath);
+                Vehicle data = JsonUtility.FromJson<Vehicle>(json);
+                savedVehicle = GetVehicleElements(data);
+                resyncVehicle = false;
             }
-
-            if (data.weaponFront != null)
+            else
             {
-                GameObject weaponFrontObj = vehiclePrefabRegistry.GetWeapon(data.weaponFront).element;
-                result[VehicleElementsKeys.WeaponFront] = weaponFrontObj;
+                Debug.LogWarning("File di salvataggio non trovato");
             }
-
-            if (data.weaponBack != null)
-            {
-                GameObject weaponBackObj = vehiclePrefabRegistry.GetWeapon(data.weaponBack).element;
-                result[VehicleElementsKeys.WeaponBack] = weaponBackObj;
-            }
-
-            if (data.weaponLeft != null)
-            {
-                GameObject weaponLeftObj = vehiclePrefabRegistry.GetWeapon(data.weaponLeft).element;
-                result[VehicleElementsKeys.WeaponLeft] = weaponLeftObj;
-            }
-
-            result[VehicleElementsKeys.Body] = bodyObj ?? defaultBodyElement;
-            result[VehicleElementsKeys.Base] = baseObj ?? defaultBaseElement;
-
-            Debug.Log("Veicolo caricato:");
-            foreach(var item in result)
-            {
-                Debug.Log(item.Key, item.Value);
-            }
-
-
         }
-        else
-        {
-            Debug.LogWarning("File di salvataggio non trovato");
-        }
-        return result;
+        return savedVehicle;
     }
+
     public string GetVehicleJson()
     {
         if (File.Exists(configPath))

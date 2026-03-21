@@ -66,8 +66,10 @@ public class CollisionDetector : PredictedIdentity<CollisionDetector.State>
 
         Vector3 hitPoint = otherCollider.ClosestPoint(transform.position);
 
+
         _pendingHit = true;
         _pendingPushDirection = (transform.position - hitPoint).normalized;
+
         weaponPart.SetWeaponHitState(0);
         Debug.Log($"Hit from {otherCollider.gameObject.name}, applying push force in direction {_pendingPushDirection}");
     }

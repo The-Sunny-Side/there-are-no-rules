@@ -23,7 +23,7 @@ public class MenuManager : MonoBehaviour
     public void OnPlayButtonClick()
     {
         GameManager.Instance.SetNetworkMode(Mode.Client);
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         string json = VehicleManager.Instance.GetVehicleJson();
 
         if (string.IsNullOrWhiteSpace(json))
@@ -31,7 +31,7 @@ public class MenuManager : MonoBehaviour
             UiLoader.Instance?.Show();
             StartCoroutine(Utilities.DelayedEvent((() =>
             {
-                GameManager.Instance?.LoadSceneAsync("VehicleSelectionScene");
+                GameManager.Instance?.GoToVehicleScreen();
             })));
 
             return;
@@ -49,7 +49,7 @@ public class MenuManager : MonoBehaviour
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.LoadSceneAsync("multiplayerMovement");
+            GameManager.Instance?.GoToPlayScreen();
         }), 0.6f));
     }
 
@@ -62,7 +62,7 @@ public class MenuManager : MonoBehaviour
         UiLoader.Instance?.Show();
         UiLoader.Instance.setNoHiding(true);
         StartCoroutine(Utilities.DelayedEvent((() =>
-        { GameManager.Instance?.LoadSceneAsync("LocalLobbyLoadingScene");
+        { GameManager.Instance?.GoToLocalLobbyScreen();
         }), 0.6f));
     }
 
@@ -75,7 +75,7 @@ public class MenuManager : MonoBehaviour
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.LoadSceneAsync("multiplayerMovement");
+            GameManager.Instance?.GoToPlayScreen();
         }), 0.6f));
     }
 
@@ -84,16 +84,16 @@ public class MenuManager : MonoBehaviour
         menuButtons?.Hide();
         playPanel?.GetComponent<FadeAnimator>()?.Hide();
         UiLoader.Instance?.Show();
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.LoadSceneAsync("VehicleSelectionScene");
+            GameManager.Instance?.GoToVehicleScreen();
         }), 0.6f));
     }
 
     public void OnExitButtonClick()
     {
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         GameManager.Instance?.ExitGame();
     }
 
@@ -101,7 +101,7 @@ public class MenuManager : MonoBehaviour
     {
         GameManager.Instance?.Resume();
         UiLoader.Instance?.Show();
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToHomeScreen();
@@ -110,7 +110,7 @@ public class MenuManager : MonoBehaviour
 
     public void OnPauseButtonClick()
     {
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         GameManager.Instance?.Pause();
         if (pausePanel != null)
         {
@@ -120,7 +120,7 @@ public class MenuManager : MonoBehaviour
 
     public void OnResumeButtonClick()
     {
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         GameManager.Instance?.Resume();
         if (pausePanel != null)
         {
@@ -131,13 +131,13 @@ public class MenuManager : MonoBehaviour
     public void OnRestartButtonClick()
     {
         GameManager.Instance?.Resume();
-        AudioManager.Instance?.PlayOneShot("notification_ok");
-        GameManager.Instance?.LoadScene("multiplayerMovement");
+        AudioManager.Instance?.PlayButtonAudio();
+        GameManager.Instance?.GoToPlayScreen();
     }
 
     public void OnSettingsButtonClick()
     {
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         SettingsModal.Instance?.Show();
     }
 

@@ -8,7 +8,7 @@ public class ServerConnectionSceneManager : MonoBehaviour
     {
         ServerConnectionButtons.Hide();
         UiLoader.Instance?.Show();
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.LoadSceneAsync("LocalLobbyLoadingScene");
@@ -19,7 +19,7 @@ public class ServerConnectionSceneManager : MonoBehaviour
     {
         ServerConnectionButtons.Hide();
         UiLoader.Instance?.Show();
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToHomeScreen();
@@ -31,7 +31,7 @@ public class ServerConnectionSceneManager : MonoBehaviour
         UiLoader.Instance?.setNoHiding(false);
         GameManager.Instance?.SetIpAddress(foundIP);
         GameManager.Instance?.SetNetworkMode(Mode.Client);
-        GameManager.Instance?.LoadScene("multiplayerMovement");
+        GameManager.Instance?.GoToPlayScreen();
     }
 
     public void OnServerIpNotFound()

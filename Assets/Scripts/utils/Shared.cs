@@ -15,3 +15,9 @@ public class VehicleElement
     public Sprite icon;
 }
 public enum Mode { Host, ServerOnly, Client }
+
+[Serializable]
+public class VehicleEntry : VehicleElement
+{
+    public string key;
+}

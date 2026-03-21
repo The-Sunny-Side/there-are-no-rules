@@ -100,6 +100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7391028374651029}
   - component: {fileID: 1827364509182736}
+  - component: {fileID: 8997902265666243074}
   m_Layer: 0
   m_Name: punch
   m_TagString: Untagged
@@ -143,6 +144,25 @@ MonoBehaviour:
   PlayerMask:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &8997902265666243074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4827364910283746}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc5360006663caf41b656bd451a64b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PulsingHighlight
+  targets:
+  - {fileID: 7776867480886933238}
+  - {fileID: 2799955389069765726}
+  - {fileID: 2018374650928374}
+  intensityMin: 1
+  intensityMax: 2.5
+  speed: 2.5
 --- !u!1001 &3748291029374856
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -389,3 +409,8 @@ CapsuleCollider:
   m_Height: 0.03
   m_Direction: 1
   m_Center: {x: 0, y: 0.005, z: 0}
+--- !u!1 &7776867480886933238 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -1449689828313570946, guid: 68b3e72aa0a04154ea41882296af2e69, type: 3}
+  m_PrefabInstance: {fileID: 3748291029374856}
+  m_PrefabAsset: {fileID: 0}

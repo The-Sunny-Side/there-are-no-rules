@@ -1,6 +1,3 @@
-using NUnit.Framework;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,26 +11,26 @@ public class MainSceneManager : MonoBehaviour
     public void Start()
     {
     
-        Dictionary<string, GameObject> list = VehicleManager.Instance?.LoadVehicleData();
+        Dictionary<string, VehicleEntry> list = VehicleManager.Instance?.LoadVehicleConfig();
 
 
-        if (list.TryGetValue(VehicleElementsKeys.Body, out var bodyPrefab) && bodyPrefab &&
-             list.TryGetValue(VehicleElementsKeys.Base, out var basePrefab) && basePrefab)
+        if (list.TryGetValue(VehicleElementsKeys.Body, out VehicleEntry bodyElement) && (bodyElement?.element != null) &&
+             list.TryGetValue(VehicleElementsKeys.Base, out VehicleEntry baseElement) && baseElement?.element != null)
         {
-            composer.baseElement = Instantiate(basePrefab);
-            composer.bodyElement = Instantiate(bodyPrefab);
+            composer.baseElement = Instantiate(baseElement.element);
+            composer.bodyElement = Instantiate(bodyElement.element);
 
-            if (list.TryGetValue(VehicleElementsKeys.WeaponBack, out var back) && back)
-                composer.weaponBackElement = Instantiate(back);
+            if (list.TryGetValue(VehicleElementsKeys.WeaponBack, out VehicleEntry backWeaponElement) && backWeaponElement?.element!=null)
+                composer.weaponBackElement = Instantiate(backWeaponElement.element);
 
-            if (list.TryGetValue(VehicleElementsKeys.WeaponFront, out var front) && front)
-                composer.weaponFrontElement = Instantiate(front);
+            if (list.TryGetValue(VehicleElementsKeys.WeaponFront, out VehicleEntry frontWeaponElement) && frontWeaponElement?.element != null)
+                composer.weaponFrontElement = Instantiate(frontWeaponElement.element);
 
-            if (list.TryGetValue(VehicleElementsKeys.WeaponLeft, out var left) && left)
-                composer.weaponLeftElement = Instantiate(left);
+            if (list.TryGetValue(VehicleElementsKeys.WeaponLeft, out VehicleEntry leftWeaponElement) && leftWeaponElement?.element != null)
+                composer.weaponLeftElement = Instantiate(leftWeaponElement.element);
 
-            if (list.TryGetValue(VehicleElementsKeys.WeaponRight, out var right) && right)
-                composer.weaponRightElement = Instantiate(right);
+            if (list.TryGetValue(VehicleElementsKeys.WeaponRight, out VehicleEntry rightWeaponElement) && rightWeaponElement?.element != null)
+                composer.weaponRightElement = Instantiate(rightWeaponElement.element);
 
             composer.AlignComponents();
         }
@@ -42,7 +39,7 @@ public class MainSceneManager : MonoBehaviour
     public void OnPlayButtonClick()
     {
         GameManager.Instance?.SetNetworkMode(Mode.Client);
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         string json = VehicleManager.Instance?.GetVehicleJson();
 
         if (string.IsNullOrWhiteSpace(json))
@@ -50,7 +47,7 @@ public class MainSceneManager : MonoBehaviour
             UiLoader.Instance?.Show();
             StartCoroutine(Utilities.DelayedEvent((() =>
             {
-                GameManager.Instance?.LoadSceneAsync("VehicleSelectionScene");
+                GameManager.Instance?.GoToVehicleScreen();
             })));
 
             return;
@@ -68,7 +65,7 @@ public class MainSceneManager : MonoBehaviour
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.LoadSceneAsync("multiplayerMovement");
+            GameManager.Instance?.GoToPlayScreen();
         }), 0.6f));
     }
 
@@ -82,7 +79,7 @@ public class MainSceneManager : MonoBehaviour
         UiLoader.Instance.setNoHiding(true);
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.LoadSceneAsync("LocalLobbyLoadingScene");
+            GameManager.Instance?.GoToLocalLobbyScreen();
         }), 0.6f));
     }
 
@@ -95,7 +92,7 @@ public class MainSceneManager : MonoBehaviour
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.LoadSceneAsync("multiplayerMovement");
+            GameManager.Instance?.GoToPlayScreen();
         }), 0.6f));
     }
 
@@ -104,22 +101,22 @@ public class MainSceneManager : MonoBehaviour
         menuButtons?.Hide();
         playPanel?.GetComponent<FadeAnimator>()?.Hide();
         UiLoader.Instance?.Show();
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.LoadSceneAsync("VehicleSelectionScene");
+            GameManager.Instance?.GoToVehicleScreen();
         }), 0.6f));
     }
 
     public void OnExitButtonClick()
     {
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         GameManager.Instance?.ExitGame();
     }
 
     public void OnSettingsButtonClick()
     {
-        AudioManager.Instance?.PlayOneShot("notification_ok");
+        AudioManager.Instance?.PlayButtonAudio();
         SettingsModal.Instance?.Show();
     }
 }

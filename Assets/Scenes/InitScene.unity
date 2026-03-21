@@ -834,6 +834,7 @@ MonoBehaviour:
   oneShotClips:
   - name: notification_ok
     clip: {fileID: 8300000, guid: 0748b37d6cfb248f5a06e485e3114155, type: 3}
+  buttonTapAudio: {fileID: 8300000, guid: 30d5ce83021fc4c4ba88ec484cc478f3, type: 3}
   volume: 0.47
   audioEnabled: 1
 --- !u!1 &3301503861057611976
