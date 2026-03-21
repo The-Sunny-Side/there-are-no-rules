@@ -1,3 +1,4 @@
+using PurrNet;
 using UnityEngine;
 
 public class PivotWeaponBehaviour : MonoBehaviour
@@ -13,9 +14,16 @@ public class PivotWeaponBehaviour : MonoBehaviour
     [SerializeField] private LayerMask PlayerMask;
 
     private Quaternion defaultLocalRotation;
+    private NetworkIdentity _networkIdentity;
+    private Collider _currentHighlightTarget;
+
+    private int _highlightIntensityID;
+    private MaterialPropertyBlock _mpb;
 
     private void Awake()
     {
+        _mpb = new MaterialPropertyBlock();
+        _highlightIntensityID = Shader.PropertyToID("_HighlightIntensity");
         AutoAssignRotationPivot();
         CacheDefaultRotation();
     }
@@ -33,26 +41,67 @@ public class PivotWeaponBehaviour : MonoBehaviour
         {
             ReturnPivotToDefault();
             DrawSearchCone();
+            SetHighlightTarget(null);
             return;
         }
 
-        bool foundTarget = DetectTarget(out Vector3 targetPoint);
+        bool foundTarget = DetectTarget(out Vector3 targetPoint, out Collider targetCollider);
 
         if (foundTarget)
         {
             DrawTargetLine(targetPoint);
             RotatePivotTowards(targetPoint);
+            SetHighlightTarget(targetCollider);
         }
         else
         {
             DrawSearchCone();
             ReturnPivotToDefault();
+            SetHighlightTarget(null);
         }
     }
 
-    private bool DetectTarget(out Vector3 targetPoint)
+    private void SetHighlightTarget(Collider newTarget)
+    {
+        _networkIdentity ??= GetComponentInParent<NetworkIdentity>();
+
+        if (_networkIdentity != null && !_networkIdentity.isOwner)
+            return;
+
+        if (newTarget == _currentHighlightTarget) return;
+
+        if (_currentHighlightTarget != null)
+            ApplyHighlight(_currentHighlightTarget, 0f);
+
+        _currentHighlightTarget = newTarget;
+
+        if (_currentHighlightTarget != null)
+            ApplyHighlight(_currentHighlightTarget, 1f);
+    }
+
+    private void ApplyHighlight(Collider col, float intensity)
+    {
+        foreach (var r in col.GetComponentsInChildren<Renderer>())
+        {
+            r.GetPropertyBlock(_mpb);
+            _mpb.SetFloat(_highlightIntensityID, intensity);
+            r.SetPropertyBlock(_mpb);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (_currentHighlightTarget != null)
+        {
+            ApplyHighlight(_currentHighlightTarget, 0f);
+            _currentHighlightTarget = null;
+        }
+    }
+
+    private bool DetectTarget(out Vector3 targetPoint, out Collider targetCollider)
     {
         targetPoint = Vector3.zero;
+        targetCollider = null;
 
         Collider[] hits = Physics.OverlapSphere(
             transform.position, detectionRadius, PlayerMask, QueryTriggerInteraction.Ignore);
@@ -70,6 +119,7 @@ public class PivotWeaponBehaviour : MonoBehaviour
             {
                 closestDistance = dist;
                 targetPoint = col.bounds.center;
+                targetCollider = col;
                 found = true;
             }
         }
