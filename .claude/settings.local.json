@@ -4,7 +4,12 @@
       "Bash(find /c/Users/Simone/Desktop/thesunnyside/ThereAreNoRules/Assets/Scripts -type f -name *.cs)",
       "WebSearch",
       "WebFetch(domain:docs.unity3d.com)",
-      "WebFetch(domain:discussions.unity.com)"
+      "WebFetch(domain:discussions.unity.com)",
+      "Bash(for guid:*)",
+      "Bash(do)",
+      "Bash(echo \"=== $guid ===\")",
+      "Bash(grep -r \"$guid\" Assets --include=\"*.prefab\" --include=\"*.unity\" -l)",
+      "Bash(done)"
     ]
   }
 }
