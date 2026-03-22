@@ -24,7 +24,8 @@ MonoBehaviour:
     probeSamplingDebugMesh: {fileID: 0}
     probeSamplingDebugTexture: {fileID: 0}
     probeVolumeBlendStatesCS: {fileID: 0}
-  m_RendererFeatures: []
+  m_RendererFeatures:
+  - {fileID: 1554427959771803105}
   m_RendererFeatureMap: 4fef469120c3c5d26376c13d26619c51
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
@@ -54,3 +55,22 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
+--- !u!114 &1554427959771803105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 129ffafad51301541a004a591a2cb6af, type: 3}
+  m_Name: Outline
+  m_EditorClassIdentifier: Assembly-CSharp::OutlineRendererFeature
+  m_Active: 1
+  settings:
+    outlineColor: {r: 0, g: 0, b: 0, a: 1}
+    thickness: 0.5
+    depthThreshold: 0.1
+    normalThreshold: 2
+  _outlineShader: {fileID: 4800000, guid: 04d9b7bc2cc25e94ba9c3a1c38080903, type: 3}
