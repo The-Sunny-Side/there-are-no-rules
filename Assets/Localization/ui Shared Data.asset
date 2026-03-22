@@ -95,6 +95,10 @@ MonoBehaviour:
     m_Key: resume
     m_Metadata:
       m_Items: []
+  - m_Id: 7722655479410688
+    m_Key: leaderboard
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

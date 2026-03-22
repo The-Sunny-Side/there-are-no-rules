@@ -38,12 +38,17 @@ public class PauseManager : MonoBehaviour
         overlay.Hide();
     }
 
-    public void OnRestartClick()
+    public void HideUi()
     {
         pausePanel?.Hide();
         overlay?.Hide();
         hudPanel?.Hide();
         gamePanel?.Hide();
+    }
+
+    public void OnRestartClick()
+    {
+        HideUi();
         UiLoader.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
@@ -55,10 +60,7 @@ public class PauseManager : MonoBehaviour
 
     public void OnHomeButtonClick()
     {
-        pausePanel?.Hide();
-        overlay?.Hide();
-        hudPanel?.Hide();
-        gamePanel?.Hide();
+        HideUi();
         UiLoader.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
