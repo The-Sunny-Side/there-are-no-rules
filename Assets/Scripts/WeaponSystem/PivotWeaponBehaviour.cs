@@ -17,13 +17,13 @@ public class PivotWeaponBehaviour : MonoBehaviour
     private NetworkIdentity _networkIdentity;
     private Collider _currentHighlightTarget;
 
-    private int _highlightIntensityID;
-    private MaterialPropertyBlock _mpb;
+    private static int _outlineLayer = -1;
+    private int _cachedOriginalLayer;
 
     private void Awake()
     {
-        _mpb = new MaterialPropertyBlock();
-        _highlightIntensityID = Shader.PropertyToID("_HighlightIntensity");
+        if (_outlineLayer < 0)
+            _outlineLayer = LayerMask.NameToLayer("OutlineObjects");
         AutoAssignRotationPivot();
         CacheDefaultRotation();
     }
@@ -71,29 +71,42 @@ public class PivotWeaponBehaviour : MonoBehaviour
         if (newTarget == _currentHighlightTarget) return;
 
         if (_currentHighlightTarget != null)
-            ApplyHighlight(_currentHighlightTarget, 0f);
+            ApplyHighlight(_currentHighlightTarget, false);
 
         _currentHighlightTarget = newTarget;
 
         if (_currentHighlightTarget != null)
-            ApplyHighlight(_currentHighlightTarget, 1f);
+            ApplyHighlight(_currentHighlightTarget, true);
     }
 
-    private void ApplyHighlight(Collider col, float intensity)
+    private void ApplyHighlight(Collider col, bool highlighted)
     {
-        foreach (var r in col.GetComponentsInChildren<Renderer>())
+        if (_outlineLayer < 0) return;
+
+        GameObject root = col.gameObject;
+        if (highlighted)
         {
-            r.GetPropertyBlock(_mpb);
-            _mpb.SetFloat(_highlightIntensityID, intensity);
-            r.SetPropertyBlock(_mpb);
+            _cachedOriginalLayer = root.layer;
+            SetLayerRecursively(root, _outlineLayer);
         }
+        else
+        {
+            SetLayerRecursively(root, _cachedOriginalLayer);
+        }
+    }
+
+    private static void SetLayerRecursively(GameObject go, int layer)
+    {
+        go.layer = layer;
+        foreach (Transform child in go.transform)
+            SetLayerRecursively(child.gameObject, layer);
     }
 
     private void OnDisable()
     {
         if (_currentHighlightTarget != null)
         {
-            ApplyHighlight(_currentHighlightTarget, 0f);
+            ApplyHighlight(_currentHighlightTarget, false);
             _currentHighlightTarget = null;
         }
     }
