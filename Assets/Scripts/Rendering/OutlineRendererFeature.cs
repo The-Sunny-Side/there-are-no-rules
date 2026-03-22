@@ -16,18 +16,22 @@ public class OutlineRendererFeature : ScriptableRendererFeature
 
     public Settings settings = new Settings();
 
+    [SerializeField, HideInInspector]
+    private Shader _outlineShader;
+
     private OutlinePass _pass;
     private Material    _material;
 
     public override void Create()
     {
-        var shader = Shader.Find("Hidden/Outline");
-        if (shader == null)
+        if (_outlineShader == null)
+            _outlineShader = Shader.Find("Hidden/Outline");
+        if (_outlineShader == null)
         {
             Debug.LogWarning("[OutlineRendererFeature] Shader 'Hidden/Outline' not found.");
             return;
         }
-        _material = CoreUtils.CreateEngineMaterial(shader);
+        _material = CoreUtils.CreateEngineMaterial(_outlineShader);
         _pass     = new OutlinePass(name);
     }
 
