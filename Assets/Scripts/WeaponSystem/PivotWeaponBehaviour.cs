@@ -1,4 +1,5 @@
 using PurrNet;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PivotWeaponBehaviour : MonoBehaviour
@@ -12,18 +13,16 @@ public class PivotWeaponBehaviour : MonoBehaviour
     [Range(1f, 180f)]
     [SerializeField] private float coneAngle = 25f;
     [SerializeField] private LayerMask PlayerMask;
+    [SerializeField] private Material outlineMaterial;
 
     private Quaternion defaultLocalRotation;
-    private NetworkIdentity _networkIdentity;
+    private MovementPredicted _movement;
     private Collider _currentHighlightTarget;
 
-    private int _highlightIntensityID;
-    private MaterialPropertyBlock _mpb;
+    private readonly List<MeshFilter> _outlineMeshes = new();
 
     private void Awake()
     {
-        _mpb = new MaterialPropertyBlock();
-        _highlightIntensityID = Shader.PropertyToID("_HighlightIntensity");
         AutoAssignRotationPivot();
         CacheDefaultRotation();
     }
@@ -63,38 +62,53 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void SetHighlightTarget(Collider newTarget)
     {
-        _networkIdentity ??= GetComponentInParent<NetworkIdentity>();
+        _movement ??= GetComponentInParent<MovementPredicted>();
 
-        if (_networkIdentity != null && !_networkIdentity.isOwner)
+        if (_movement == null || !_movement.isOwner)
             return;
 
         if (newTarget == _currentHighlightTarget) return;
 
         if (_currentHighlightTarget != null)
-            ApplyHighlight(_currentHighlightTarget, 0f);
+            ApplyHighlight(_currentHighlightTarget, false);
 
         _currentHighlightTarget = newTarget;
 
         if (_currentHighlightTarget != null)
-            ApplyHighlight(_currentHighlightTarget, 1f);
+            ApplyHighlight(_currentHighlightTarget, true);
     }
 
-    private void ApplyHighlight(Collider col, float intensity)
+    private void ApplyHighlight(Collider col, bool highlighted)
     {
-        foreach (var r in col.GetComponentsInChildren<Renderer>())
+        if (highlighted)
         {
-            r.GetPropertyBlock(_mpb);
-            _mpb.SetFloat(_highlightIntensityID, intensity);
-            r.SetPropertyBlock(_mpb);
+            _outlineMeshes.Clear();
+            col.GetComponentsInChildren(_outlineMeshes);
+        }
+        else
+        {
+            _outlineMeshes.Clear();
         }
     }
 
     private void OnDisable()
     {
-        if (_currentHighlightTarget != null)
+        _outlineMeshes.Clear();
+        _currentHighlightTarget = null;
+    }
+
+    private void LateUpdate()
+    {
+        if (outlineMaterial == null) return;
+
+        var rparams = new RenderParams(outlineMaterial);
+        foreach (var mf in _outlineMeshes)
         {
-            ApplyHighlight(_currentHighlightTarget, 0f);
-            _currentHighlightTarget = null;
+            if (mf == null || mf.sharedMesh == null) continue;
+            var mesh = mf.sharedMesh;
+            var matrix = mf.transform.localToWorldMatrix;
+            for (int sub = 0; sub < mesh.subMeshCount; sub++)
+                Graphics.RenderMesh(rparams, mesh, sub, matrix);
         }
     }
 
@@ -111,6 +125,8 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
         foreach (Collider col in hits)
         {
+            if (col.transform.root == transform.root) continue;
+
             Vector3 toTarget = col.bounds.center - transform.position;
             if (Vector3.Angle(transform.forward, toTarget) > coneAngle) continue;
 

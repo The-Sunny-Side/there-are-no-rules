@@ -88,6 +88,15 @@ public class Composer : MonoBehaviour
 
         bodyElement.transform.SetParent(vehicle.transform, false);
         bodyElement.transform.localPosition = new Vector3(0, bodyElement.transform.localPosition.y, bodyElement.transform.localPosition.z);
+
+        PropagateParentLayer(vehicle.transform);
+    }
+
+    private static void PropagateParentLayer(Transform root)
+    {
+        int layer = root.gameObject.layer;
+        foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+            child.gameObject.layer = layer;
     }
 
     private void AttachArmorToContainer(GameObject armor, Transform container)
