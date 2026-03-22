@@ -99,6 +99,10 @@ MonoBehaviour:
     m_Key: leaderboard
     m_Metadata:
       m_Items: []
+  - m_Id: 7969306873868288
+    m_Key: jump
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
