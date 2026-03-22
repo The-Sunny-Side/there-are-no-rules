@@ -70,6 +70,6 @@ MonoBehaviour:
   m_Active: 1
   settings:
     outlineColor: {r: 0, g: 0, b: 0, a: 1}
-    thickness: 1
-    depthThreshold: 0.005
-    normalThreshold: 0.4
+    thickness: 0.5
+    depthThreshold: 0.1
+    normalThreshold: 2
