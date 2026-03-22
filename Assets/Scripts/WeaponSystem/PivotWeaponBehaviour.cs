@@ -1,4 +1,5 @@
 using PurrNet;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PivotWeaponBehaviour : MonoBehaviour
@@ -12,21 +13,16 @@ public class PivotWeaponBehaviour : MonoBehaviour
     [Range(1f, 180f)]
     [SerializeField] private float coneAngle = 25f;
     [SerializeField] private LayerMask PlayerMask;
+    [SerializeField] private Material outlineMaterial;
 
     private Quaternion defaultLocalRotation;
-    private NetworkIdentity _networkIdentity;
+    private MovementPredicted _movement;
     private Collider _currentHighlightTarget;
 
-    private static int _outlineLayer = -1;
-    private int _cachedOriginalLayer;
+    private readonly List<MeshFilter> _outlineMeshes = new();
 
     private void Awake()
     {
-        if (_outlineLayer < 0)
-            _outlineLayer = LayerMask.NameToLayer("OutlineObjects");
-        // Include OutlineObjects layer in detection so targeting still works
-        // when a player is already highlighted
-        PlayerMask |= (1 << _outlineLayer);
         AutoAssignRotationPivot();
         CacheDefaultRotation();
     }
@@ -66,9 +62,9 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void SetHighlightTarget(Collider newTarget)
     {
-        _networkIdentity ??= GetComponentInParent<NetworkIdentity>();
+        _movement ??= GetComponentInParent<MovementPredicted>();
 
-        if (_networkIdentity != null && !_networkIdentity.isOwner)
+        if (_movement == null || !_movement.isOwner)
             return;
 
         if (newTarget == _currentHighlightTarget) return;
@@ -84,33 +80,34 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void ApplyHighlight(Collider col, bool highlighted)
     {
-        if (_outlineLayer < 0) return;
-
-        GameObject root = col.gameObject;
         if (highlighted)
         {
-            _cachedOriginalLayer = root.layer;
-            SetLayerRecursively(root, _outlineLayer);
+            _outlineMeshes.Clear();
+            col.GetComponentsInChildren(_outlineMeshes);
         }
         else
         {
-            SetLayerRecursively(root, _cachedOriginalLayer);
+            _outlineMeshes.Clear();
         }
-    }
-
-    private static void SetLayerRecursively(GameObject go, int layer)
-    {
-        go.layer = layer;
-        foreach (Transform child in go.transform)
-            SetLayerRecursively(child.gameObject, layer);
     }
 
     private void OnDisable()
     {
-        if (_currentHighlightTarget != null)
+        _outlineMeshes.Clear();
+        _currentHighlightTarget = null;
+    }
+
+    private void LateUpdate()
+    {
+        if (outlineMaterial == null) return;
+
+        foreach (var mf in _outlineMeshes)
         {
-            ApplyHighlight(_currentHighlightTarget, false);
-            _currentHighlightTarget = null;
+            if (mf == null || mf.sharedMesh == null) continue;
+            var mesh = mf.sharedMesh;
+            var matrix = mf.transform.localToWorldMatrix;
+            for (int sub = 0; sub < mesh.subMeshCount; sub++)
+                Graphics.DrawMesh(mesh, matrix, outlineMaterial, 0, null, sub);
         }
     }
 
@@ -127,6 +124,8 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
         foreach (Collider col in hits)
         {
+            if (col.transform.root == transform.root) continue;
+
             Vector3 toTarget = col.bounds.center - transform.position;
             if (Vector3.Angle(transform.forward, toTarget) > coneAngle) continue;
 

@@ -144,6 +144,7 @@ MonoBehaviour:
   PlayerMask:
     serializedVersion: 2
     m_Bits: 128
+  outlineMaterial: {fileID: 2100000, guid: fc5cc4aa573236b4ba505e3cfcdbdcb0, type: 2}
 --- !u!114 &8997902265666243074
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2003,6 +2003,7 @@ MonoBehaviour:
   PlayerMask:
     serializedVersion: 2
     m_Bits: 384
+  outlineMaterial: {fileID: 0}
 --- !u!114 &8753843744927150229
 MonoBehaviour:
   m_ObjectHideFlags: 0

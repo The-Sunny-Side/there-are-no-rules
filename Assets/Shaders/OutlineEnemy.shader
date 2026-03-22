@@ -18,6 +18,7 @@ Shader "Custom/OutlineEnemy"
         Pass
         {
             Name "OutlineShell"
+            Tags { "LightMode" = "UniversalForwardOnly" }
             Cull Front
             ZWrite Off
 
