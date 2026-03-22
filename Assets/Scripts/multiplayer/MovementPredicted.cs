@@ -25,7 +25,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     [SerializeField] private float sideBreak = 20f;
     [Tooltip("Velocità massima in avanti a terra")]
     [SerializeField] private float forwardSpeed = 10f;
-    [Tooltip("Tasso di accelerazione a terra: più alto = risposta più immediata al gas")]
+    [Tooltip("Quanto velocemente si raggiunge la velocità massima quando si accelera a terra")]
     [SerializeField] private float groundedAcceleration = 30f;
     [Tooltip("Forza di frenata quando si spinge l'analogico indietro a terra")]
     [SerializeField] private float groundedDeceleration = 45f;
