@@ -101,13 +101,14 @@ public class PivotWeaponBehaviour : MonoBehaviour
     {
         if (outlineMaterial == null) return;
 
+        var rparams = new RenderParams(outlineMaterial);
         foreach (var mf in _outlineMeshes)
         {
             if (mf == null || mf.sharedMesh == null) continue;
             var mesh = mf.sharedMesh;
             var matrix = mf.transform.localToWorldMatrix;
             for (int sub = 0; sub < mesh.subMeshCount; sub++)
-                Graphics.DrawMesh(mesh, matrix, outlineMaterial, 0, null, sub);
+                Graphics.RenderMesh(rparams, mesh, sub, matrix);
         }
     }
 
