@@ -200,7 +200,7 @@ MonoBehaviour:
   alignSpeed: 30
   _rigidbody: {fileID: 4360163942621179187}
   visuals: {fileID: 2315482730086823503}
-  rotationSpeed: 50
+  rotationSpeed: 60
   airRotationMultiplier: 0.35
   jumpForce: 300
   sideBreak: 10
