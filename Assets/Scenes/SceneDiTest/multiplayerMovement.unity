@@ -1270,7 +1270,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuManager
   pauseManager: {fileID: 5213456025979274115}
   finishedGamePanel: {fileID: 2074820781}
-  InGamePanel: {fileID: 1564431400}
+  InGamePanel: {fileID: 1564431404}
   textToShowWhenFinished: {fileID: 967953790}
 --- !u!4 &1118415734
 Transform:

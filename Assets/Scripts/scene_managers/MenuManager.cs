@@ -6,7 +6,7 @@ public class MenuManager : MonoBehaviour
 {
     [SerializeField] private PauseManager pauseManager;
     [SerializeField] private GameObject finishedGamePanel;
-    [SerializeField] private GameObject InGamePanel;
+    [SerializeField] private FadeAnimator InGamePanel;
     [SerializeField] private TextMeshProUGUI textToShowWhenFinished;
 
     private bool _finishPanelShown;
@@ -14,6 +14,7 @@ public class MenuManager : MonoBehaviour
     public void GoToHomeScreen()
     {
         pauseManager.HideUi();
+        finishedGamePanel.GetComponent<FadeAnimator>()?.Hide();
         GameManager.Instance?.Resume();
         UiLoader.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
@@ -33,7 +34,8 @@ public class MenuManager : MonoBehaviour
                 if (localPlayerId.HasValue && id == localPlayerId.Value)
                 {
                     _finishPanelShown = true;
-                    InGamePanel.SetActive(false);
+                    pauseManager.HideUi();
+                    InGamePanel.Hide();
                     finishedGamePanel.SetActive(true);
                     break;
                 }
