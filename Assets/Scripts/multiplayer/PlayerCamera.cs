@@ -1,6 +1,4 @@
-using System.Collections;
 using Unity.Cinemachine;
-using Unity.Cinemachine.TargetTracking;
 using UnityEngine;
 
 [DefaultExecutionOrder(2000)]
@@ -11,13 +9,9 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField] private CinemachineCamera _cinemachineCamera;
     [SerializeField] private CinemachineBrain _brain;
 
-    private CinemachineOrbitalFollow _orbital;
-
     void Awake()
     {
         instance = this;
-        if (_cinemachineCamera)
-            _orbital = _cinemachineCamera.GetComponent<CinemachineOrbitalFollow>();
         ResolveBrain();
         EnsureManualUpdateMode();
     }
@@ -27,19 +21,8 @@ public class PlayerCamera : MonoBehaviour
         if (_cinemachineCamera)
         {
             _cinemachineCamera.Target.TrackingTarget = target;
-            StartCoroutine(ResetBindingMode());
+            _cinemachineCamera.PreviousStateIsValid = false;
         }
-    }
-
-    private IEnumerator ResetBindingMode()
-    {
-        if (_orbital == null)
-            yield break;
-
-        var original = _orbital.TrackerSettings.BindingMode;
-        _orbital.TrackerSettings.BindingMode = BindingMode.LazyFollow;
-        yield return null;
-        _orbital.TrackerSettings.BindingMode = original;
     }
 
     private void ResolveBrain()
