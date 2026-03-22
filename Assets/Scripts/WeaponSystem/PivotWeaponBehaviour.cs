@@ -24,6 +24,9 @@ public class PivotWeaponBehaviour : MonoBehaviour
     {
         if (_outlineLayer < 0)
             _outlineLayer = LayerMask.NameToLayer("OutlineObjects");
+        // Include OutlineObjects layer in detection so targeting still works
+        // when a player is already highlighted
+        PlayerMask |= (1 << _outlineLayer);
         AutoAssignRotationPivot();
         CacheDefaultRotation();
     }
