@@ -102,6 +102,10 @@ MonoBehaviour:
     m_Localized: Classifica
     m_Metadata:
       m_Items: []
+  - m_Id: 7969306873868288
+    m_Localized: SALTA
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

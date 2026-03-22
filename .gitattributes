@@ -1,0 +1,54 @@
+###################################
+# Unity YAML serialization
+###################################
+*.cs        text diff=csharp
+*.shader    text
+*.cginc     text
+
+*.unity     text eol=lf merge=unityyamlmerge
+*.prefab    text eol=lf merge=unityyamlmerge
+*.asset     text eol=lf merge=unityyamlmerge
+*.meta      text eol=lf merge=unityyamlmerge
+*.mat       text eol=lf merge=unityyamlmerge
+*.anim      text eol=lf merge=unityyamlmerge
+*.controller text eol=lf merge=unityyamlmerge
+
+###################################
+# Text files
+###################################
+*.txt       text eol=lf
+*.json      text eol=lf
+*.xml       text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+
+###################################
+# Binary assets (no diff/merge)
+###################################
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.tga       binary
+*.psd       binary
+
+*.fbx       binary
+*.obj       binary
+*.blend     binary
+
+*.wav       binary
+*.mp3       binary
+*.ogg       binary
+
+*.mp4       binary
+*.mov       binary
+
+*.ttf       binary
+*.otf       binary
+
+###################################
+# Optional: reduce noise in diffs
+###################################
+*.asset     diff
+*.prefab    diff
+*.unity     diff
