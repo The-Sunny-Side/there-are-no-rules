@@ -75,4 +75,9 @@ public abstract class UiAnimator: MonoBehaviour
         if (showOnDisable) Show();
         else if (hideOnDisable) Hide();
     }
+
+    public void ToggleAnimator() { 
+        if (IsVisible) Hide();
+        else Show();
+    }
 }

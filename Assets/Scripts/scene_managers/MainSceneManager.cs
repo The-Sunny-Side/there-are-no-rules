@@ -38,7 +38,6 @@ public class MainSceneManager : MonoBehaviour
 
     public void OnPlayButtonClick()
     {
-        GameManager.Instance?.SetNetworkMode(Mode.Client);
         AudioManager.Instance?.PlayButtonAudio();
         string json = VehicleManager.Instance?.GetVehicleJson();
 
@@ -53,13 +52,13 @@ public class MainSceneManager : MonoBehaviour
             return;
         }
 
-        playPanel?.GetComponent<FadeAnimator>()?.Show();
+        playPanel?.GetComponent<UiAnimator>()?.ToggleAnimator();
     }
 
     public void OnPlayAsHost()
     {
         menuButtons.Hide();
-        playPanel?.GetComponent<FadeAnimator>()?.Hide();
+        playPanel?.GetComponent<UiAnimator>()?.Hide();
         GameManager.Instance.SetNetworkMode(Mode.Host);
         GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
         UiLoader.Instance?.Show();
@@ -72,7 +71,7 @@ public class MainSceneManager : MonoBehaviour
     public void OnPlayAsClient()
     {
         menuButtons.Hide();
-        playPanel?.GetComponent<FadeAnimator>()?.Hide();
+        playPanel?.GetComponent<UiAnimator>()?.Hide();
         GameManager.Instance?.SetNetworkMode(Mode.Client);
         GameManager.Instance?.SetIpAddress(Utilities.GetLocalIPAddress());
         UiLoader.Instance?.Show();
@@ -86,7 +85,7 @@ public class MainSceneManager : MonoBehaviour
     public void OnStartServerOnly()
     {
         menuButtons.Hide();
-        playPanel?.GetComponent<FadeAnimator>()?.Hide();
+        playPanel?.GetComponent<UiAnimator>()?.Hide();
         GameManager.Instance?.SetIpAddress(Utilities.GetLocalIPAddress());
         GameManager.Instance?.SetNetworkMode(Mode.ServerOnly);
         UiLoader.Instance?.Show();
@@ -99,7 +98,7 @@ public class MainSceneManager : MonoBehaviour
     public void OnVehicleSelectionButtonClick()
     {
         menuButtons?.Hide();
-        playPanel?.GetComponent<FadeAnimator>()?.Hide();
+        playPanel?.GetComponent<UiAnimator>()?.Hide();
         UiLoader.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
