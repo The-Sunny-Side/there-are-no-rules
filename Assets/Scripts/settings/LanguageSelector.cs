@@ -94,7 +94,9 @@ public class LanguageSelector : MonoBehaviour
     private void OnLanguageSelected(int index)
     {
         if (index >= 0 && index < _locales.Count)
-            LocalizationSettings.SelectedLocale = _locales[index];
+        { 
+            GameConfig.Data.language = index;
+            LocalizationSettings.SelectedLocale = _locales[index]; }
     }
 
     // =========================

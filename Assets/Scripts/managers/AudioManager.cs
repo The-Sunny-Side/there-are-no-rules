@@ -29,8 +29,8 @@ public class AudioManager : MonoBehaviour
 
         sfxSource = gameObject.AddComponent<AudioSource>();
         sfxSource.loop = false;
-
-        volume = 0f;
+        audioEnabled = GameConfig.Data.audioEnabled;
+        volume = GameConfig.Data.volume;
         savedVolume = volume;
         InitLibrary();
     }
@@ -76,11 +76,13 @@ public class AudioManager : MonoBehaviour
         volume = Mathf.Clamp01(newVolume);
         sfxSource.volume = volume;
         musicSource.volume = volume;
+        GameConfig.Data.volume = volume;
     }
 
     public void ToggleAudio()
     {
         audioEnabled = !audioEnabled;
+        GameConfig.Data.audioEnabled = audioEnabled;
         if (audioEnabled)
         {
             SetVolume(savedVolume);

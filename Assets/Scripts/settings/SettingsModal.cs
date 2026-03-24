@@ -74,6 +74,7 @@ public class SettingsModal : MonoBehaviour
     public void OnConfirm()
     {
         AudioManager.Instance?.PlayButtonAudio();
+        GameConfig.Save();
         Hide();
     }
 
