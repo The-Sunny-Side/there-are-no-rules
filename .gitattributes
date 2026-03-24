@@ -52,3 +52,8 @@
 *.asset     diff
 *.prefab    diff
 *.unity     diff
+
+###################################
+# Unity binary assets (override)
+###################################
+Assets/Terrains/*.asset binary
