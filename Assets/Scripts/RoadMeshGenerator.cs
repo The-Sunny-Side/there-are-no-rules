@@ -12,10 +12,6 @@ public class RoadMeshGenerator : MonoBehaviour
     [Header("Waypoints")]
     [SerializeField] private Transform waypointsParent;
 
-    [Header("Fork Detection")]
-    [Tooltip("Se due waypoint sono a distanza simile dal corrente (differenza < delta), crea un bivio")]
-    [SerializeField] private float forkDelta = 5f;
-
     private Mesh _mesh;
     private MeshFilter _meshFilter;
     private MeshCollider _meshCollider;
@@ -55,16 +51,8 @@ public class RoadMeshGenerator : MonoBehaviour
             _meshFilter.mesh = _mesh;
         }
 
-        // Raccoglie le posizioni dei waypoint
-        int count = waypointsParent.childCount;
-        var positions = new Vector3[count];
-        for (int i = 0; i < count; i++)
-            positions[i] = waypointsParent.GetChild(i).position;
+        var branches = CollectBranches();
 
-        // Costruisce i rami tramite nearest-neighbor con rilevamento bivio
-        var branches = BuildBranches(positions);
-
-        // Per ogni ramo genera i punti spline, poi combina tutto in una mesh
         var allSplinePoints = new List<List<Vector3>>();
         foreach (var branch in branches)
         {
@@ -76,82 +64,79 @@ public class RoadMeshGenerator : MonoBehaviour
     }
 
     /// <summary>
-    /// Partendo dal waypoint 0, segue il più vicino non visitato.
-    /// Se due non visitati sono a distanza simile (differenza < forkDelta), crea un bivio.
+    /// Raccoglie i rami dalla gerarchia:
+    /// - Figli diretti del parent = strada principale (in ordine)
+    /// - Se un figlio ha sotto-figli con gruppi = bivio
+    ///   Ogni gruppo (figlio del fork node) è un ramo indipendente
+    ///   Se ci sono waypoint dopo il fork nella principale, ogni ramo riconverge lì
     /// </summary>
-    private List<List<Vector3>> BuildBranches(Vector3[] positions)
+    private List<List<Vector3>> CollectBranches()
     {
         var branches = new List<List<Vector3>>();
-        var visited = new HashSet<int>();
+        var mainPath = new List<Vector3>();
 
-        // Coda di rami da esplorare: ogni elemento è (indice di partenza, lista punti già nel ramo)
-        var queue = new Queue<(int startIdx, List<Vector3> path)>();
-
-        var mainPath = new List<Vector3> { positions[0] };
-        visited.Add(0);
-        queue.Enqueue((0, mainPath));
-        branches.Add(mainPath);
-
-        while (queue.Count > 0)
+        for (int i = 0; i < waypointsParent.childCount; i++)
         {
-            var (currentIdx, currentPath) = queue.Dequeue();
-            Vector3 currentPos = positions[currentIdx];
+            Transform child = waypointsParent.GetChild(i);
 
-            while (true)
+            // Nodo fork: ha figli che sono gruppi (ogni gruppo ha a sua volta figli waypoint)
+            if (child.childCount > 0 && child.GetChild(0).childCount > 0)
             {
-                // Trova i due waypoint non visitati più vicini
-                int nearest = -1;
-                float nearestDist = float.MaxValue;
-                int secondNearest = -1;
-                float secondDist = float.MaxValue;
+                // Il fork point è parte della strada principale
+                mainPath.Add(child.position);
 
-                for (int i = 0; i < positions.Length; i++)
+                // Raccoglie i waypoint dopo il fork per la riconvergenza
+                var afterFork = new List<Vector3>();
+                for (int k = i + 1; k < waypointsParent.childCount; k++)
+                    afterFork.Add(waypointsParent.GetChild(k).position);
+
+                // Ogni figlio del fork node è un gruppo/ramo
+                for (int g = 0; g < child.childCount; g++)
                 {
-                    if (visited.Contains(i)) continue;
-                    float d = Vector3.Distance(currentPos, positions[i]);
+                    Transform group = child.GetChild(g);
+                    var forkPath = new List<Vector3>();
 
-                    if (d < nearestDist)
-                    {
-                        secondNearest = nearest;
-                        secondDist = nearestDist;
-                        nearest = i;
-                        nearestDist = d;
-                    }
-                    else if (d < secondDist)
-                    {
-                        secondNearest = i;
-                        secondDist = d;
-                    }
-                }
+                    // Parte dal punto di fork
+                    forkPath.Add(child.position);
 
-                if (nearest == -1) break;
+                    // Aggiunge i waypoint del gruppo
+                    for (int j = 0; j < group.childCount; j++)
+                        forkPath.Add(group.GetChild(j).position);
 
-                // Bivio: se il secondo è a distanza simile al primo
-                if (secondNearest != -1 && Mathf.Abs(nearestDist - secondDist) < forkDelta)
-                {
-                    // Il ramo corrente continua con nearest
-                    visited.Add(nearest);
-                    currentPath.Add(positions[nearest]);
+                    // Riconverge sulla principale (se ci sono waypoint dopo)
+                    if (afterFork.Count > 0)
+                        forkPath.AddRange(afterFork);
 
-                    // Nuovo ramo parte dal punto corrente verso secondNearest
-                    visited.Add(secondNearest);
-                    var forkPath = new List<Vector3> { currentPos, positions[secondNearest] };
                     branches.Add(forkPath);
-                    queue.Enqueue((secondNearest, forkPath));
+                }
 
-                    currentIdx = nearest;
-                    currentPos = positions[nearest];
-                }
-                else
-                {
-                    visited.Add(nearest);
-                    currentPath.Add(positions[nearest]);
-                    currentIdx = nearest;
-                    currentPos = positions[nearest];
-                }
+                // La strada principale salta il fork (i rami la coprono)
+                // Continua dal prossimo waypoint normale
+            }
+            // Nodo fork semplice: ha figli diretti (non gruppi) = singolo ramo
+            else if (child.childCount > 0)
+            {
+                mainPath.Add(child.position);
+
+                var forkPath = new List<Vector3>();
+                forkPath.Add(child.position);
+
+                for (int j = 0; j < child.childCount; j++)
+                    forkPath.Add(child.GetChild(j).position);
+
+                // Riconverge
+                for (int k = i + 1; k < waypointsParent.childCount; k++)
+                    forkPath.Add(waypointsParent.GetChild(k).position);
+
+                branches.Add(forkPath);
+            }
+            else
+            {
+                mainPath.Add(child.position);
             }
         }
 
+        branches.Insert(0, mainPath);
         return branches;
     }
 
@@ -190,9 +175,6 @@ public class RoadMeshGenerator : MonoBehaviour
         );
     }
 
-    /// <summary>
-    /// Combina tutti i rami in una singola mesh.
-    /// </summary>
     private void BuildCombinedMesh(List<List<Vector3>> allSplinePoints)
     {
         var allVertices = new List<Vector3>();
@@ -312,18 +294,7 @@ public class RoadMeshGenerator : MonoBehaviour
     {
         if (waypointsParent == null || waypointsParent.childCount < 2) return;
 
-        int count = waypointsParent.childCount;
-        var positions = new Vector3[count];
-        for (int i = 0; i < count; i++)
-            positions[i] = waypointsParent.GetChild(i).position;
-
-        // Disegna i waypoint
-        Gizmos.color = Color.yellow;
-        foreach (var pos in positions)
-            Gizmos.DrawWireSphere(pos, 0.3f);
-
-        // Disegna i rami
-        var branches = BuildBranches(positions);
+        var branches = CollectBranches();
         Color[] branchColors = { Color.cyan, Color.magenta, Color.green, Color.red, Color.blue };
 
         for (int b = 0; b < branches.Count; b++)
@@ -331,6 +302,11 @@ public class RoadMeshGenerator : MonoBehaviour
             if (branches[b].Count < 2) continue;
             Gizmos.color = branchColors[b % branchColors.Length];
 
+            // Disegna waypoint del ramo
+            foreach (var pos in branches[b])
+                Gizmos.DrawWireSphere(pos, 0.3f);
+
+            // Disegna spline
             var spline = GenerateSplinePoints(branches[b]);
             for (int i = 0; i < spline.Count - 1; i++)
                 Gizmos.DrawLine(spline[i], spline[i + 1]);
