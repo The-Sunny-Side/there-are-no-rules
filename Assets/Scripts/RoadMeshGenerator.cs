@@ -10,8 +10,9 @@ public class RoadMeshGenerator : MonoBehaviour
     [SerializeField] private float thickness = 1f;
 
     [Header("Waypoints")]
-    [SerializeField] private Transform[] waypoints;
+    [SerializeField] private Transform waypointsParent;
 
+    private Transform[] waypoints;
     private Mesh _mesh;
     private MeshFilter _meshFilter;
     private MeshCollider _meshCollider;
@@ -40,9 +41,19 @@ public class RoadMeshGenerator : MonoBehaviour
         GenerateRoad();
     }
 
+    private void CollectWaypoints()
+    {
+        if (waypointsParent == null) return;
+        int count = waypointsParent.childCount;
+        waypoints = new Transform[count];
+        for (int i = 0; i < count; i++)
+            waypoints[i] = waypointsParent.GetChild(i);
+    }
+
     [ContextMenu("Generate Road")]
     public void GenerateRoad()
     {
+        CollectWaypoints();
         if (waypoints == null || waypoints.Length < 2) return;
         if (_mesh == null)
         {
