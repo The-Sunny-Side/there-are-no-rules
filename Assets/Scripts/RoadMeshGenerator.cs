@@ -12,7 +12,10 @@ public class RoadMeshGenerator : MonoBehaviour
     [Header("Waypoints")]
     [SerializeField] private Transform waypointsParent;
 
-    private Transform[] waypoints;
+    [Header("Fork Detection")]
+    [Tooltip("Se due waypoint sono a distanza simile dal corrente (differenza < delta), crea un bivio")]
+    [SerializeField] private float forkDelta = 5f;
+
     private Mesh _mesh;
     private MeshFilter _meshFilter;
     private MeshCollider _meshCollider;
@@ -24,7 +27,6 @@ public class RoadMeshGenerator : MonoBehaviour
         _mesh = new Mesh { name = "RoadMesh" };
         _meshFilter.mesh = _mesh;
 
-        // Zero rimbalzo sulla strada: il veicolo non deve "saltellare" sui bordi dei triangoli
         var mat = new PhysicsMaterial("RoadSurface")
         {
             bounciness = 0f,
@@ -41,20 +43,10 @@ public class RoadMeshGenerator : MonoBehaviour
         GenerateRoad();
     }
 
-    private void CollectWaypoints()
-    {
-        if (waypointsParent == null) return;
-        int count = waypointsParent.childCount;
-        waypoints = new Transform[count];
-        for (int i = 0; i < count; i++)
-            waypoints[i] = waypointsParent.GetChild(i);
-    }
-
     [ContextMenu("Generate Road")]
     public void GenerateRoad()
     {
-        CollectWaypoints();
-        if (waypoints == null || waypoints.Length < 2) return;
+        if (waypointsParent == null || waypointsParent.childCount < 2) return;
         if (_mesh == null)
         {
             _mesh = new Mesh { name = "RoadMesh" };
@@ -63,24 +55,117 @@ public class RoadMeshGenerator : MonoBehaviour
             _meshFilter.mesh = _mesh;
         }
 
-        List<Vector3> splinePoints = GenerateSplinePoints();
-        BuildMesh(splinePoints);
+        // Raccoglie le posizioni dei waypoint
+        int count = waypointsParent.childCount;
+        var positions = new Vector3[count];
+        for (int i = 0; i < count; i++)
+            positions[i] = waypointsParent.GetChild(i).position;
+
+        // Costruisce i rami tramite nearest-neighbor con rilevamento bivio
+        var branches = BuildBranches(positions);
+
+        // Per ogni ramo genera i punti spline, poi combina tutto in una mesh
+        var allSplinePoints = new List<List<Vector3>>();
+        foreach (var branch in branches)
+        {
+            if (branch.Count >= 2)
+                allSplinePoints.Add(GenerateSplinePoints(branch));
+        }
+
+        BuildCombinedMesh(allSplinePoints);
     }
 
     /// <summary>
-    /// Catmull-Rom spline: genera punti interpolati tra i waypoint per curve morbide.
+    /// Partendo dal waypoint 0, segue il più vicino non visitato.
+    /// Se due non visitati sono a distanza simile (differenza < forkDelta), crea un bivio.
     /// </summary>
-    private List<Vector3> GenerateSplinePoints()
+    private List<List<Vector3>> BuildBranches(Vector3[] positions)
+    {
+        var branches = new List<List<Vector3>>();
+        var visited = new HashSet<int>();
+
+        // Coda di rami da esplorare: ogni elemento è (indice di partenza, lista punti già nel ramo)
+        var queue = new Queue<(int startIdx, List<Vector3> path)>();
+
+        var mainPath = new List<Vector3> { positions[0] };
+        visited.Add(0);
+        queue.Enqueue((0, mainPath));
+        branches.Add(mainPath);
+
+        while (queue.Count > 0)
+        {
+            var (currentIdx, currentPath) = queue.Dequeue();
+            Vector3 currentPos = positions[currentIdx];
+
+            while (true)
+            {
+                // Trova i due waypoint non visitati più vicini
+                int nearest = -1;
+                float nearestDist = float.MaxValue;
+                int secondNearest = -1;
+                float secondDist = float.MaxValue;
+
+                for (int i = 0; i < positions.Length; i++)
+                {
+                    if (visited.Contains(i)) continue;
+                    float d = Vector3.Distance(currentPos, positions[i]);
+
+                    if (d < nearestDist)
+                    {
+                        secondNearest = nearest;
+                        secondDist = nearestDist;
+                        nearest = i;
+                        nearestDist = d;
+                    }
+                    else if (d < secondDist)
+                    {
+                        secondNearest = i;
+                        secondDist = d;
+                    }
+                }
+
+                if (nearest == -1) break;
+
+                // Bivio: se il secondo è a distanza simile al primo
+                if (secondNearest != -1 && Mathf.Abs(nearestDist - secondDist) < forkDelta)
+                {
+                    // Il ramo corrente continua con nearest
+                    visited.Add(nearest);
+                    currentPath.Add(positions[nearest]);
+
+                    // Nuovo ramo parte dal punto corrente verso secondNearest
+                    visited.Add(secondNearest);
+                    var forkPath = new List<Vector3> { currentPos, positions[secondNearest] };
+                    branches.Add(forkPath);
+                    queue.Enqueue((secondNearest, forkPath));
+
+                    currentIdx = nearest;
+                    currentPos = positions[nearest];
+                }
+                else
+                {
+                    visited.Add(nearest);
+                    currentPath.Add(positions[nearest]);
+                    currentIdx = nearest;
+                    currentPos = positions[nearest];
+                }
+            }
+        }
+
+        return branches;
+    }
+
+    private List<Vector3> GenerateSplinePoints(List<Vector3> waypoints)
     {
         var points = new List<Vector3>();
-        int count = waypoints.Length;
+        int count = waypoints.Count;
 
         for (int i = 0; i < count - 1; i++)
         {
-            Vector3 p0 = waypoints[Mathf.Max(i - 1, 0)].position;
-            Vector3 p1 = waypoints[i].position;
-            Vector3 p2 = waypoints[Mathf.Min(i + 1, count - 1)].position;
-            Vector3 p3 = waypoints[Mathf.Min(i + 2, count - 1)].position;
+            Vector3 p0 = waypoints[Mathf.Max(i - 1, 0)];
+            Vector3 p1 = waypoints[i];
+            Vector3 p2 = waypoints[Mathf.Min(i + 1, count - 1)];
+            Vector3 p3 = waypoints[Mathf.Min(i + 2, count - 1)];
 
             int steps = (i < count - 2) ? resolution : resolution + 1;
             for (int s = 0; s < steps; s++)
@@ -105,10 +190,39 @@ public class RoadMeshGenerator : MonoBehaviour
         );
     }
 
-    private void BuildMesh(List<Vector3> splinePoints)
+    /// <summary>
+    /// Combina tutti i rami in una singola mesh.
+    /// </summary>
+    private void BuildCombinedMesh(List<List<Vector3>> allSplinePoints)
+    {
+        var allVertices = new List<Vector3>();
+        var allUvs = new List<Vector2>();
+        var allTriangles = new List<int>();
+
+        foreach (var splinePoints in allSplinePoints)
+            BuildBranchMesh(splinePoints, allVertices, allUvs, allTriangles);
+
+        _mesh.Clear();
+        _mesh.vertices = allVertices.ToArray();
+        _mesh.triangles = allTriangles.ToArray();
+        _mesh.uv = allUvs.ToArray();
+        _mesh.RecalculateNormals();
+        _mesh.RecalculateBounds();
+
+        if (_meshCollider != null)
+        {
+            _meshCollider.sharedMesh = null;
+            _meshCollider.sharedMesh = _mesh;
+        }
+    }
+
+    private void BuildBranchMesh(List<Vector3> splinePoints, List<Vector3> allVertices, List<Vector2> allUvs, List<int> allTriangles)
     {
         int pointCount = splinePoints.Count;
+        if (pointCount < 2) return;
+
         float halfWidth = roadWidth * 0.5f;
+        int vertexOffset = allVertices.Count;
 
         var tangents = new Vector3[pointCount];
         for (int i = 0; i < pointCount; i++)
@@ -121,13 +235,10 @@ public class RoadMeshGenerator : MonoBehaviour
                 tangents[i] = (splinePoints[i + 1] - splinePoints[i - 1]).normalized;
         }
 
-        // Rotation Minimizing Frame: propaga il frame dal primo punto in avanti.
-        // A differenza del Frenet frame, non degenera su pendenze ripide
-        // perché non dipende da Vector3.up per ogni punto.
+        // Rotation Minimizing Frame
         var lefts = new Vector3[pointCount];
         var ups = new Vector3[pointCount];
 
-        // Primo punto: calcola con Vector3.up (funziona se il primo tratto non è verticale)
         {
             Vector3 fwd = tangents[0];
             Vector3 left = Vector3.Cross(Vector3.up, fwd).normalized;
@@ -139,25 +250,13 @@ public class RoadMeshGenerator : MonoBehaviour
             ups[0] = up;
         }
 
-        // Propaga il frame: ruota il left/up del punto precedente verso la nuova tangente
         for (int i = 1; i < pointCount; i++)
         {
-            Vector3 prevFwd = tangents[i - 1];
-            Vector3 currFwd = tangents[i];
-
-            // Rotazione che porta prevFwd su currFwd
-            Quaternion rot = Quaternion.FromToRotation(prevFwd, currFwd);
-
-            // Applica la stessa rotazione al frame precedente
+            Quaternion rot = Quaternion.FromToRotation(tangents[i - 1], tangents[i]);
             lefts[i] = (rot * lefts[i - 1]).normalized;
             ups[i] = (rot * ups[i - 1]).normalized;
         }
 
-        int vertCount = pointCount * 4;
-        int triCount = (pointCount - 1) * 24;
-        var vertices = new Vector3[vertCount];
-        var uvs = new Vector2[vertCount];
-        var triangles = new int[triCount];
         float accumulatedLength = 0f;
 
         for (int i = 0; i < pointCount; i++)
@@ -171,74 +270,71 @@ public class RoadMeshGenerator : MonoBehaviour
             Vector3 botLeft = topLeft - localUp * thickness;
             Vector3 botRight = topRight - localUp * thickness;
 
-            int vi = i * 4;
-            vertices[vi] = topLeft;
-            vertices[vi + 1] = topRight;
-            vertices[vi + 2] = botLeft;
-            vertices[vi + 3] = botRight;
+            allVertices.Add(topLeft);
+            allVertices.Add(topRight);
+            allVertices.Add(botLeft);
+            allVertices.Add(botRight);
 
             if (i > 0)
                 accumulatedLength += Vector3.Distance(splinePoints[i], splinePoints[i - 1]);
             float v = accumulatedLength / roadWidth;
-            uvs[vi] = new Vector2(0f, v);
-            uvs[vi + 1] = new Vector2(1f, v);
-            uvs[vi + 2] = new Vector2(0f, v);
-            uvs[vi + 3] = new Vector2(1f, v);
+            allUvs.Add(new Vector2(0f, v));
+            allUvs.Add(new Vector2(1f, v));
+            allUvs.Add(new Vector2(0f, v));
+            allUvs.Add(new Vector2(1f, v));
         }
 
-        int ti = 0;
         for (int i = 0; i < pointCount - 1; i++)
         {
-            int c = i * 4;
-            int n = (i + 1) * 4;
+            int c = vertexOffset + i * 4;
+            int n = vertexOffset + (i + 1) * 4;
 
             // Top face
-            triangles[ti++] = c;     triangles[ti++] = n;     triangles[ti++] = c + 1;
-            triangles[ti++] = c + 1; triangles[ti++] = n;     triangles[ti++] = n + 1;
+            allTriangles.Add(c);     allTriangles.Add(n);     allTriangles.Add(c + 1);
+            allTriangles.Add(c + 1); allTriangles.Add(n);     allTriangles.Add(n + 1);
 
             // Bottom face
-            triangles[ti++] = c + 2; triangles[ti++] = c + 3; triangles[ti++] = n + 2;
-            triangles[ti++] = c + 3; triangles[ti++] = n + 3; triangles[ti++] = n + 2;
+            allTriangles.Add(c + 2); allTriangles.Add(c + 3); allTriangles.Add(n + 2);
+            allTriangles.Add(c + 3); allTriangles.Add(n + 3); allTriangles.Add(n + 2);
 
             // Left side
-            triangles[ti++] = c;     triangles[ti++] = c + 2; triangles[ti++] = n;
-            triangles[ti++] = n;     triangles[ti++] = c + 2; triangles[ti++] = n + 2;
+            allTriangles.Add(c);     allTriangles.Add(c + 2); allTriangles.Add(n);
+            allTriangles.Add(n);     allTriangles.Add(c + 2); allTriangles.Add(n + 2);
 
             // Right side
-            triangles[ti++] = c + 1; triangles[ti++] = n + 1; triangles[ti++] = c + 3;
-            triangles[ti++] = c + 3; triangles[ti++] = n + 1; triangles[ti++] = n + 3;
-        }
-
-        _mesh.Clear();
-        _mesh.vertices = vertices;
-        _mesh.triangles = triangles;
-        _mesh.uv = uvs;
-        _mesh.RecalculateNormals();
-        _mesh.RecalculateBounds();
-
-        if (_meshCollider != null)
-        {
-            _meshCollider.sharedMesh = null;
-            _meshCollider.sharedMesh = _mesh;
+            allTriangles.Add(c + 1); allTriangles.Add(n + 1); allTriangles.Add(c + 3);
+            allTriangles.Add(c + 3); allTriangles.Add(n + 1); allTriangles.Add(n + 3);
         }
     }
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (waypoints == null || waypoints.Length < 2) return;
+        if (waypointsParent == null || waypointsParent.childCount < 2) return;
 
+        int count = waypointsParent.childCount;
+        var positions = new Vector3[count];
+        for (int i = 0; i < count; i++)
+            positions[i] = waypointsParent.GetChild(i).position;
+
+        // Disegna i waypoint
         Gizmos.color = Color.yellow;
-        foreach (var wp in waypoints)
-        {
-            if (wp != null)
-                Gizmos.DrawWireSphere(wp.position, 0.3f);
-        }
+        foreach (var pos in positions)
+            Gizmos.DrawWireSphere(pos, 0.3f);
 
-        Gizmos.color = Color.cyan;
-        List<Vector3> points = GenerateSplinePoints();
-        for (int i = 0; i < points.Count - 1; i++)
-            Gizmos.DrawLine(points[i], points[i + 1]);
+        // Disegna i rami
+        var branches = BuildBranches(positions);
+        Color[] branchColors = { Color.cyan, Color.magenta, Color.green, Color.red, Color.blue };
+
+        for (int b = 0; b < branches.Count; b++)
+        {
+            if (branches[b].Count < 2) continue;
+            Gizmos.color = branchColors[b % branchColors.Length];
+
+            var spline = GenerateSplinePoints(branches[b]);
+            for (int i = 0; i < spline.Count - 1; i++)
+                Gizmos.DrawLine(spline[i], spline[i + 1]);
+        }
     }
 #endif
 }
