@@ -55,23 +55,26 @@ public class RoadMeshGenerator : MonoBehaviour
 
         var waypoints = new List<Vector3>();
         var nodeTypes = new List<bool>(); // true = Flat
+        var waypointBankAngles = new List<float>();
         for (int i = 0; i < waypointsParent.childCount; i++)
         {
             Transform child = waypointsParent.GetChild(i);
             waypoints.Add(child.position);
             var node = child.GetComponent<WaypointNode>();
             nodeTypes.Add(node != null && node.nodeType == WaypointNode.NodeType.Flat);
+            waypointBankAngles.Add(node != null ? node.bankAngle : 0f);
         }
 
-        var splineData = GenerateSplinePoints(waypoints, nodeTypes);
-        BuildMesh(splineData.points, splineData.flatWeights);
+        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles);
+        BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles);
     }
 
-    private (List<Vector3> points, List<float> flatWeights) GenerateSplinePoints(
-        List<Vector3> waypoints, List<bool> nodeTypes)
+    private (List<Vector3> points, List<float> flatWeights, List<float> bankAngles) GenerateSplinePoints(
+        List<Vector3> waypoints, List<bool> nodeTypes, List<float> waypointBankAngles)
     {
         var points = new List<Vector3>();
         var flatWeights = new List<float>();
+        var bankAngles = new List<float>();
         int count = waypoints.Count;
 
         for (int i = 0; i < count - 1; i++)
@@ -84,16 +87,20 @@ public class RoadMeshGenerator : MonoBehaviour
             float flatA = nodeTypes[i] ? 1f : 0f;
             float flatB = nodeTypes[Mathf.Min(i + 1, count - 1)] ? 1f : 0f;
 
+            float bankA = waypointBankAngles[i];
+            float bankB = waypointBankAngles[Mathf.Min(i + 1, count - 1)];
+
             int steps = (i < count - 2) ? resolution : resolution + 1;
             for (int s = 0; s < steps; s++)
             {
                 float t = s / (float)resolution;
                 points.Add(CatmullRom(p0, p1, p2, p3, t, splineTension));
                 flatWeights.Add(Mathf.Lerp(flatA, flatB, t));
+                bankAngles.Add(Mathf.Lerp(bankA, bankB, t));
             }
         }
 
-        return (points, flatWeights);
+        return (points, flatWeights, bankAngles);
     }
 
     private static Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t, float tension)
@@ -110,7 +117,7 @@ public class RoadMeshGenerator : MonoBehaviour
         return h1 * p1 + h2 * s * (p2 - p0) + h3 * p2 + h4 * s * (p3 - p1);
     }
 
-    private void BuildMesh(List<Vector3> splinePoints, List<float> flatWeights)
+    private void BuildMesh(List<Vector3> splinePoints, List<float> flatWeights, List<float> bankAngles)
     {
         int pointCount = splinePoints.Count;
         float halfWidth = roadWidth * 0.5f;
@@ -167,6 +174,15 @@ public class RoadMeshGenerator : MonoBehaviour
             float w = flatWeights[i];
             lefts[i] = Vector3.Slerp(rmfLeft, flatLeft, w).normalized;
             ups[i] = Vector3.Slerp(rmfUp, flatUp, w).normalized;
+
+            // Applica banking: ruota left/up attorno alla tangente
+            float bank = bankAngles[i];
+            if (Mathf.Abs(bank) > 0.01f)
+            {
+                Quaternion bankRot = Quaternion.AngleAxis(bank, fwd);
+                lefts[i] = (bankRot * lefts[i]).normalized;
+                ups[i] = (bankRot * ups[i]).normalized;
+            }
         }
 
         int vertCount = pointCount * 4;
@@ -246,12 +262,14 @@ public class RoadMeshGenerator : MonoBehaviour
 
         var waypoints = new List<Vector3>();
         var nodeTypes = new List<bool>();
+        var waypointBankAngles = new List<float>();
         for (int i = 0; i < waypointsParent.childCount; i++)
         {
             Transform child = waypointsParent.GetChild(i);
             waypoints.Add(child.position);
             var node = child.GetComponent<WaypointNode>();
             nodeTypes.Add(node != null && node.nodeType == WaypointNode.NodeType.Flat);
+            waypointBankAngles.Add(node != null ? node.bankAngle : 0f);
         }
 
         // Waypoint: giallo = Default, verde = Flat
@@ -262,7 +280,7 @@ public class RoadMeshGenerator : MonoBehaviour
         }
 
         Gizmos.color = Color.cyan;
-        var splineData = GenerateSplinePoints(waypoints, nodeTypes);
+        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles);
         for (int i = 0; i < splineData.points.Count - 1; i++)
             Gizmos.DrawLine(splineData.points[i], splineData.points[i + 1]);
     }
