@@ -35,6 +35,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LocalLobbyLoadingScene.unity
     guid: e6b9d9a48cefe9e4cabd56612224fe65
+  - enabled: 1
+    path: Assets/Scenes/SceneDiTest/CameraTest.unity
+    guid: 7c5ea62ac5ba048f098929bbd2fb3b41
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 50461614b32180f48bc63082686d83bf, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
