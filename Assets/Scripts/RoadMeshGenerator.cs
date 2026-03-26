@@ -11,6 +11,12 @@ public class RoadMeshGenerator : MonoBehaviour
     [Tooltip("0 = curva morbida (default Catmull-Rom), 1 = lineare (ogni waypoint ha impatto massimo)")]
     [SerializeField, Range(0f, 1f)] private float splineTension = 0f;
 
+    [Header("Edge Curve (U-shape)")]
+    [Tooltip("Altezza dei bordi rialzati. 0 = strada piatta")]
+    [SerializeField] private float edgeCurveHeight = 0.5f;
+    [Tooltip("Segmenti trasversali per la curvatura")]
+    [SerializeField, Range(2, 16)] private int widthSegments = 8;
+
     [Header("Waypoints")]
     [SerializeField] private Transform waypointsParent;
 
@@ -185,8 +191,14 @@ public class RoadMeshGenerator : MonoBehaviour
             }
         }
 
-        int vertCount = pointCount * 4;
-        int triCount = (pointCount - 1) * 24;
+        int segs = Mathf.Max(2, widthSegments);
+        int vertsPerRow = segs + 1;
+        int vertsPerPoint = vertsPerRow * 2; // top row + bottom row
+        int vertCount = pointCount * vertsPerPoint;
+        // Per segmento longitudinale: top quads + bottom quads + 2 side quads
+        int trisPerSegment = (segs * 2 + 2) * 6;
+        int triCount = (pointCount - 1) * trisPerSegment;
+
         var vertices = new Vector3[vertCount];
         var uvs = new Vector2[vertCount];
         var triangles = new int[triCount];
@@ -198,47 +210,84 @@ public class RoadMeshGenerator : MonoBehaviour
             Vector3 localLeft = transform.InverseTransformDirection(lefts[i]);
             Vector3 localUp = transform.InverseTransformDirection(ups[i]);
 
-            Vector3 topLeft = localPos - localLeft * halfWidth;
-            Vector3 topRight = localPos + localLeft * halfWidth;
-            Vector3 botLeft = topLeft - localUp * thickness;
-            Vector3 botRight = topRight - localUp * thickness;
-
-            int vi = i * 4;
-            vertices[vi] = topLeft;
-            vertices[vi + 1] = topRight;
-            vertices[vi + 2] = botLeft;
-            vertices[vi + 3] = botRight;
-
             if (i > 0)
                 accumulatedLength += Vector3.Distance(splinePoints[i], splinePoints[i - 1]);
             float v = accumulatedLength / roadWidth;
-            uvs[vi] = new Vector2(0f, v);
-            uvs[vi + 1] = new Vector2(1f, v);
-            uvs[vi + 2] = new Vector2(0f, v);
-            uvs[vi + 3] = new Vector2(1f, v);
+
+            int baseIdx = i * vertsPerPoint;
+
+            for (int j = 0; j <= segs; j++)
+            {
+                float u = (float)j / segs;              // 0..1
+                float centered = u * 2f - 1f;           // -1..+1
+
+                // Posizione trasversale
+                Vector3 widthOffset = localLeft * (centered * halfWidth);
+
+                // Curva a U: parabolica, 0 al centro, edgeCurveHeight ai bordi
+                float curveOffset = edgeCurveHeight * centered * centered;
+                Vector3 heightOffset = localUp * curveOffset;
+
+                Vector3 topPos = localPos + widthOffset + heightOffset;
+                Vector3 botPos = topPos - localUp * thickness;
+
+                vertices[baseIdx + j] = topPos;
+                vertices[baseIdx + vertsPerRow + j] = botPos;
+
+                uvs[baseIdx + j] = new Vector2(u, v);
+                uvs[baseIdx + vertsPerRow + j] = new Vector2(u, v);
+            }
         }
 
         int ti = 0;
         for (int i = 0; i < pointCount - 1; i++)
         {
-            int c = i * 4;
-            int n = (i + 1) * 4;
+            int c = i * vertsPerPoint;
+            int n = (i + 1) * vertsPerPoint;
 
-            // Top
-            triangles[ti++] = c;     triangles[ti++] = n;     triangles[ti++] = c + 1;
-            triangles[ti++] = c + 1; triangles[ti++] = n;     triangles[ti++] = n + 1;
+            // Top face — strip di quads
+            for (int j = 0; j < segs; j++)
+            {
+                triangles[ti++] = c + j;
+                triangles[ti++] = n + j;
+                triangles[ti++] = c + j + 1;
 
-            // Bottom
-            triangles[ti++] = c + 2; triangles[ti++] = c + 3; triangles[ti++] = n + 2;
-            triangles[ti++] = c + 3; triangles[ti++] = n + 3; triangles[ti++] = n + 2;
+                triangles[ti++] = c + j + 1;
+                triangles[ti++] = n + j;
+                triangles[ti++] = n + j + 1;
+            }
 
-            // Left
-            triangles[ti++] = c;     triangles[ti++] = c + 2; triangles[ti++] = n;
-            triangles[ti++] = n;     triangles[ti++] = c + 2; triangles[ti++] = n + 2;
+            // Bottom face — strip di quads (winding invertito)
+            int cb = c + vertsPerRow;
+            int nb = n + vertsPerRow;
+            for (int j = 0; j < segs; j++)
+            {
+                triangles[ti++] = cb + j;
+                triangles[ti++] = cb + j + 1;
+                triangles[ti++] = nb + j;
 
-            // Right
-            triangles[ti++] = c + 1; triangles[ti++] = n + 1; triangles[ti++] = c + 3;
-            triangles[ti++] = c + 3; triangles[ti++] = n + 1; triangles[ti++] = n + 3;
+                triangles[ti++] = cb + j + 1;
+                triangles[ti++] = nb + j + 1;
+                triangles[ti++] = nb + j;
+            }
+
+            // Left side
+            triangles[ti++] = c;
+            triangles[ti++] = c + vertsPerRow;
+            triangles[ti++] = n;
+
+            triangles[ti++] = n;
+            triangles[ti++] = c + vertsPerRow;
+            triangles[ti++] = n + vertsPerRow;
+
+            // Right side
+            triangles[ti++] = c + segs;
+            triangles[ti++] = n + segs;
+            triangles[ti++] = c + vertsPerRow + segs;
+
+            triangles[ti++] = c + vertsPerRow + segs;
+            triangles[ti++] = n + segs;
+            triangles[ti++] = n + vertsPerRow + segs;
         }
 
         _mesh.Clear();
