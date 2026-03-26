@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(100)] // Esegue dopo RoadMeshGenerator (default = 0)
 public class RoadOverlapCleaner : MonoBehaviour
 {
     [Tooltip("Dimensione cella per spatial hashing (circa la dimensione di un triangolo)")]
@@ -14,15 +15,24 @@ public class RoadOverlapCleaner : MonoBehaviour
 
     private void Start()
     {
-        CleanOverlaps();
+        // Le strade sono già generate dai RoadMeshGenerator.Start() (execution order 0)
+        CleanOverlaps(false);
     }
 
     [ContextMenu("Clean Overlaps")]
-    public void CleanOverlaps()
+    public void CleanOverlapsFromMenu()
+    {
+        CleanOverlaps(true);
+    }
+
+    public void CleanOverlaps(bool regenerate = true)
     {
         var generators = GetComponentsInChildren<RoadMeshGenerator>();
-        foreach (var gen in generators)
-            gen.GenerateRoad();
+        if (regenerate)
+        {
+            foreach (var gen in generators)
+                gen.GenerateRoad();
+        }
 
         var meshFilters = new List<MeshFilter>();
         foreach (var gen in generators)
