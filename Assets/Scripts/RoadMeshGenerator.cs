@@ -225,7 +225,8 @@ public class RoadMeshGenerator : MonoBehaviour
                 Vector3 widthOffset = localLeft * (centered * halfWidth);
 
                 // Curva a U: parabolica, 0 al centro, edgeCurveHeight ai bordi
-                float curveOffset = edgeCurveHeight * centered * centered;
+                // Si appiattisce ai nodi Flat (bivi/incroci) per far combaciare le strade
+                float curveOffset = edgeCurveHeight * (1f - flatWeights[i]) * centered * centered;
                 Vector3 heightOffset = localUp * curveOffset;
 
                 Vector3 topPos = localPos + widthOffset + heightOffset;
