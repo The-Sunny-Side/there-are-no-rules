@@ -61,6 +61,7 @@ public class RoadMeshGenerator : MonoBehaviour
 
         var waypoints = new List<Vector3>();
         var nodeTypes = new List<bool>(); // true = Flat
+        var stopNodes = new List<bool>(); // true = Stop (no mesh on outgoing arc)
         var waypointBankAngles = new List<float>();
         for (int i = 0; i < waypointsParent.childCount; i++)
         {
@@ -68,19 +69,21 @@ public class RoadMeshGenerator : MonoBehaviour
             waypoints.Add(child.position);
             var node = child.GetComponent<WaypointNode>();
             nodeTypes.Add(node != null && node.nodeType == WaypointNode.NodeType.Flat);
+            stopNodes.Add(node != null && node.nodeType == WaypointNode.NodeType.Stop);
             waypointBankAngles.Add(node != null ? node.bankAngle : 0f);
         }
 
-        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles);
-        BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles);
+        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes);
+        BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles, splineData.meshActive);
     }
 
-    private (List<Vector3> points, List<float> flatWeights, List<float> bankAngles) GenerateSplinePoints(
-        List<Vector3> waypoints, List<bool> nodeTypes, List<float> waypointBankAngles)
+    private (List<Vector3> points, List<float> flatWeights, List<float> bankAngles, List<bool> meshActive) GenerateSplinePoints(
+        List<Vector3> waypoints, List<bool> nodeTypes, List<float> waypointBankAngles, List<bool> stopNodes)
     {
         var points = new List<Vector3>();
         var flatWeights = new List<float>();
         var bankAngles = new List<float>();
+        var meshActive = new List<bool>(); // per-point: false = non generare mesh verso il punto successivo
         int count = waypoints.Count;
 
         for (int i = 0; i < count - 1; i++)
@@ -96,6 +99,8 @@ public class RoadMeshGenerator : MonoBehaviour
             float bankA = waypointBankAngles[i];
             float bankB = waypointBankAngles[Mathf.Min(i + 1, count - 1)];
 
+            bool generateMesh = !stopNodes[i];
+
             int steps = (i < count - 2) ? resolution : resolution + 1;
             for (int s = 0; s < steps; s++)
             {
@@ -103,10 +108,11 @@ public class RoadMeshGenerator : MonoBehaviour
                 points.Add(CatmullRom(p0, p1, p2, p3, t, splineTension));
                 flatWeights.Add(Mathf.Lerp(flatA, flatB, t));
                 bankAngles.Add(Mathf.Lerp(bankA, bankB, t));
+                meshActive.Add(generateMesh);
             }
         }
 
-        return (points, flatWeights, bankAngles);
+        return (points, flatWeights, bankAngles, meshActive);
     }
 
     private static Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t, float tension)
@@ -123,7 +129,7 @@ public class RoadMeshGenerator : MonoBehaviour
         return h1 * p1 + h2 * s * (p2 - p0) + h3 * p2 + h4 * s * (p3 - p1);
     }
 
-    private void BuildMesh(List<Vector3> splinePoints, List<float> flatWeights, List<float> bankAngles)
+    private void BuildMesh(List<Vector3> splinePoints, List<float> flatWeights, List<float> bankAngles, List<bool> meshActive)
     {
         int pointCount = splinePoints.Count;
         float halfWidth = roadWidth * 0.5f;
@@ -195,13 +201,10 @@ public class RoadMeshGenerator : MonoBehaviour
         int vertsPerRow = segs + 1;
         int vertsPerPoint = vertsPerRow * 2; // top row + bottom row
         int vertCount = pointCount * vertsPerPoint;
-        // Per segmento longitudinale: top quads + bottom quads + 2 side quads
-        int trisPerSegment = (segs * 2 + 2) * 6;
-        int triCount = (pointCount - 1) * trisPerSegment;
 
         var vertices = new Vector3[vertCount];
         var uvs = new Vector2[vertCount];
-        var triangles = new int[triCount];
+        var trianglesList = new List<int>();
         float accumulatedLength = 0f;
 
         for (int i = 0; i < pointCount; i++)
@@ -240,22 +243,23 @@ public class RoadMeshGenerator : MonoBehaviour
             }
         }
 
-        int ti = 0;
         for (int i = 0; i < pointCount - 1; i++)
         {
+            if (!meshActive[i]) continue;
+
             int c = i * vertsPerPoint;
             int n = (i + 1) * vertsPerPoint;
 
             // Top face — strip di quads
             for (int j = 0; j < segs; j++)
             {
-                triangles[ti++] = c + j;
-                triangles[ti++] = n + j;
-                triangles[ti++] = c + j + 1;
+                trianglesList.Add(c + j);
+                trianglesList.Add(n + j);
+                trianglesList.Add(c + j + 1);
 
-                triangles[ti++] = c + j + 1;
-                triangles[ti++] = n + j;
-                triangles[ti++] = n + j + 1;
+                trianglesList.Add(c + j + 1);
+                trianglesList.Add(n + j);
+                trianglesList.Add(n + j + 1);
             }
 
             // Bottom face — strip di quads (winding invertito)
@@ -263,37 +267,37 @@ public class RoadMeshGenerator : MonoBehaviour
             int nb = n + vertsPerRow;
             for (int j = 0; j < segs; j++)
             {
-                triangles[ti++] = cb + j;
-                triangles[ti++] = cb + j + 1;
-                triangles[ti++] = nb + j;
+                trianglesList.Add(cb + j);
+                trianglesList.Add(cb + j + 1);
+                trianglesList.Add(nb + j);
 
-                triangles[ti++] = cb + j + 1;
-                triangles[ti++] = nb + j + 1;
-                triangles[ti++] = nb + j;
+                trianglesList.Add(cb + j + 1);
+                trianglesList.Add(nb + j + 1);
+                trianglesList.Add(nb + j);
             }
 
             // Left side
-            triangles[ti++] = c;
-            triangles[ti++] = c + vertsPerRow;
-            triangles[ti++] = n;
+            trianglesList.Add(c);
+            trianglesList.Add(c + vertsPerRow);
+            trianglesList.Add(n);
 
-            triangles[ti++] = n;
-            triangles[ti++] = c + vertsPerRow;
-            triangles[ti++] = n + vertsPerRow;
+            trianglesList.Add(n);
+            trianglesList.Add(c + vertsPerRow);
+            trianglesList.Add(n + vertsPerRow);
 
             // Right side
-            triangles[ti++] = c + segs;
-            triangles[ti++] = n + segs;
-            triangles[ti++] = c + vertsPerRow + segs;
+            trianglesList.Add(c + segs);
+            trianglesList.Add(n + segs);
+            trianglesList.Add(c + vertsPerRow + segs);
 
-            triangles[ti++] = c + vertsPerRow + segs;
-            triangles[ti++] = n + segs;
-            triangles[ti++] = n + vertsPerRow + segs;
+            trianglesList.Add(c + vertsPerRow + segs);
+            trianglesList.Add(n + segs);
+            trianglesList.Add(n + vertsPerRow + segs);
         }
 
         _mesh.Clear();
         _mesh.vertices = vertices;
-        _mesh.triangles = triangles;
+        _mesh.triangles = trianglesList.ToArray();
         _mesh.uv = uvs;
         _mesh.RecalculateNormals();
         _mesh.RecalculateBounds();
@@ -312,6 +316,7 @@ public class RoadMeshGenerator : MonoBehaviour
 
         var waypoints = new List<Vector3>();
         var nodeTypes = new List<bool>();
+        var stopNodes = new List<bool>();
         var waypointBankAngles = new List<float>();
         for (int i = 0; i < waypointsParent.childCount; i++)
         {
@@ -319,20 +324,26 @@ public class RoadMeshGenerator : MonoBehaviour
             waypoints.Add(child.position);
             var node = child.GetComponent<WaypointNode>();
             nodeTypes.Add(node != null && node.nodeType == WaypointNode.NodeType.Flat);
+            stopNodes.Add(node != null && node.nodeType == WaypointNode.NodeType.Stop);
             waypointBankAngles.Add(node != null ? node.bankAngle : 0f);
         }
 
-        // Waypoint: giallo = Default, verde = Flat
+        // Waypoint: giallo = Default, verde = Flat, rosso = Stop
         for (int i = 0; i < waypoints.Count; i++)
         {
-            Gizmos.color = nodeTypes[i] ? Color.green : Color.yellow;
+            if (stopNodes[i])
+                Gizmos.color = Color.red;
+            else
+                Gizmos.color = nodeTypes[i] ? Color.green : Color.yellow;
             Gizmos.DrawWireSphere(waypoints[i], 0.3f);
         }
 
-        Gizmos.color = Color.cyan;
-        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles);
+        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes);
         for (int i = 0; i < splineData.points.Count - 1; i++)
+        {
+            Gizmos.color = splineData.meshActive[i] ? Color.cyan : Color.red;
             Gizmos.DrawLine(splineData.points[i], splineData.points[i + 1]);
+        }
     }
 #endif
 }
