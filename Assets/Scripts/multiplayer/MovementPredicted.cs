@@ -129,8 +129,17 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
                 if (isBrakeInput)
                 {
                     Vector3 groundVelocity = Vector3.ProjectOnPlane(_rigidbody.linearVelocity, slopeNormal);
-                    if (groundVelocity.sqrMagnitude > 0.0001f)
-                        _rigidbody.AddForce(-groundVelocity.normalized * groundedDeceleration, ForceMode.Acceleration);
+                    float groundSpeed = groundVelocity.magnitude;
+                    if (groundSpeed > 0.5f)
+                    {
+                        float brakeFactor = Mathf.Clamp01(groundSpeed / 5f);
+                        _rigidbody.AddForce(-groundVelocity.normalized * groundedDeceleration * brakeFactor, ForceMode.Acceleration);
+                    }
+                    else
+                    {
+                        Vector3 verticalVel = Vector3.Project(_rigidbody.linearVelocity, slopeNormal);
+                        _rigidbody.linearVelocity = verticalVel;
+                    }
 
                     state.driftingTime = 0f;
                 }

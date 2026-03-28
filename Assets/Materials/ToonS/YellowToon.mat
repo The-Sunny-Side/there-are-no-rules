@@ -22,7 +22,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: YellowToon
   m_Shader: {fileID: -6465566751694194690, guid: 50c345320db835845af830abe325149e, type: 3}
-  m_Parent: {fileID: -876546973899608171, guid: 50c345320db835845af830abe325149e, type: 3}
+  m_Parent: {fileID: 2100000, guid: b0ef43f20703de34e92e294ae857aa29, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []

@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
 
     public void GoToPlayScreen()
     {
-        LoadSceneAsync("multiplayerMovement");
+        LoadSceneAsync("PlayScene");
     }
 
     public void GoToVehicleScreen()
@@ -83,11 +83,13 @@ public class GameManager : MonoBehaviour
         return paused;
     }
 
-    public void SetNetworkMode(Mode netMode) {
+    public void SetNetworkMode(Mode netMode)
+    {
         mode = netMode;
     }
 
-    public Mode GetNetworkMode() {
+    public Mode GetNetworkMode()
+    {
         return mode;
     }
 
