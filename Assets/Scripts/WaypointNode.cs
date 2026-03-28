@@ -5,7 +5,8 @@ public class WaypointNode : MonoBehaviour
     public enum NodeType
     {
         Default,  // Rotation Minimizing Frame (smooth per curve)
-        Flat      // Vector3.up (piatto, ideale per bivi e incroci)
+        Flat,     // Vector3.up (piatto, ideale per bivi e incroci)
+        Stop      // La spline continua ma la mesh non viene generata fino al nodo successivo
     }
 
     public NodeType nodeType = NodeType.Default;
