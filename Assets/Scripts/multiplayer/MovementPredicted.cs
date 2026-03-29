@@ -93,6 +93,13 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         Vector2 moveInput = new Vector2(input.horizontalTurn, input.verticalTurn);
         float airRotationSpeed = rotationSpeed * airRotationMultiplier;
 
+        // X rotation: libera in aria (per ruotarsi/salti), bloccata a terra (evita scatti sul terreno)
+        Rigidbody rb = _rigidbody.GetComponent<Rigidbody>();
+        if (state.grounded)
+            rb.constraints |= RigidbodyConstraints.FreezeRotationX;
+        else
+            rb.constraints &= ~RigidbodyConstraints.FreezeRotationX;
+
         CastGroundRaysAndAlign(ref state, moveInput, delta);
 
         if (!state.grounded && Mathf.Abs(input.horizontalTurn) > 0.0001f)
