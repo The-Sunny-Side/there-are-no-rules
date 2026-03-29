@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,9 +18,9 @@ public class RoadMeshGenerator : MonoBehaviour
     [Header("Waypoints")]
     [SerializeField] private Transform waypointsParent;
 
-    private Mesh _mesh;
-    private MeshFilter _meshFilter;
-    private MeshCollider _meshCollider;
+    [NonSerialized] public Mesh _mesh;
+    [NonSerialized] public MeshFilter _meshFilter;
+    [NonSerialized] public MeshCollider _meshCollider;
 
     private void Awake()
     {
