@@ -115,7 +115,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         {
             _rigidbody.GetComponent<Rigidbody>().linearDamping = dragOnGround;
 
-            if (Physics.Raycast(_rigidbody.position, -Vector3.up, out RaycastHit hit, whenIsGroundLenght, whatIsGroud))
+            if (Physics.Raycast(_rigidbody.position, -_rigidbody.transform.up, out RaycastHit hit, whenIsGroundLenght, whatIsGroud))
             {
                 Vector3 slopeNormal = hit.normal;
                 Vector3 slopeDirection = Vector3.Cross(slopeNormal, Vector3.Cross(Vector3.down, slopeNormal)).normalized;
