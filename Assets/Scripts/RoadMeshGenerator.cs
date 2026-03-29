@@ -8,9 +8,6 @@ public class RoadMeshGenerator : MonoBehaviour
     [SerializeField] private float roadWidth = 4f;
     [SerializeField] private int resolution = 20;
     [SerializeField] private float thickness = 1f;
-    [Tooltip("0 = curva morbida (default Catmull-Rom), 1 = lineare (ogni waypoint ha impatto massimo)")]
-    [SerializeField, Range(0f, 1f)] private float splineTension = 0f;
-
     [Header("Edge Curve (U-shape)")]
     [Tooltip("Altezza dei bordi rialzati. 0 = strada piatta")]
     [SerializeField] private float edgeCurveHeight = 0.5f;
@@ -63,6 +60,7 @@ public class RoadMeshGenerator : MonoBehaviour
         var nodeTypes = new List<bool>(); // true = Flat
         var stopNodes = new List<bool>(); // true = Stop (no mesh on outgoing arc)
         var waypointBankAngles = new List<float>();
+        var waypointTensions = new List<float>();
         for (int i = 0; i < waypointsParent.childCount; i++)
         {
             Transform child = waypointsParent.GetChild(i);
@@ -71,14 +69,15 @@ public class RoadMeshGenerator : MonoBehaviour
             nodeTypes.Add(node != null && node.nodeType == WaypointNode.NodeType.Flat);
             stopNodes.Add(node != null && node.nodeType == WaypointNode.NodeType.Stop);
             waypointBankAngles.Add(node != null ? node.bankAngle : 0f);
+            waypointTensions.Add(node != null && node.overrideTension ? node.splineTension : 0f);
         }
 
-        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes);
+        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes, waypointTensions);
         BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles, splineData.meshActive);
     }
 
     private (List<Vector3> points, List<float> flatWeights, List<float> bankAngles, List<bool> meshActive) GenerateSplinePoints(
-        List<Vector3> waypoints, List<bool> nodeTypes, List<float> waypointBankAngles, List<bool> stopNodes)
+        List<Vector3> waypoints, List<bool> nodeTypes, List<float> waypointBankAngles, List<bool> stopNodes, List<float> waypointTensions)
     {
         var points = new List<Vector3>();
         var flatWeights = new List<float>();
@@ -99,13 +98,17 @@ public class RoadMeshGenerator : MonoBehaviour
             float bankA = waypointBankAngles[i];
             float bankB = waypointBankAngles[Mathf.Min(i + 1, count - 1)];
 
+            float tensionA = waypointTensions[i];
+            float tensionB = waypointTensions[Mathf.Min(i + 1, count - 1)];
+
             bool generateMesh = !stopNodes[i];
 
             int steps = (i < count - 2) ? resolution : resolution + 1;
             for (int s = 0; s < steps; s++)
             {
                 float t = s / (float)resolution;
-                points.Add(CatmullRom(p0, p1, p2, p3, t, splineTension));
+                float tension = Mathf.Lerp(tensionA, tensionB, t);
+                points.Add(CatmullRom(p0, p1, p2, p3, t, tension));
                 flatWeights.Add(Mathf.Lerp(flatA, flatB, t));
                 bankAngles.Add(Mathf.Lerp(bankA, bankB, t));
                 meshActive.Add(generateMesh);
@@ -318,6 +321,7 @@ public class RoadMeshGenerator : MonoBehaviour
         var nodeTypes = new List<bool>();
         var stopNodes = new List<bool>();
         var waypointBankAngles = new List<float>();
+        var waypointTensions = new List<float>();
         for (int i = 0; i < waypointsParent.childCount; i++)
         {
             Transform child = waypointsParent.GetChild(i);
@@ -326,6 +330,7 @@ public class RoadMeshGenerator : MonoBehaviour
             nodeTypes.Add(node != null && node.nodeType == WaypointNode.NodeType.Flat);
             stopNodes.Add(node != null && node.nodeType == WaypointNode.NodeType.Stop);
             waypointBankAngles.Add(node != null ? node.bankAngle : 0f);
+            waypointTensions.Add(node != null && node.overrideTension ? node.splineTension : 0f);
         }
 
         // Waypoint: giallo = Default, verde = Flat, rosso = Stop
@@ -338,7 +343,7 @@ public class RoadMeshGenerator : MonoBehaviour
             Gizmos.DrawWireSphere(waypoints[i], 0.3f);
         }
 
-        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes);
+        var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes, waypointTensions);
         for (int i = 0; i < splineData.points.Count - 1; i++)
         {
             Gizmos.color = splineData.meshActive[i] ? Color.cyan : Color.red;

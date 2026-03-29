@@ -30,13 +30,13 @@ EditorBuildSettings:
     path: Assets/Scenes/SceneDiTest/LatticeHitScene.unity
     guid: 424ef7cfae3cfa945b0df4d4627c19bb
   - enabled: 1
-    path: Assets/Scenes/SceneDiTest/multiplayerMovement.unity
+    path: Assets/Scenes/SceneDiTest/DeprecatedScene/multiplayerMovement.unity
     guid: e8991aa757100c94ab7a60340ab35ce0
   - enabled: 1
     path: Assets/Scenes/LocalLobbyLoadingScene.unity
     guid: e6b9d9a48cefe9e4cabd56612224fe65
   - enabled: 1
-    path: Assets/Scenes/SceneDiTest/CameraTest.unity
+    path: Assets/Scenes/SceneDiTest/MapGenerationScene.unity
     guid: 7c5ea62ac5ba048f098929bbd2fb3b41
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 50461614b32180f48bc63082686d83bf, type: 2}

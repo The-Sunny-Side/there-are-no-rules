@@ -39,6 +39,7 @@ public class NewMovement : NetworkIdentity
 
     // input cache (letto in Update, usato in FixedUpdate)
     private float _turnInput;
+    private float _forwardInput;
     private bool _jumpPressed;
 
     protected override void OnSpawned()
@@ -75,13 +76,15 @@ public class NewMovement : NetworkIdentity
 
     void Update()
     {
-        // solo owner (lo script è già disabled per non-owner, ma meglio safe)
+        // solo owner (lo script ï¿½ giï¿½ disabled per non-owner, ma meglio safe)
         if (!isOwner || inputManager == null) return;
 
         // Leggo input qui, ma NON muovo fisica/transform qui.
         _turnInput = 0f;
         if (inputManager.rightHeld) _turnInput += 1f;
         if (inputManager.leftHeld) _turnInput -= 1f;
+
+        _forwardInput = inputManager.rotateVertical;
 
         // edge-trigger: salvo la pressione salto per FixedUpdate
         if (inputManager.jumpTapped)
@@ -128,7 +131,9 @@ public class NewMovement : NetworkIdentity
                 float alignment = Mathf.Clamp01(Vector3.Dot(forwardOnSlope, slopeDirection));
                 alignment = Mathf.Max(alignment, minAlignment);
 
-                Vector3 slideForce = forwardOnSlope * gravityForce * alignment * forwardSpeed;
+                // throttle: stick avanti = 2x forza, centro = 1x, indietro = 0x (freno)
+                float forceMultiplier = Mathf.Max(0f, 1f + Mathf.Clamp(_forwardInput, -1f, 1f));
+                Vector3 slideForce = forwardOnSlope * gravityForce * alignment * forwardSpeed * forceMultiplier;
                 Debug.DrawRay(_rb.position, slideForce * 5f, Color.cyan);
 
                 _rb.AddForce(slideForce);
@@ -189,7 +194,7 @@ public class NewMovement : NetworkIdentity
             // angolo sul piano XZ (locale)
             float angle = angleStep * i * Mathf.Deg2Rad;
 
-            // direzione “laterale” intorno all’oggetto (sul piano orizzontale)
+            // direzione ï¿½lateraleï¿½ intorno allï¿½oggetto (sul piano orizzontale)
             Vector3 radial =
                 _rb.transform.right * Mathf.Cos(angle) +
                 _rb.transform.forward * Mathf.Sin(angle);
