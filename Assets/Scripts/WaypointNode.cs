@@ -2,6 +2,20 @@ using UnityEngine;
 
 public class WaypointNode : MonoBehaviour
 {
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        var trigger = GetComponent<CheckpointTrigger>();
+        if (isCheckpoint && trigger == null)
+            gameObject.AddComponent<CheckpointTrigger>();
+        else if (!isCheckpoint && trigger != null)
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                if (trigger != null) DestroyImmediate(trigger);
+            };
+    }
+#endif
+
     public enum NodeType
     {
         Default,  // Rotation Minimizing Frame (smooth per curve)
