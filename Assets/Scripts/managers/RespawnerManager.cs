@@ -16,7 +16,7 @@ public class RespawnerManager : NetworkBehaviour
         Instance = this;
     }
 
-    private void OnDestroy()
+    private new void OnDestroy()
     {
         if (Instance == this) Instance = null;
     }
@@ -35,6 +35,22 @@ public class RespawnerManager : NetworkBehaviour
         if (!isServer) return;
         _lastCheckpoints[playerId] = position;
         _lastRotations[playerId] = rotation;
+    }
+
+    // Chiamato direttamente server-side (es. da KillZoneTrigger)
+    public void ForceRespawn(PlayerID playerId)
+    {
+        if (!isServer) return;
+        if (!_lastCheckpoints.TryGetValue(playerId, out Vector3 pos)) return;
+        _lastRotations.TryGetValue(playerId, out Quaternion rot);
+        TeleportPlayer(playerId, pos, rot);
+    }
+
+    // Chiamato dal client locale (es. da KillZoneTrigger o tasto R)
+    public void RequestRespawnLocal()
+    {
+        if (!localPlayer.HasValue) return;
+        RequestRespawn(localPlayer.Value);
     }
 
     [ServerRpc(requireOwnership: false)]
