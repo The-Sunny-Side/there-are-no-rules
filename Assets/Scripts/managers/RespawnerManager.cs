@@ -74,7 +74,7 @@ public class RespawnerManager : NetworkBehaviour
 
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-            rb.position = position;
+            rb.position = position + Vector3.up * 10f;
             rb.rotation = rotation;
             return;
         }
