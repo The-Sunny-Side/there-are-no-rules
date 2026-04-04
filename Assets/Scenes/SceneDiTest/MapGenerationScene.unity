@@ -4460,6 +4460,10 @@ PrefabInstance:
       propertyPath: menuManager
       value: 
       objectReference: {fileID: 1118415733}
+    - target: {fileID: 2913616829152247547, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 454.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4415512876950190331, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
       propertyPath: m_Name
       value: MapFInal
@@ -4634,7 +4638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdd14ac7d56bd044a9ecd533e1a4792b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraSpawner
-  cameraPrefab: {fileID: 7809276616201291240, guid: 24eb9f3691802784a999e4c4abe96d7d, type: 3}
+  cameraPrefab: {fileID: 7143694404256695292, guid: 0f3bac60998729b4dba967953bca9c7e, type: 3}
 --- !u!114 &5903776715292778981
 MonoBehaviour:
   m_ObjectHideFlags: 0
