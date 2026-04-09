@@ -91,8 +91,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
-  Damping: {x: 0.1, y: 0.5, z: 0.3}
-  ShoulderOffset: {x: 0.5, y: 5, z: 0}
+  Damping: {x: 0.1, y: 0.2, z: 0.3}
+  ShoulderOffset: {x: 0.5, y: 0, z: 0}
   VerticalArmLength: 6
   CameraSide: 0.5
   CameraDistance: 20
@@ -102,7 +102,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 8
     IgnoreTag: PlayerSphere
-    CameraRadius: 0.2
+    CameraRadius: 0.02
     DampingIntoCollision: 0
     DampingFromCollision: 3
 --- !u!114 &4247193732112175988
