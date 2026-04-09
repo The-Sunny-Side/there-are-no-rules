@@ -344,7 +344,7 @@ public class VehicleSelectorManager : MonoBehaviour
     public void ResetVehicleRotation()
     {
         Transform composedVehicle = Composer.transform.Find("Vehicle");
-        composedVehicle.rotation = Quaternion.identity;
+        vehicle.transform.rotation = Quaternion.identity;
     }
 
 }
