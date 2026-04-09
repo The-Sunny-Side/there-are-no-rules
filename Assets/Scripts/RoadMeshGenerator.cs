@@ -15,6 +15,12 @@ public class RoadMeshGenerator : MonoBehaviour
     [Tooltip("Segmenti trasversali per la curvatura")]
     [SerializeField, Range(2, 16)] private int widthSegments = 8;
 
+    [Header("Kill Zone")]
+    [Tooltip("Quanto sotto il centro della strada viene piazzata la rete di sicurezza")]
+    [SerializeField] private float killZoneDistanceBelow = 5f;
+    [Tooltip("Larghezza totale della rete di sicurezza in unità")]
+    [SerializeField] private float killZoneWidth = 20f;
+
     [Header("Waypoints")]
     [SerializeField] private Transform waypointsParent;
 
@@ -75,6 +81,7 @@ public class RoadMeshGenerator : MonoBehaviour
 
         var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes, waypointTensions);
         BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles, splineData.meshActive);
+        BuildKillZoneNet(splineData.points, splineData.meshActive);
     }
 
     private (List<Vector3> points, List<float> flatWeights, List<float> bankAngles, List<bool> meshActive) GenerateSplinePoints(
@@ -310,6 +317,45 @@ public class RoadMeshGenerator : MonoBehaviour
         {
             _meshCollider.sharedMesh = null;
             _meshCollider.sharedMesh = _mesh;
+        }
+    }
+
+    private void BuildKillZoneNet(List<Vector3> splinePoints, List<bool> meshActive)
+    {
+        const string netName = "KillZoneNet";
+        var existing = transform.Find(netName);
+        if (existing != null) DestroyImmediate(existing.gameObject);
+
+        var netGO = new GameObject(netName);
+        netGO.transform.SetParent(transform);
+        netGO.transform.localPosition = Vector3.zero;
+        netGO.transform.localRotation = Quaternion.identity;
+        netGO.transform.localScale = Vector3.one;
+
+        int pointCount = splinePoints.Count;
+
+        for (int i = 0; i < pointCount - 1; i++)
+        {
+            if (!meshActive[i]) continue;
+
+            Vector3 a = splinePoints[i];
+            Vector3 b = splinePoints[i + 1];
+            float segLength = Vector3.Distance(a, b);
+            if (segLength < 0.001f) continue;
+
+            Vector3 mid = (a + b) * 0.5f + Vector3.down * killZoneDistanceBelow;
+            Vector3 dir = (b - a).normalized;
+
+            var segGO = new GameObject($"KZSeg_{i}");
+            segGO.transform.SetParent(netGO.transform);
+            segGO.transform.position = mid;
+            segGO.transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
+
+            var bc = segGO.AddComponent<BoxCollider>();
+            bc.isTrigger = true;
+            bc.size = new Vector3(killZoneWidth, 2f, segLength + 0.1f);
+
+            segGO.AddComponent<KillZoneTrigger>();
         }
     }
 
