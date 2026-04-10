@@ -14,11 +14,16 @@ public class EffectsManager : MonoBehaviour
         else { Destroy(gameObject); return; }
 
         _canvas = GetComponent<Canvas>();
-        _camera = Camera.main;
     }
 
     public void SpawnBalloon(Vector3 worldPosition)
     {
+        if (_camera == null)
+            _camera = Camera.main;
+
+        if (_camera == null)
+            return;
+
         Vector2 screenPos = _camera.WorldToScreenPoint(worldPosition);
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(

@@ -19,6 +19,9 @@ public class Composer : MonoBehaviour
 
     private void Awake()
     {
+        if (GameConfig.VehiclePrefabRegistry == null)
+            return;
+
         GameObject defaultElement = GameConfig.VehiclePrefabRegistry.EmptyPart.element;
         weaponLeftElement = defaultElement;
         weaponBackElement = defaultElement;
