@@ -36,8 +36,13 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [SerializeField] private float alignSpeed = 10f;
     [SerializeField] private float normalSmoothSpeed = 6f;
 
+    [Header("CAMERA")]
+    [Tooltip("Secondi in aria prima di switchare alla camera OnAir")]
+    [SerializeField] private float airCameraDelay = 0.5f;
+
     private bool _cameraAssigned;
-    private bool _lastGrounded;
+    private bool _lastCameraGrounded = true;
+    private float _airTime;
 
     private MobileInputManager _inputManager;
 
@@ -265,10 +270,24 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         TryAssignLocalCamera();
 
         bool grounded = IsGrounded();
-        if (grounded != _lastGrounded)
+
+        if (grounded)
         {
-            _lastGrounded = grounded;
-            PlayerCamera.instance?.SwitchCamera(grounded);
+            _airTime = 0f;
+            if (!_lastCameraGrounded)
+            {
+                _lastCameraGrounded = true;
+                PlayerCamera.instance?.SwitchCamera(true);
+            }
+        }
+        else
+        {
+            _airTime += Time.deltaTime;
+            if (_lastCameraGrounded && _airTime >= airCameraDelay)
+            {
+                _lastCameraGrounded = false;
+                PlayerCamera.instance?.SwitchCamera(false);
+            }
         }
     }
 

@@ -221,6 +221,7 @@ MonoBehaviour:
     m_Bits: 8
   groundRayLength: 4
   whenIsGroundLenght: 3
+  airCameraDelay: 0.5
 --- !u!114 &900021083246706320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,6 +261,7 @@ MonoBehaviour:
   groundCheckLength: 3
   alignSpeed: 10
   normalSmoothSpeed: 6
+  airCameraDelay: 0.1
 --- !u!114 &-4002540731971505960
 MonoBehaviour:
   m_ObjectHideFlags: 0
