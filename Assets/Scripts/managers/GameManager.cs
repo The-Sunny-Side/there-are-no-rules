@@ -59,6 +59,11 @@ public class GameManager : MonoBehaviour
         LoadSceneAsync("LocalLobbyLoadingScene");
     }
 
+    public void GoToSandboxScreen()
+    {
+        LoadSceneAsync("SandboxScene");
+    }
+
     public void ExitGame()
     {
         Application.Quit();

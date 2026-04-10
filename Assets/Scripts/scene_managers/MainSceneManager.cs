@@ -118,4 +118,16 @@ public class MainSceneManager : MonoBehaviour
         AudioManager.Instance?.PlayButtonAudio();
         SettingsModal.Instance?.Show();
     }
+
+    public void OnSandboxButtonClick()
+    {
+        AudioManager.Instance?.PlayButtonAudio();
+        menuButtons?.Hide();
+        playPanel?.GetComponent<UiAnimator>()?.Hide();
+        UiLoader.Instance?.Show();
+        StartCoroutine(Utilities.DelayedEvent((() =>
+        {
+            GameManager.Instance?.GoToSandboxScreen();
+        }), 0.6f));
+    }
 }

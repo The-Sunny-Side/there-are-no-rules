@@ -1087,7 +1087,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 58.972237
+  field of view: 79.12308
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1113,8 +1113,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.119309545, y: -0.093989655, z: 0.03017877, w: -0.9879375}
-  m_LocalPosition: {x: 164.25, y: 8.93, z: 68.06}
+  m_LocalRotation: {x: -0.13462782, y: 0.80584085, z: -0.028782453, w: -0.57590586}
+  m_LocalPosition: {x: 218.76999, y: 12.5, z: 83.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2174,7 +2174,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 118, y: 43}
+  m_SizeDelta: {x: 150.9, y: 43}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &433112035
 MonoBehaviour:
@@ -2222,7 +2222,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 788373869}
         m_TargetAssemblyTypeName: MainSceneManager, Assembly-CSharp
-        m_MethodName: OnStartServerOnly
+        m_MethodName: OnSandboxButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3623,7 +3623,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Server
+  m_text: Sandbox
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9ed19f5af49814b43b4039814553aa33, type: 2}
   m_sharedMaterial: {fileID: -5343956022204426543, guid: 9ed19f5af49814b43b4039814553aa33, type: 2}

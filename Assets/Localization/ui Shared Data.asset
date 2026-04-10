@@ -103,6 +103,10 @@ MonoBehaviour:
     m_Key: jump
     m_Metadata:
       m_Items: []
+  - m_Id: 14831530879922176
+    m_Key: tutorial
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
