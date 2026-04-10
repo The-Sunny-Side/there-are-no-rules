@@ -188,7 +188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6669217140945208666}
   m_Layer: 0
-  m_Name: packCamera 1
+  m_Name: thirdPerson
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

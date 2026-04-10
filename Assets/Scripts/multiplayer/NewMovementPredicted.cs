@@ -37,6 +37,8 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [SerializeField] private float normalSmoothSpeed = 6f;
 
     private bool _cameraAssigned;
+    private bool _lastGrounded;
+
     private MobileInputManager _inputManager;
 
     public struct State : IPredictedData<State>
@@ -256,6 +258,19 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     {
         return Physics.Raycast(_rigidbody.position, -_rigidbody.transform.up, out _, groundCheckLength, groundLayer);
     }
+    void LateUpdate()
+    {
+        if (!isOwner) return;
+
+        TryAssignLocalCamera();
+
+        bool grounded = IsGrounded();
+        if (grounded != _lastGrounded)
+        {
+            _lastGrounded = grounded;
+            PlayerCamera.instance?.SwitchCamera(grounded);
+        }
+    }
 
     private void TryAssignLocalCamera()
     {
@@ -266,6 +281,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             return;
 
         PlayerCamera.instance.SetTarget(visuals.transform);
+        PlayerCamera.instance.SwitchCamera(true);
         _cameraAssigned = true;
     }
 

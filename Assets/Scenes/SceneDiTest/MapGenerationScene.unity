@@ -3135,28 +3135,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -1.8}
   m_SizeDelta: {x: 0, y: -3.6}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &429628166669846983
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5623002959763529703}
-  - component: {fileID: 4422345525976924561}
-  - component: {fileID: 2722631942418573877}
-  - component: {fileID: 4255066368797794167}
-  - component: {fileID: 7414008248997829132}
-  - component: {fileID: 1278664355651838476}
-  - component: {fileID: 7414008248997829133}
-  m_Layer: 0
-  m_Name: vrCameraFreeToFollowButNotToRotate
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
 --- !u!224 &681931341431692928
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3308,45 +3286,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 948438992687584768}
   m_CullTransparentMesh: 1
---- !u!114 &1278664355651838476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 429628166669846983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDeoccluder
-  CollideAgainst:
-    serializedVersion: 2
-    m_Bits: 8
-  IgnoreTag: 
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  MinimumDistanceFromTarget: 30
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 0
-    MinimumOcclusionTime: 0
-    CameraRadius: 3
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Strategy: 2
-    MaximumEffort: 1
-    SmoothingTime: 0.3
-    Damping: 1
-    DampingWhenOccluded: 0.3
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!1 &1339879968438014547
 GameObject:
   m_ObjectHideFlags: 0
@@ -3741,69 +3680,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
---- !u!114 &2722631942418573877
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 429628166669846983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b5d7c088409d9a40b7b09aa707777f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineOrbitalFollow
-  TargetOffset: {x: 0, y: 0, z: 0}
-  TrackerSettings:
-    BindingMode: 5
-    PositionDamping: {x: 0, y: 0, z: 5}
-    AngularDampingMode: 0
-    RotationDamping: {x: 1, y: 1, z: 1}
-    QuaternionDamping: 1
-  OrbitStyle: 1
-  Radius: 16.6
-  Orbits:
-    Top:
-      Radius: 0.3
-      Height: 0
-    Center:
-      Radius: 0.2
-      Height: 0
-    Bottom:
-      Radius: 0.1
-      Height: 0
-    SplineCurvature: 0
-  RecenteringTarget: 3
-  HorizontalAxis:
-    Value: 0
-    Center: 0
-    Range: {x: -90, y: 90}
-    Wrap: 1
-    Recentering:
-      Enabled: 0
-      Wait: 1
-      Time: 2
-    Restrictions: 0
-  VerticalAxis:
-    Value: 30
-    Center: 20
-    Range: {x: 10, y: 30}
-    Wrap: 0
-    Recentering:
-      Enabled: 0
-      Wait: 1
-      Time: 2
-    Restrictions: 0
-  RadialAxis:
-    Value: 1
-    Center: 1
-    Range: {x: 1, y: 1}
-    Wrap: 0
-    Recentering:
-      Enabled: 0
-      Wait: 1
-      Time: 2
-    Restrictions: 0
 --- !u!114 &2898384847424231364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3988,78 +3864,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2936086738014245229}
   m_CullTransparentMesh: 1
---- !u!114 &4255066368797794167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 429628166669846983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f38bda98361e1de48a4ca2bd86ea3c17, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineRotationComposer
-  Composition:
-    ScreenPosition: {x: 0, y: 0}
-    DeadZone:
-      Enabled: 0
-      Size: {x: 0.2, y: 0.2}
-    HardLimits:
-      Enabled: 0
-      Size: {x: 0.2, y: 0.2}
-      Offset: {x: 0, y: 0}
-  CenterOnActivate: 1
-  TargetOffset: {x: 0, y: 0, z: 0}
-  Damping: {x: 0.5, y: 0.5}
-  Lookahead:
-    Enabled: 0
-    Time: 0
-    Smoothing: 0
-    IgnoreY: 0
---- !u!114 &4422345525976924561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 429628166669846983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
-  Priority:
-    Enabled: 0
-    m_Value: 0
-  OutputChannel: 1
-  StandbyUpdate: 2
-  m_StreamingVersion: 20241001
-  m_LegacyPriority: 0
-  Target:
-    TrackingTarget: {fileID: 0}
-    LookAtTarget: {fileID: 0}
-    CustomLookAtTarget: 0
-  Lens:
-    FieldOfView: 40
-    OrthographicSize: 10
-    NearClipPlane: 0.1
-    FarClipPlane: 5000
-    Dutch: 0
-    ModeOverride: 2
-    PhysicalProperties:
-      GateFit: 2
-      SensorSize: {x: 21.946, y: 16.002}
-      LensShift: {x: 0, y: 0}
-      FocusDistance: 10
-      Iso: 200
-      ShutterSpeed: 0.005
-      Aperture: 16
-      BladeCount: 5
-      Curvature: {x: 2, y: 11}
-      BarrelClipping: 0.25
-      Anamorphism: 0
-  BlendHint: 0
 --- !u!1 &4534632068685280198
 GameObject:
   m_ObjectHideFlags: 0
@@ -4183,8 +3987,7 @@ Transform:
   m_LocalPosition: {x: 1011.4282, y: 650.3, z: 1431.2798}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5623002959763529703}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4722437155246381350
@@ -4366,21 +4169,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!4 &5623002959763529703
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 429628166669846983}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.01823808, y: 0.4824658, z: -0.0100486195, w: 0.8756673}
-  m_LocalPosition: {x: 1.328125, y: 8.75, z: 1.4899902}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4678161769741112451}
-  m_LocalEulerAnglesHint: {x: 15.035, y: -90, z: 0}
 --- !u!114 &5629317431204927363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4638,7 +4426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdd14ac7d56bd044a9ecd533e1a4792b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraSpawner
-  cameraPrefab: {fileID: 7143694404256695292, guid: 0f3bac60998729b4dba967953bca9c7e, type: 3}
+  cameraRig: {fileID: 519772384231334450, guid: e8a70b09383d9ed4ab5d367d92fa4c8c, type: 3}
 --- !u!114 &5903776715292778981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5097,50 +4885,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4534632068685280198}
   m_CullTransparentMesh: 1
---- !u!114 &7414008248997829132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 429628166669846983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDecollider
-  CameraRadius: 10
-  Decollision:
-    Enabled: 1
-    ObstacleLayers:
-      serializedVersion: 2
-      m_Bits: 8
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 17.48
-    Damping: 0
-    SmoothingTime: 0
-  TerrainResolution:
-    Enabled: 1
-    TerrainLayers:
-      serializedVersion: 2
-      m_Bits: 8
-    MaximumRaycast: 50
-    Damping: 1
---- !u!114 &7414008248997829133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 429628166669846983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4e8b01a75ed78d4a802039249c9f7ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
-  _cinemachineCamera: {fileID: 4422345525976924561}
-  _brain: {fileID: 0}
 --- !u!1 &7648798884117539357
 GameObject:
   m_ObjectHideFlags: 0

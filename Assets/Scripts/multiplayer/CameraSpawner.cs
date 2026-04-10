@@ -2,14 +2,13 @@ using UnityEngine;
 
 public class CameraSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject cameraPrefab;
+    [SerializeField] private GameObject cameraRig;
 
     void Awake()
     {
-        if (cameraPrefab == null)
+        if (cameraRig == null)
             return;
 
-        var instance = Instantiate(cameraPrefab, transform.position, transform.rotation, transform);
-        instance.name = cameraPrefab.name;
+        Instantiate(cameraRig, transform.position, transform.rotation, transform);
     }
 }

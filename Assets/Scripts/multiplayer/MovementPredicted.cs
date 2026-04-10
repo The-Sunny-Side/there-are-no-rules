@@ -57,6 +57,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     [SerializeField] private float whenIsGroundLenght = .5f;
 
     private bool _cameraAssigned;
+    private bool _lastGrounded;
     private MobileInputManager _inputManager;
     protected override void LateAwake()
     {
@@ -208,6 +209,20 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
     }
 
 
+    void LateUpdate()
+    {
+        if (!isOwner) return;
+
+        TryAssignLocalCamera();
+
+        bool grounded = IsGrounded();
+        if (grounded != _lastGrounded)
+        {
+            _lastGrounded = grounded;
+            PlayerCamera.instance?.SwitchCamera(grounded);
+        }
+    }
+
     private void TryAssignLocalCamera()
     {
         if (_cameraAssigned || !isOwner)
@@ -217,6 +232,7 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
             return;
 
         PlayerCamera.instance.SetTarget(visuals.transform);
+        PlayerCamera.instance.SwitchCamera(true);
         _cameraAssigned = true;
     }
 
