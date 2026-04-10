@@ -236,7 +236,7 @@ MonoBehaviour:
   _repeatInputFactor: 0.8
   _extrapolateInput: 1
   _rigidbody: {fileID: 4360163942621179187}
-  visuals: {fileID: 7079017173305837497}
+  visuals: {fileID: 2315482730086823503}
   maxSpeed: 100
   acceleration: 50
   brakeDeceleration: 80
