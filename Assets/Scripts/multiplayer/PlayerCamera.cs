@@ -19,13 +19,16 @@ public class PlayerCamera : MonoBehaviour
 
     public void SetTarget(Transform target)
     {
-        var cameras = GetComponentsInChildren<CinemachineCamera>();
-        Debug.Log($"[PlayerCamera] SetTarget chiamato su '{gameObject.name}', trovate {cameras.Length} CinemachineCamera nei figli, target={target?.name}");
-        foreach (var cam in cameras)
+        if (_onGroundCamera)
         {
-            Debug.Log($"[PlayerCamera] -> Assegno target a '{cam.gameObject.name}'");
-            cam.Target.TrackingTarget = target;
-            cam.PreviousStateIsValid = false;
+            _onGroundCamera.Target.TrackingTarget = target;
+            _onGroundCamera.PreviousStateIsValid = false;
+        }
+
+        if (_onAirCamera)
+        {
+            _onAirCamera.Target.TrackingTarget = target;
+            _onAirCamera.PreviousStateIsValid = false;
         }
     }
 
