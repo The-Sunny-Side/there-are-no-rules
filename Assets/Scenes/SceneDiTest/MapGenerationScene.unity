@@ -4248,10 +4248,6 @@ PrefabInstance:
       propertyPath: menuManager
       value: 
       objectReference: {fileID: 1118415733}
-    - target: {fileID: 2913616829152247547, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 454.5
-      objectReference: {fileID: 0}
     - target: {fileID: 4415512876950190331, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
       propertyPath: m_Name
       value: MapFInal
