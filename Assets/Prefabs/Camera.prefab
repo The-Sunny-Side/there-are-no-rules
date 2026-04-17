@@ -230,8 +230,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7513619135051603471}
   - component: {fileID: 6114666745245445519}
-  - component: {fileID: 4889196600766701685}
-  - component: {fileID: 622933784287616439}
+  - component: {fileID: 5763199679699336364}
+  - component: {fileID: 3499383409158167339}
   - component: {fileID: 9154651885939974271}
   - component: {fileID: 2854508853698134476}
   m_Layer: 0
@@ -299,7 +299,7 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
---- !u!114 &4889196600766701685
+--- !u!114 &5763199679699336364
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -308,61 +308,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 8064586037016643758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b5d7c088409d9a40b7b09aa707777f8, type: 3}
+  m_Script: {fileID: 11500000, guid: b617507da6d07e749b7efdb34e1173e1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineOrbitalFollow
-  TargetOffset: {x: 0, y: 0, z: -30}
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineFollow
   TrackerSettings:
-    BindingMode: 1
-    PositionDamping: {x: 0, y: 0, z: 2}
+    BindingMode: 4
+    PositionDamping: {x: 1, y: 1, z: 1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  OrbitStyle: 0
-  Radius: 0
-  Orbits:
-    Top:
-      Radius: 0.3
-      Height: 0
-    Center:
-      Radius: 0.2
-      Height: 0
-    Bottom:
-      Radius: 0.1
-      Height: 0
-    SplineCurvature: 0
-  RecenteringTarget: 3
-  HorizontalAxis:
-    Value: 0
-    Center: 0
-    Range: {x: -90, y: 90}
-    Wrap: 1
-    Recentering:
-      Enabled: 0
-      Wait: 1
-      Time: 2
-    Restrictions: 0
-  VerticalAxis:
-    Value: 30
-    Center: 20
-    Range: {x: 10, y: 30}
-    Wrap: 0
-    Recentering:
-      Enabled: 0
-      Wait: 1
-      Time: 2
-    Restrictions: 0
-  RadialAxis:
-    Value: 1
-    Center: 1
-    Range: {x: 1, y: 1}
-    Wrap: 0
-    Recentering:
-      Enabled: 0
-      Wait: 1
-      Time: 2
-    Restrictions: 0
---- !u!114 &622933784287616439
+  FollowOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &3499383409158167339
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -371,26 +327,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8064586037016643758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f38bda98361e1de48a4ca2bd86ea3c17, type: 3}
+  m_Script: {fileID: 11500000, guid: 1e8b78ac948f05a46a6d8339a503172b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineRotationComposer
-  Composition:
-    ScreenPosition: {x: 0, y: 0}
-    DeadZone:
-      Enabled: 0
-      Size: {x: 0.2, y: 0.2}
-    HardLimits:
-      Enabled: 0
-      Size: {x: 0.2, y: 0.2}
-      Offset: {x: 0, y: 0}
-  CenterOnActivate: 1
-  TargetOffset: {x: 0, y: 0, z: 0}
-  Damping: {x: 0.5, y: 0.5}
-  Lookahead:
-    Enabled: 0
-    Time: 0
-    Smoothing: 0
-    IgnoreY: 0
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineHardLookAt
+  LookAtOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &9154651885939974271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,7 +338,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8064586037016643758}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
   m_Name: 
@@ -428,7 +368,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8064586037016643758}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
   m_Name: 
@@ -550,7 +490,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
-  Damping: {x: 0.1, y: 0.2, z: 0.3}
+  Damping: {x: 0.1, y: 0.1, z: 0.1}
   ShoulderOffset: {x: 0.5, y: 0, z: 0}
   VerticalArmLength: 6
   CameraSide: 0.5
@@ -592,7 +532,7 @@ MonoBehaviour:
     Enabled: 1
     Time: 0.25
     Smoothing: 30
-    IgnoreY: 0
+    IgnoreY: 1
 --- !u!114 &2693278713538757698
 MonoBehaviour:
   m_ObjectHideFlags: 0

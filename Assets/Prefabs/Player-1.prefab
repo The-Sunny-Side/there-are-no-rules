@@ -261,7 +261,7 @@ MonoBehaviour:
   groundCheckLength: 3
   alignSpeed: 10
   normalSmoothSpeed: 6
-  airCameraDelay: 0.1
+  airCameraDelay: 0
 --- !u!114 &-4002540731971505960
 MonoBehaviour:
   m_ObjectHideFlags: 0

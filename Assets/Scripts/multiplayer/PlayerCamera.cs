@@ -20,16 +20,10 @@ public class PlayerCamera : MonoBehaviour
     public void SetTarget(Transform target)
     {
         if (_onGroundCamera)
-        {
             _onGroundCamera.Target.TrackingTarget = target;
-            _onGroundCamera.PreviousStateIsValid = false;
-        }
 
         if (_onAirCamera)
-        {
             _onAirCamera.Target.TrackingTarget = target;
-            _onAirCamera.PreviousStateIsValid = false;
-        }
     }
 
     public void SwitchCamera(bool grounded)
