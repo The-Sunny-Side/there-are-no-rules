@@ -10,6 +10,8 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField] private CinemachineCamera _onAirCamera;
     [SerializeField] private CinemachineBrain _brain;
 
+    private CameraPivot _pivot;
+
     void Awake()
     {
         instance = this;
@@ -19,6 +21,8 @@ public class PlayerCamera : MonoBehaviour
 
     public void SetTarget(Transform target)
     {
+        _pivot = target.GetComponent<CameraPivot>();
+
         if (_onGroundCamera)
             _onGroundCamera.Target.TrackingTarget = target;
 
@@ -43,6 +47,8 @@ public class PlayerCamera : MonoBehaviour
             return;
 
         EnsureManualUpdateMode();
+        if (_pivot != null)
+            _pivot.Tick();
         _brain.ManualUpdate();
     }
 
