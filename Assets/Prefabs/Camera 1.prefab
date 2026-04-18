@@ -333,7 +333,7 @@ MonoBehaviour:
   HorizontalAxis:
     Value: 0
     Center: 0
-    Range: {x: -180, y: 180}
+    Range: {x: -3, y: 3}
     Wrap: 1
     Recentering:
       Enabled: 0

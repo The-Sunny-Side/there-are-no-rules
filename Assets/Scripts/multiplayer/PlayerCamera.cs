@@ -24,10 +24,16 @@ public class PlayerCamera : MonoBehaviour
         _pivot = target.GetComponent<CameraPivot>();
 
         if (_onGroundCamera)
+        {
             _onGroundCamera.Target.TrackingTarget = target;
+            _onGroundCamera.PreviousStateIsValid = false;
+        }
 
         if (_onAirCamera)
+        {
             _onAirCamera.Target.TrackingTarget = target;
+            _onAirCamera.PreviousStateIsValid = false;
+        }
     }
 
     public void SwitchCamera(bool grounded)

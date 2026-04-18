@@ -1277,6 +1277,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 967953788}
   m_CullTransparentMesh: 1
+--- !u!1 &1048492710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1048492712}
+  - component: {fileID: 1048492711}
+  m_Layer: 0
+  m_Name: CinemachineCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1048492711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1048492710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdd14ac7d56bd044a9ecd533e1a4792b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraSpawner
+  cameraRig: {fileID: 519772384231334450, guid: 0489f20387273c444822c5d9e9a7d7a9, type: 3}
+--- !u!4 &1048492712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1048492710}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1011.4282, y: 650.3, z: 1431.2798}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1118415732
 GameObject:
   m_ObjectHideFlags: 0
@@ -3975,21 +4020,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!4 &4678161769741112451
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5898374542333973698}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1011.4282, y: 650.3, z: 1431.2798}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4722437155246381350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4248,6 +4278,14 @@ PrefabInstance:
       propertyPath: menuManager
       value: 
       objectReference: {fileID: 1118415733}
+    - target: {fileID: 2913616829152247547, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 161.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2913616829152247547, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -825
+      objectReference: {fileID: 0}
     - target: {fileID: 4415512876950190331, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
       propertyPath: m_Name
       value: MapFInal
@@ -4393,36 +4431,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &5898374542333973698
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4678161769741112451}
-  - component: {fileID: 5898374542333973699}
-  m_Layer: 0
-  m_Name: CinemachineCamera
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &5898374542333973699
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5898374542333973698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdd14ac7d56bd044a9ecd533e1a4792b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraSpawner
-  cameraRig: {fileID: 519772384231334450, guid: e8a70b09383d9ed4ab5d367d92fa4c8c, type: 3}
 --- !u!114 &5903776715292778981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5100,8 +5108,8 @@ SceneRoots:
   - {fileID: 553976229}
   - {fileID: 952891623}
   - {fileID: 1921745570}
-  - {fileID: 4678161769741112451}
   - {fileID: 2517987787207872589}
   - {fileID: 267611774}
   - {fileID: 2107574305}
   - {fileID: 1512978761}
+  - {fileID: 1048492712}
