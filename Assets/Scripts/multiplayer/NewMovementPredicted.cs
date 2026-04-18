@@ -40,6 +40,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [Tooltip("Secondi in aria prima di switchare alla camera OnAir")]
     [SerializeField] private float airCameraDelay = 0.5f;
 
+    private CameraPivot _cameraPivot;
     private bool _cameraAssigned;
     private bool _lastCameraGrounded = true;
     private float _airTime;
@@ -274,6 +275,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         if (grounded)
         {
             _airTime = 0f;
+            _cameraPivot?.SetGrounded(true);
             if (!_lastCameraGrounded)
             {
                 _lastCameraGrounded = true;
@@ -286,6 +288,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             if (_lastCameraGrounded && _airTime >= airCameraDelay)
             {
                 _lastCameraGrounded = false;
+                _cameraPivot?.SetGrounded(false);
                 PlayerCamera.instance?.SwitchCamera(false);
             }
         }
@@ -299,7 +302,11 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         if (PlayerCamera.instance == null)
             return;
 
-        PlayerCamera.instance.SetTarget(visuals.transform);
+        var pivotGo = new GameObject("CameraPivot");
+        _cameraPivot = pivotGo.AddComponent<CameraPivot>();
+        _cameraPivot.Init(visuals.transform);
+
+        PlayerCamera.instance.SetTarget(_cameraPivot.transform);
         PlayerCamera.instance.SwitchCamera(true);
         _cameraAssigned = true;
     }
