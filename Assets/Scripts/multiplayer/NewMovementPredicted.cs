@@ -303,6 +303,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             return;
 
         var pivotGo = new GameObject("CameraPivot");
+        pivotGo.transform.SetParent(transform, worldPositionStays: false);
         _cameraPivot = pivotGo.AddComponent<CameraPivot>();
         _cameraPivot.Init(visuals.transform);
 
