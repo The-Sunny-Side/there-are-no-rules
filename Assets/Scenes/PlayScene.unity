@@ -256,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdd14ac7d56bd044a9ecd533e1a4792b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraSpawner
-  cameraRig: {fileID: 519772384231334450, guid: e8a70b09383d9ed4ab5d367d92fa4c8c, type: 3}
+  cameraRig: {fileID: 519772384231334450, guid: 0489f20387273c444822c5d9e9a7d7a9, type: 3}
 --- !u!1 &242280952
 GameObject:
   m_ObjectHideFlags: 0
