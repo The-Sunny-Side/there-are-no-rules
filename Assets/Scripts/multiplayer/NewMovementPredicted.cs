@@ -12,8 +12,8 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [SerializeField] private float acceleration = 60f;
     [SerializeField] private float brakeDeceleration = 80f;
     [SerializeField] private float naturalDeceleration = 15f;
-    [SerializeField] private float rotationSpeed = 180f;
-    [SerializeField, Range(0f, 1f)] private float airSteerFactor = 0.3f;
+    [SerializeField] private float groundRotationSpeed = 180f;
+    [SerializeField] private float airRotationSpeed = 60f;
 
     [Header("SALTO")]
     [SerializeField] private float jumpForce = 14f;
@@ -83,15 +83,25 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         AlignToGround(ref state, delta);
 
         // --- STERZATA ---
-        float steerAmount = input.steer * rotationSpeed;
-        if (!state.grounded)
-            steerAmount *= airSteerFactor;
-
-        if (Mathf.Abs(input.steer) > 0.05f)
+        if (state.grounded)
         {
-            Vector3 upAxis = state.hasNormal && state.grounded ? state.smoothedNormal : Vector3.up;
-            Quaternion steerRot = Quaternion.AngleAxis(steerAmount * delta, upAxis);
-            _rigidbody.MoveRotation(steerRot * _rigidbody.rotation);
+            if (Mathf.Abs(input.steer) > 0.05f)
+            {
+                Vector3 upAxis = state.hasNormal ? state.smoothedNormal : Vector3.up;
+                Quaternion steerRot = Quaternion.AngleAxis(input.steer * groundRotationSpeed * delta, upAxis);
+                _rigidbody.MoveRotation(steerRot * _rigidbody.rotation);
+            }
+        }
+        else
+        {
+            Vector3 axis = _rigidbody.transform.up * input.steer
+                         + _rigidbody.transform.right * input.throttle;
+            float magnitude = axis.magnitude;
+            if (magnitude > 0.05f)
+            {
+                float angle = magnitude * airRotationSpeed * delta;
+                _rigidbody.MoveRotation(Quaternion.AngleAxis(angle, axis / magnitude) * _rigidbody.rotation);
+            }
         }
 
         if (state.grounded)

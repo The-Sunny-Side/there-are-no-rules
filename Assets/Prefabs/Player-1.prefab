@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 9201475319759048605}
   - component: {fileID: 7139793741261796267}
   - component: {fileID: 4360163942621179187}
-  - component: {fileID: 7503685315405010670}
   - component: {fileID: 900021083246706320}
   - component: {fileID: -4002540731971505960}
   - component: {fileID: 3379998605608418547}
@@ -179,49 +178,6 @@ MonoBehaviour:
   _floatAccuracy: 0
   _eventMask: 63
   _ignoreTriggerOnTrigger: 0
---- !u!114 &7503685315405010670
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1536615153988124585}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63ffa90f5fa0d284e82fc968c8bf28b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementPredicted
-  _repeatInputFactor: 0
-  _extrapolateInput: 0
-  gravityForce: 3000
-  dragOnGround: 0.3
-  dragInAir: 0.1
-  normalAlignSpeed: 5
-  alignSpeed: 30
-  _rigidbody: {fileID: 4360163942621179187}
-  visuals: {fileID: 2315482730086823503}
-  rotationSpeed: 60
-  airRotationMultiplier: 0.35
-  jumpForce: 300
-  sideBreak: 10
-  forwardSpeed: 0.5
-  groundedAcceleration: 20
-  groundedDeceleration: 20
-  groundedDriveDeadzone: 0.15
-  groundedBrakeDeadzone: 0.2
-  groundedSteerDeadzone: 0.1
-  minAlignment: 0
-  boostForce: 0
-  speedToStartBoostDecay: 50
-  timeToStartBoostCharge: 0.3
-  raysCount: 8
-  raySpread: 1
-  whatIsGroud:
-    serializedVersion: 2
-    m_Bits: 8
-  groundRayLength: 4
-  whenIsGroundLenght: 3
-  airCameraDelay: 0.5
 --- !u!114 &900021083246706320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,8 +198,8 @@ MonoBehaviour:
   acceleration: 50
   brakeDeceleration: 80
   naturalDeceleration: 15
-  rotationSpeed: 20
-  airSteerFactor: 0
+  groundRotationSpeed: 60
+  airRotationSpeed: 180
   jumpForce: 20
   gravity: 10
   fastFallGravityMult: 5
