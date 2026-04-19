@@ -6,8 +6,8 @@ public class KillZoneTrigger : MonoBehaviour
     {
         if (!other.CompareTag("PlayerSphere")) return;
 
-        var movement = other.GetComponentInParent<MovementPredicted>();
-        if (movement == null || !movement.isOwner) return;
+        var player = other.GetComponentInParent<PlayerIdentity>();
+        if (player == null || !player.IsLocalOwner) return;
 
         RespawnerManager.Instance?.RequestRespawnLocal();
     }

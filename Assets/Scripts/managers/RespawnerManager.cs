@@ -66,10 +66,10 @@ public class RespawnerManager : NetworkBehaviour
     {
         foreach (var obj in GameObject.FindGameObjectsWithTag("PlayerSphere"))
         {
-            var movement = obj.GetComponentInParent<MovementPredicted>();
-            if (movement == null || !movement.isOwner) continue;
+            var player = obj.GetComponentInParent<PlayerIdentity>();
+            if (player == null || !player.IsLocalOwner) continue;
 
-            var rb = movement.GetComponent<Rigidbody>();
+            var rb = player.Rigidbody;
             if (rb == null) continue;
 
             rb.linearVelocity = Vector3.zero;

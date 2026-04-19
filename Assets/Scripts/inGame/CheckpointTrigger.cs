@@ -8,10 +8,9 @@ public class CheckpointTrigger : NetworkBehaviour
         if (!isServer) return;
         if (!collider.gameObject.CompareTag("PlayerSphere")) return;
 
-        var movement = collider.gameObject.GetComponentInParent<MovementPredicted>();
-        if (movement == null || !movement.owner.HasValue) return;
+        var player = collider.gameObject.GetComponentInParent<PlayerIdentity>();
+        if (player == null || !player.TryGetOwner(out PlayerID playerId)) return;
 
-        PlayerID playerId = movement.owner.Value;
-        RespawnerManager.Instance.RegisterCheckpoint(playerId, transform.position,transform.rotation);
+        RespawnerManager.Instance.RegisterCheckpoint(playerId, transform.position, transform.rotation);
     }
 }

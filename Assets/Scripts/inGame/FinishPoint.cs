@@ -34,10 +34,9 @@ public class FinishPoint : NetworkBehaviour
         if (!isServer) return;
         if (!collider.gameObject.CompareTag("PlayerSphere")) return;
 
-        var movement = collider.gameObject.GetComponentInParent<MovementPredicted>();
-        if (movement == null || !movement.owner.HasValue) return;
+        var player = collider.gameObject.GetComponentInParent<PlayerIdentity>();
+        if (player == null || !player.TryGetOwner(out PlayerID finishedId)) return;
 
-        PlayerID finishedId = movement.owner.Value;
         if (_finishOrder.Contains(finishedId)) return;
 
         _finishOrder.Add(finishedId);
