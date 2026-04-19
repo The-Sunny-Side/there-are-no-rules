@@ -25,10 +25,15 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [SerializeField] private float slopeAcceleration = 50f;
 
     [Header("BOOST / DRIFT")]
+    [Tooltip("Impulso in avanti applicato quando un drift caricato viene rilasciato. Viene moltiplicato per la carica accumulata.")]
     [SerializeField] private float boostImpulse = 15f;
+    [Tooltip("Velocità con cui si carica il boost mentre la sfera sta driftando dopo il breve ritardo iniziale.")]
     [SerializeField] private float driftChargeRate = 1.5f;
+    [Tooltip("Soglia di disallineamento tra velocità e direzione frontale oltre la quale inizia il drift. Valori più bassi lo attivano prima.")]
     [SerializeField] private float driftAngleThreshold = 0.3f;
+    [Tooltip("Soglia di riallineamento sotto la quale viene rilasciato il boost accumulato dal drift.")]
     [SerializeField] private float driftReleaseThreshold = 0.15f;
+    [Tooltip("Forza con cui viene ridotta la velocità laterale sul terreno. Valori più alti danno più grip e meno scivolamento.")]
     [SerializeField] private float sideGripFactor = 12f;
 
     [Header("ALLINEAMENTO TERRENO")]
@@ -149,21 +154,32 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             {
                 float dirDot = Vector3.Dot(groundVel.normalized, forward);
                 float misalignment = 1f - Mathf.Clamp01(dirDot);
+                ParticleSystem ps = this.gameObject.GetComponentInChildren<ParticleSystem>();
 
                 if (misalignment > driftAngleThreshold && totalGroundSpeed > 5f)
                 {
+                    if (!ps.isPlaying)
+                    {
+                        ps.Play();
+                    }
+
+                    Debug.Log("carico: "+state.boostCharge);
                     state.driftTimer += delta;
                     if (state.driftTimer > 0.2f)
                         state.boostCharge = Mathf.Min(1f, state.boostCharge + driftChargeRate * delta);
                 }
                 else if (misalignment < driftReleaseThreshold && state.boostCharge > 0.1f)
                 {
+                    ps.Stop();
+
+                    Debug.Log("boost: "+boostImpulse+"*"+state.boostCharge+"="+ boostImpulse * state.boostCharge);
                     forwardSpeed += boostImpulse * state.boostCharge;
                     state.boostCharge = 0f;
                     state.driftTimer = 0f;
                 }
                 else if (misalignment <= driftAngleThreshold)
                 {
+                    ps.Stop();
                     state.driftTimer = 0f;
                 }
             }

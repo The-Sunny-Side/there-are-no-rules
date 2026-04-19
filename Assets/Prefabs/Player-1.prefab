@@ -205,11 +205,11 @@ MonoBehaviour:
   gravity: 50
   fastFallGravityMult: 2
   slopeAcceleration: 50
-  boostImpulse: 15
+  boostImpulse: 30
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3
-  driftReleaseThreshold: 0.15
-  sideGripFactor: 12
+  driftReleaseThreshold: 0.2
+  sideGripFactor: 17
   raysCount: 8
   raySpread: 1
   groundLayer:
@@ -235,6 +235,7 @@ MonoBehaviour:
   _movement: {fileID: 900021083246706320}
   _rigidbody: {fileID: 9201475319759048605}
   _predictedRigidbody: {fileID: 4360163942621179187}
+  _predictedTransform: {fileID: 0}
 --- !u!114 &-4002540731971505960
 MonoBehaviour:
   m_ObjectHideFlags: 0
