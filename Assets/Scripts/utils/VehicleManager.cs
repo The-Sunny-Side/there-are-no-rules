@@ -39,6 +39,7 @@ public class VehicleManager : MonoBehaviour
 
     private bool resyncVehicle = true;
     private Dictionary<string, VehicleEntry> savedVehicle = new Dictionary<string, VehicleEntry>();
+    private string cachedVehicleJson = "";
 
     void Awake()
     {
@@ -60,11 +61,17 @@ public class VehicleManager : MonoBehaviour
                     weaponBack = "empty",
                     weaponRight = "empty"
                 };
-                string json = JsonUtility.ToJson(defaultVehicle, true);
-                File.WriteAllText(configPath, json);
-            }else {                 string json = File.ReadAllText(configPath);
-                Vehicle data = JsonUtility.FromJson<Vehicle>(json);
+                cachedVehicleJson = JsonUtility.ToJson(defaultVehicle, true);
+                File.WriteAllText(configPath, cachedVehicleJson);
+                savedVehicle = GetVehicleElements(defaultVehicle);
+                resyncVehicle = false;
+            }
+            else
+            {
+                cachedVehicleJson = File.ReadAllText(configPath);
+                Vehicle data = JsonUtility.FromJson<Vehicle>(cachedVehicleJson);
                 savedVehicle = GetVehicleElements(data);
+                resyncVehicle = false;
             }
             DontDestroyOnLoad(gameObject);
         }
@@ -88,7 +95,9 @@ public class VehicleManager : MonoBehaviour
         string json = JsonUtility.ToJson(dataToSave, true);
         File.WriteAllText(configPath, json);
 
-        savedVehicle= GetVehicleElements(dataToSave);
+        cachedVehicleJson = json;
+        savedVehicle = GetVehicleElements(dataToSave);
+        resyncVehicle = false;
         Debug.Log("Veicolo salvato: " + json);
     }
 
@@ -135,8 +144,8 @@ public class VehicleManager : MonoBehaviour
         {
             if (File.Exists(configPath))
             {
-                string json = File.ReadAllText(configPath);
-                Vehicle data = JsonUtility.FromJson<Vehicle>(json);
+                cachedVehicleJson = File.ReadAllText(configPath);
+                Vehicle data = JsonUtility.FromJson<Vehicle>(cachedVehicleJson);
                 savedVehicle = GetVehicleElements(data);
                 resyncVehicle = false;
             }
@@ -150,9 +159,6 @@ public class VehicleManager : MonoBehaviour
 
     public string GetVehicleJson()
     {
-        if (File.Exists(configPath))
-            return File.ReadAllText(configPath);
-        return "";
-
+        return cachedVehicleJson;
     }
 }
