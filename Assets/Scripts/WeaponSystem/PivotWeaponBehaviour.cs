@@ -1,4 +1,3 @@
-using PurrNet;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,7 +15,7 @@ public class PivotWeaponBehaviour : MonoBehaviour
     [SerializeField] private Material outlineMaterial;
 
     private Quaternion defaultLocalRotation;
-    private MovementPredicted _movement;
+    private PlayerIdentity _player;
     private Collider _currentHighlightTarget;
 
     private readonly List<MeshFilter> _outlineMeshes = new();
@@ -62,9 +61,9 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void SetHighlightTarget(Collider newTarget)
     {
-        _movement ??= GetComponentInParent<MovementPredicted>();
+        _player ??= GetComponentInParent<PlayerIdentity>();
 
-        if (_movement == null || !_movement.isOwner)
+        if (_player == null || !_player.IsLocalOwner)
             return;
 
         if (newTarget == _currentHighlightTarget) return;
