@@ -201,8 +201,9 @@ MonoBehaviour:
   groundRotationSpeed: 60
   airRotationSpeed: 180
   jumpForce: 20
-  gravity: 10
-  fastFallGravityMult: 5
+  gravity: 50
+  fastFallGravityMult: 2
+  slopeAcceleration: 50
   boostImpulse: 15
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3

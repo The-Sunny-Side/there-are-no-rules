@@ -20,6 +20,10 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [SerializeField] private float gravity = 50f;
     [SerializeField] private float fastFallGravityMult = 2.5f;
 
+    [Header("GRAVITÀ SLOPE")]
+    [Tooltip("Accelerazione aggiuntiva lungo la pendenza in discesa (unità/s²)")]
+    [SerializeField] private float slopeAcceleration = 50f;
+
     [Header("BOOST / DRIFT")]
     [SerializeField] private float boostImpulse = 15f;
     [SerializeField] private float driftChargeRate = 1.5f;
@@ -164,9 +168,9 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
                 }
             }
 
-            // --- SLOPE PUSH (gravità proiettata sulla slope → spinta naturale in discesa) ---
-            Vector3 slopeGravity = Vector3.ProjectOnPlane(Vector3.down * gravity, slopeNormal);
-            float slopePush = Vector3.Dot(slopeGravity, forward);
+            // --- SLOPE PUSH (accelerazione aggiuntiva lungo la pendenza in discesa) ---
+            Vector3 slopeDir = Vector3.ProjectOnPlane(Vector3.down, slopeNormal);
+            float slopePush = Vector3.Dot(slopeDir, forward) * slopeAcceleration;
             forwardSpeed += slopePush * delta;
 
             // --- APPLICA VELOCITÀ ---
