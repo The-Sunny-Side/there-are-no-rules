@@ -6,8 +6,7 @@ public class PlayerCamera : MonoBehaviour
 {
     public static PlayerCamera instance;
 
-    [SerializeField] private CinemachineCamera _onGroundCamera;
-    [SerializeField] private CinemachineCamera _onAirCamera;
+    [SerializeField] private CinemachineCamera _camera;
     [SerializeField] private CinemachineBrain _brain;
 
     private CameraPivot _pivot;
@@ -23,25 +22,11 @@ public class PlayerCamera : MonoBehaviour
     {
         _pivot = target.GetComponent<CameraPivot>();
 
-        if (_onGroundCamera)
+        if (_camera)
         {
-            _onGroundCamera.Target.TrackingTarget = target;
-            _onGroundCamera.PreviousStateIsValid = false;
+            _camera.Target.TrackingTarget = target;
+            _camera.PreviousStateIsValid = false;
         }
-
-        if (_onAirCamera)
-        {
-            _onAirCamera.Target.TrackingTarget = target;
-            _onAirCamera.PreviousStateIsValid = false;
-        }
-    }
-
-    public void SwitchCamera(bool grounded)
-    {
-        if (_onGroundCamera)
-            _onGroundCamera.Priority = grounded ? 20 : 10;
-        if (_onAirCamera)
-            _onAirCamera.Priority = grounded ? 10 : 20;
     }
 
     void LateUpdate()
