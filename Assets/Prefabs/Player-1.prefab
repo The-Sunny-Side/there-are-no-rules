@@ -230,8 +230,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2f689d6a8fdc4b7f8c90bb0af1433a19, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   _movement: {fileID: 900021083246706320}
   _rigidbody: {fileID: 9201475319759048605}
   _predictedRigidbody: {fileID: 4360163942621179187}
@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 2236589948941971393}
   m_Layer: 0
   m_Name: Visuals
-  m_TagString: PlayerSphere
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
