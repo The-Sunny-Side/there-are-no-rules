@@ -216,8 +216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4e8b01a75ed78d4a802039249c9f7ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
-  _onGroundCamera: {fileID: 849511440119220649}
-  _onAirCamera: {fileID: 0}
+  _camera: {fileID: 849511440119220649}
   _brain: {fileID: 5848827744540572354}
 --- !u!1 &1676691190672107623
 GameObject:
@@ -233,7 +232,7 @@ GameObject:
   - component: {fileID: 501399602210895806}
   - component: {fileID: 7271879961736937692}
   m_Layer: 0
-  m_Name: OnGroundCamera (1)
+  m_Name: OrbitCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

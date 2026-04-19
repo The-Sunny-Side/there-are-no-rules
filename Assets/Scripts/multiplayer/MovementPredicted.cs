@@ -225,19 +225,13 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
         {
             _airTime = 0f;
             if (!_lastCameraGrounded)
-            {
                 _lastCameraGrounded = true;
-                PlayerCamera.instance?.SwitchCamera(true);
-            }
         }
         else
         {
             _airTime += Time.deltaTime;
             if (_lastCameraGrounded && _airTime >= airCameraDelay)
-            {
                 _lastCameraGrounded = false;
-                PlayerCamera.instance?.SwitchCamera(false);
-            }
         }
     }
 
@@ -250,7 +244,6 @@ public class MovementPredicted : PredictedIdentity<MovementPredicted.Input, Move
             return;
 
         PlayerCamera.instance.SetTarget(visuals.transform);
-        PlayerCamera.instance.SwitchCamera(true);
         _cameraAssigned = true;
     }
 
