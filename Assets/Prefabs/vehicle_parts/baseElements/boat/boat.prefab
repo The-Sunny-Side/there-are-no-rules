@@ -55,13 +55,119 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5344231160244249829, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3547788577284813409}
   m_SourcePrefab: {fileID: 100100000, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
 --- !u!4 &1292319278388650885 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
   m_PrefabInstance: {fileID: 3665970653506707846}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8703946311359563107 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5344231160244249829, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+  m_PrefabInstance: {fileID: 3665970653506707846}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3547788577284813409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8703946311359563107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab13bfd1e935f4409b6039c2c39ce9d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleVFX
+  ps: {fileID: 0}
+  type: 0
+--- !u!1001 &4154279267016598575
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4984159094063915693}
+    m_Modifications:
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00605
+      objectReference: {fileID: 0}
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.00235
+      objectReference: {fileID: 0}
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344231160244249829, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      propertyPath: m_Name
+      value: DriftParticles (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5344231160244249829, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6230901769347951548}
+  m_SourcePrefab: {fileID: 100100000, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+--- !u!4 &1921330118135113260 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2526265866483958275, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+  m_PrefabInstance: {fileID: 4154279267016598575}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8326156355729998026 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5344231160244249829, guid: a4e8c9a453ba5a345a2e138f85f1a2ad, type: 3}
+  m_PrefabInstance: {fileID: 4154279267016598575}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6230901769347951548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8326156355729998026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab13bfd1e935f4409b6039c2c39ce9d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleVFX
+  ps: {fileID: 0}
+  type: 0
 --- !u!1001 &4801386084817372486
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -156,6 +262,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: cc4c22f59edbf3c498cc96a202dd7ded, type: 3}
       insertIndex: 0
       addedObject: {fileID: 1292319278388650885}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: cc4c22f59edbf3c498cc96a202dd7ded, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1921330118135113260}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cc4c22f59edbf3c498cc96a202dd7ded, type: 3}
       insertIndex: -1

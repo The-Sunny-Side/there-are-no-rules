@@ -54,6 +54,8 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     private bool _lastPivotGrounded = true;
     private float _airTime;
 
+    private VFXGroup _driftVFX;
+
     private MobileInputManager _inputManager;
 
     public struct State : IPredictedData<State>
@@ -81,6 +83,15 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         _inputManager = MobileInputManager.instance;
         _rigidbody = GetComponent<PredictedRigidbody>();
         TryAssignLocalCamera();
+        var loader = GetComponentInChildren<VehicleLoader>();
+
+        if (loader != null)
+            loader.OnVehicleBuilt += CacheVehicleVFX;
+    }
+
+    private void CacheVehicleVFX()
+    {
+        _driftVFX = VFXGroup.FromChildren(gameObject, VFXType.Drift);
     }
 
     protected override void Simulate(Input input, ref State state, float delta)
@@ -154,32 +165,25 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             {
                 float dirDot = Vector3.Dot(groundVel.normalized, forward);
                 float misalignment = 1f - Mathf.Clamp01(dirDot);
-                ParticleSystem ps = this.gameObject.GetComponentInChildren<ParticleSystem>();
-
                 if (misalignment > driftAngleThreshold && totalGroundSpeed > 5f)
                 {
-                    if (!ps.isPlaying)
-                    {
-                        ps.Play();
-                    }
+                    _driftVFX.Play();
 
-                    Debug.Log("carico: "+state.boostCharge);
                     state.driftTimer += delta;
                     if (state.driftTimer > 0.2f)
                         state.boostCharge = Mathf.Min(1f, state.boostCharge + driftChargeRate * delta);
                 }
                 else if (misalignment < driftReleaseThreshold && state.boostCharge > 0.1f)
                 {
-                    ps.Stop();
+                    _driftVFX.Stop();
 
-                    Debug.Log("boost: "+boostImpulse+"*"+state.boostCharge+"="+ boostImpulse * state.boostCharge);
                     forwardSpeed += boostImpulse * state.boostCharge;
                     state.boostCharge = 0f;
                     state.driftTimer = 0f;
                 }
                 else if (misalignment <= driftAngleThreshold)
                 {
-                    ps.Stop();
+                    _driftVFX.Stop();
                     state.driftTimer = 0f;
                 }
             }
@@ -205,6 +209,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         else
         {
             // --- IN ARIA ---
+            _driftVFX.Stop();
             rb.linearDamping = 0f;
 
             // gravità custom (fast-fall se si scende)
