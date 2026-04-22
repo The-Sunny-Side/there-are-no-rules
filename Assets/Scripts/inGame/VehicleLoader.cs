@@ -11,6 +11,8 @@ public class VehicleLoader : MonoBehaviour
     [SerializeField] private Composer composer;
     private string _currentJson;
 
+    public event Action OnVehicleBuilt;
+
     private void OnEnable()
     {
         // Force a rebuild after object re-enable/replay.
@@ -95,6 +97,7 @@ public class VehicleLoader : MonoBehaviour
 
                 composer.AlignComponents();
                 _currentJson = json;
+                OnVehicleBuilt?.Invoke();
             }
             catch (Exception ex)
             {
