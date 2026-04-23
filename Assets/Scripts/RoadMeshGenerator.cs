@@ -28,6 +28,10 @@ public class RoadMeshGenerator : MonoBehaviour
     [NonSerialized] public MeshFilter _meshFilter;
     [NonSerialized] public MeshCollider _meshCollider;
 
+    private Vector3[] _splinePoints;
+    public IReadOnlyList<Vector3> SplinePoints => _splinePoints;
+    public bool IsGenerated => _splinePoints != null && _splinePoints.Length > 1;
+
     private void Awake()
     {
         _meshFilter = GetComponent<MeshFilter>();
@@ -80,6 +84,7 @@ public class RoadMeshGenerator : MonoBehaviour
         }
 
         var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes, waypointTensions);
+        _splinePoints = splineData.points.ToArray();
         BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles, splineData.meshActive);
         BuildKillZoneNet(splineData.points, splineData.meshActive);
     }

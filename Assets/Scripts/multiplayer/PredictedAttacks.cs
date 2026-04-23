@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, PredictedAttacks.State>
 {
-    private MobileInputManager _inputManager;
+    private IVehicleInputProvider _input;
     private SwipeDetector _swipeDetector;
     private Dictionary<string, string> weaponsKey = new Dictionary<string, string>();
 
     protected override void LateAwake()
     {
-        _inputManager = MobileInputManager.instance;
+        _input = GetComponent<IVehicleInputProvider>();
         weaponsKey.Add("front", AnchorNames.WeaponFrontAnchor);
         weaponsKey.Add("back", AnchorNames.WeaponBackAnchor);
         weaponsKey.Add("left", AnchorNames.WeaponLeftAnchor);
@@ -19,10 +19,10 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
     }
     protected override void UpdateInput(ref Input input)
     {
-            input.useFront = _inputManager.weaponSelectAxis.y>0;
-            input.useBack = _inputManager.weaponSelectAxis.y<0;
-            input.useRight = _inputManager.weaponSelectAxis.x > 0;
-            input.useLeft = _inputManager.weaponSelectAxis.x < 0;
+            input.useFront = _input.UseFront;
+            input.useBack = _input.UseBack;
+            input.useRight = _input.UseRight;
+            input.useLeft = _input.UseLeft;
     }
     public struct Input : IPredictedData
     {

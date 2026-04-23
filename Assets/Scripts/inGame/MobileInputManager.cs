@@ -5,6 +5,7 @@ public class MobileInputManager : MonoBehaviour
 {
     [SerializeField] private InputActionAsset inputActions;
     [SerializeField, Range(0f, 1f)] private float rotateDeadzone = 0.1f;
+    [SerializeField, Range(0f, 1f)] private float weaponSelectDeadzone = 0.5f;
 
     public static MobileInputManager instance;
     public Vector2 rotateAxis
@@ -28,7 +29,16 @@ public class MobileInputManager : MonoBehaviour
     public bool slideLeftHeld => slideLeftAction.IsPressed();
     public bool slideRightHeld => slideRightAction.IsPressed();
     public bool jumpTapped => jumpAction.IsPressed();
-    public Vector2 weaponSelectAxis => ReadWeaponSelectRaw();
+    public Vector2 weaponSelectAxis
+    {
+        get
+        {
+            Vector2 axis = ReadWeaponSelectRaw();
+            if (axis.sqrMagnitude < weaponSelectDeadzone * weaponSelectDeadzone)
+                return Vector2.zero;
+            return axis;
+        }
+    }
 
 
     private InputAction rotateAction;

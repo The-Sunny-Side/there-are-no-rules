@@ -56,7 +56,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
     private VFXGroup _driftVFX;
 
-    private MobileInputManager _inputManager;
+    private IVehicleInputProvider _input;
 
     public struct State : IPredictedData<State>
     {
@@ -80,7 +80,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
     protected override void LateAwake()
     {
-        _inputManager = MobileInputManager.instance;
+        _input = GetComponent<IVehicleInputProvider>();
         _rigidbody = GetComponent<PredictedRigidbody>();
         TryAssignLocalCamera();
         var loader = GetComponentInChildren<VehicleLoader>();
@@ -346,13 +346,13 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
     protected override void UpdateInput(ref Input input)
     {
-        input.jump = _inputManager.jumpTapped;
+        input.jump = _input.JumpTapped;
     }
 
     protected override void GetFinalInput(ref Input input)
     {
-        input.steer = _inputManager.rotateHorizontal;
-        input.throttle = _inputManager.rotateVertical;
+        input.steer = _input.Steer;
+        input.throttle = _input.Throttle;
     }
 
     protected override void SanitizeInput(ref Input input)

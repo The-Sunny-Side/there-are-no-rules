@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 4829361740281736451}
   - component: {fileID: -4002540731971505960}
   - component: {fileID: 3379998605608418547}
+  - component: {fileID: 5314822282453256193}
   m_Layer: 7
   m_Name: Player-1
   m_TagString: PlayerSphere
@@ -267,6 +268,18 @@ MonoBehaviour:
   swipedRight: 0
   swipedUp: 0
   swipedDown: 0
+--- !u!114 &5314822282453256193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536615153988124585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb0b10792b954d34bb1f10fb8f549c6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HumanInputProvider
 --- !u!1 &2315482730086823503
 GameObject:
   m_ObjectHideFlags: 0
