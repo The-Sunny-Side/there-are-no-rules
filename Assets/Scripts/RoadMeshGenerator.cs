@@ -38,10 +38,7 @@ public class RoadMeshGenerator : MonoBehaviour
 
     private void Awake()
     {
-        _meshFilter = GetComponent<MeshFilter>();
-        _meshCollider = GetComponent<MeshCollider>();
-        _mesh = new Mesh { name = "RoadMesh" };
-        _meshFilter.mesh = _mesh;
+        EnsureComponents();
 
         var mat = new PhysicsMaterial("RoadSurface")
         {
@@ -51,7 +48,8 @@ public class RoadMeshGenerator : MonoBehaviour
             staticFriction = 0.6f,
             frictionCombine = PhysicsMaterialCombine.Average
         };
-        _meshCollider.material = mat;
+        if (_meshCollider != null)
+            _meshCollider.material = mat;
     }
 
     private void Start()
@@ -68,13 +66,7 @@ public class RoadMeshGenerator : MonoBehaviour
     private void GenerateRoadInternal(bool buildMesh)
     {
         if (waypointsParent == null || waypointsParent.childCount < 2) return;
-        if (_mesh == null)
-        {
-            _mesh = new Mesh { name = "RoadMesh" };
-            _meshFilter = GetComponent<MeshFilter>();
-            _meshCollider = GetComponent<MeshCollider>();
-            _meshFilter.mesh = _mesh;
-        }
+        EnsureComponents();
 
         var waypoints = new List<Vector3>();
         var nodeTypes = new List<bool>(); // true = Flat
@@ -97,8 +89,48 @@ public class RoadMeshGenerator : MonoBehaviour
 
         if (!buildMesh) return;
 
+        EnsureWritableMesh();
         BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles, splineData.meshActive);
         BuildKillZoneNet(splineData.points, splineData.meshActive);
+    }
+
+    private void EnsureComponents()
+    {
+        _meshFilter ??= GetComponent<MeshFilter>();
+        _meshCollider ??= GetComponent<MeshCollider>();
+
+        if (_mesh == null)
+            _mesh = _meshFilter != null && _meshFilter.sharedMesh != null
+                ? _meshFilter.sharedMesh
+                : _meshCollider != null ? _meshCollider.sharedMesh : null;
+
+        if (_mesh == null)
+            _mesh = CreateRuntimeMesh();
+
+        if (_meshFilter != null && _meshFilter.sharedMesh == null)
+            _meshFilter.sharedMesh = _mesh;
+
+        if (_meshCollider != null && _meshCollider.sharedMesh == null)
+            _meshCollider.sharedMesh = _mesh;
+    }
+
+    private void EnsureWritableMesh()
+    {
+        EnsureComponents();
+
+        if (_mesh == null || _mesh.name != "RoadMesh")
+            _mesh = CreateRuntimeMesh();
+
+        if (_meshFilter != null)
+            _meshFilter.sharedMesh = _mesh;
+
+        if (_meshCollider != null)
+            _meshCollider.sharedMesh = _mesh;
+    }
+
+    private static Mesh CreateRuntimeMesh()
+    {
+        return new Mesh { name = "RoadMesh" };
     }
 
     private (List<Vector3> points, List<float> flatWeights, List<float> bankAngles, List<bool> meshActive) GenerateSplinePoints(

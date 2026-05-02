@@ -1864,6 +1864,8 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   botPrefab: {fileID: 2820164963572008167, guid: ed18358153bd27240a17f2b8966b5034, type: 3}
+  defaultBotConfig: {fileID: 0}
+  predictionManager: {fileID: 0}
   roadSequence:
   - {fileID: 536188688}
   - {fileID: 536188687}
