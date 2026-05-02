@@ -24,6 +24,10 @@ public class RoadMeshGenerator : MonoBehaviour
     [Header("Waypoints")]
     [SerializeField] private Transform waypointsParent;
 
+    [Header("Bake")]
+    [Tooltip("Se false, in Start() viene calcolata SOLO la spline (per il bot AI) ma la mesh non viene rigenerata. Disattivalo dopo il primo bake per saltare il rebuild ad ogni avvio. Il ContextMenu 'Generate Road' ignora sempre questo flag.")]
+    [SerializeField] private bool bakeMeshOnStart = true;
+
     [NonSerialized] public Mesh _mesh;
     [NonSerialized] public MeshFilter _meshFilter;
     [NonSerialized] public MeshCollider _meshCollider;
@@ -52,11 +56,16 @@ public class RoadMeshGenerator : MonoBehaviour
 
     private void Start()
     {
-        GenerateRoad();
+        GenerateRoadInternal(buildMesh: bakeMeshOnStart);
     }
 
     [ContextMenu("Generate Road")]
     public void GenerateRoad()
+    {
+        GenerateRoadInternal(buildMesh: true);
+    }
+
+    private void GenerateRoadInternal(bool buildMesh)
     {
         if (waypointsParent == null || waypointsParent.childCount < 2) return;
         if (_mesh == null)
@@ -85,6 +94,9 @@ public class RoadMeshGenerator : MonoBehaviour
 
         var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes, waypointTensions);
         _splinePoints = splineData.points.ToArray();
+
+        if (!buildMesh) return;
+
         BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles, splineData.meshActive);
         BuildKillZoneNet(splineData.points, splineData.meshActive);
     }

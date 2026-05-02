@@ -6,7 +6,7 @@ using UnityEngine;
 public class AIDriver : NetworkBehaviour
 {
     [Header("Road")]
-    [Tooltip("Sequenza di road da percorrere in ordine. Il bot passa alla successiva quando si avvicina alla fine della corrente.")]
+    [Tooltip("Sequenza di road da percorrere in ordine. Il bot passa alla successiva quando si avvicina alla fine della corrente. Viene sovrascritta da Initialize() se chiamato (es. dal BotSpawner).")]
     [SerializeField] private List<RoadMeshGenerator> roadSequence = new();
     [Tooltip("Numero di punti spline dalla fine entro cui il bot passa alla road successiva.")]
     [SerializeField] private int advanceThresholdFromEnd = 3;
@@ -48,6 +48,16 @@ public class AIDriver : NetworkBehaviour
     void FixedUpdate()
     {
         if (!isServer) return;
+        if (LobbyState.Instance != null && !LobbyState.Instance.IsRaceActive)
+        {
+            if (_input != null)
+            {
+                _input.Steer = 0f;
+                _input.Throttle = 0f;
+                _input.JumpTapped = false;
+            }
+            return;
+        }
         if (roadSequence == null || roadSequence.Count == 0) return;
 
         RoadMeshGenerator road = GetCurrentRoad();
@@ -78,6 +88,18 @@ public class AIDriver : NetworkBehaviour
         _input.Steer = steer;
         _input.Throttle = throttle * throttleScale;
         _input.JumpTapped = false;
+    }
+
+    // Iniettata dal BotSpawner per i bot creati a runtime, dato che i RoadMeshGenerator sono istanze di scena
+    // e non possono essere referenziate dal prefab.
+    public void Initialize(IEnumerable<RoadMeshGenerator> sequence)
+    {
+        roadSequence.Clear();
+        if (sequence != null)
+            roadSequence.AddRange(sequence);
+        _roadIndex = 0;
+        _closestIndex = 0;
+        ResetTracking();
     }
 
     private RoadMeshGenerator GetCurrentRoad()
