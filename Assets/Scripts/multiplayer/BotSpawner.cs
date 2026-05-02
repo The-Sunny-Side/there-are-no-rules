@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using PurrNet;
+using PurrNet.Prediction;
 using UnityEngine;
 
 // Server-only: istanzia bot ai punti di spawn liberi al momento dello start gara.
@@ -9,9 +10,12 @@ public class BotSpawner : NetworkBehaviour
     [Header("Prefab")]
     [Tooltip("Prefab del bot (variante del player con AIInputProvider + AIDriver + AIRespawner).")]
     [SerializeField] private GameObject botPrefab;
+    [Tooltip("Config veicolo usata per i bot. Se non assegnata, i bot clonano la config del veicolo locale dell'host/server.")]
+    [SerializeField] private TextAsset defaultBotConfig;
+    [SerializeField] private PredictionManager predictionManager;
 
     [Header("Roads")]
-    [Tooltip("Sequenza di RoadMeshGenerator che ogni bot dovrà seguire. Iniettata sull'AIDriver dopo lo spawn.")]
+    [Tooltip("Sequenza di RoadMeshGenerator che ogni bot dovra' seguire. Iniettata sull'AIDriver dopo lo spawn.")]
     [SerializeField] private List<RoadMeshGenerator> roadSequence = new();
 
     [Header("Settings")]
@@ -37,9 +41,19 @@ public class BotSpawner : NetworkBehaviour
             return;
         }
 
+        if (!EnsurePredictionManager())
+        {
+            Debug.LogWarning("[BotSpawner] PredictionManager non trovato: impossibile spawnare bot predicted.");
+            return;
+        }
+
         int totalSpawns = spawns.Count;
         int botsToSpawn = Mathf.Min(targetRacerCount, totalSpawns) - humanCount;
         if (botsToSpawn <= 0) return;
+
+        string botConfigJson = ResolveBotConfigJson();
+        if (string.IsNullOrWhiteSpace(botConfigJson))
+            Debug.LogWarning("[BotSpawner] Nessuna config veicolo disponibile per i bot: verranno spawnati ma resteranno vuoti.");
 
         for (int i = 0; i < botsToSpawn; i++)
         {
@@ -49,15 +63,46 @@ public class BotSpawner : NetworkBehaviour
             Transform sp = spawns.GetAt(spawnIdx);
             if (sp == null) continue;
 
-            GameObject bot = Instantiate(botPrefab, sp.position, sp.rotation);
+            PredictedObjectID? botId = predictionManager.hierarchy.Create(botPrefab, sp.position, sp.rotation);
+            if (!predictionManager.hierarchy.TryGetGameObject(botId, out GameObject bot) || bot == null)
+            {
+                Debug.LogWarning("[BotSpawner] Spawn predicted bot fallito.");
+                continue;
+            }
 
-            // Inietta la roadSequence prima dello spawn così l'AIDriver è subito pronto.
+            var vehicleConfig = bot.GetComponentInChildren<VehicleNetConfig>(true);
+            if (vehicleConfig != null && !string.IsNullOrWhiteSpace(botConfigJson))
+                vehicleConfig.SetServerConfigJson(botConfigJson);
+
+            // Inietta la roadSequence prima dello spawn cosi' l'AIDriver e' subito pronto.
             var driver = bot.GetComponent<AIDriver>();
             if (driver != null)
                 driver.Initialize(roadSequence);
-
-            // Spawn networkato — server-owned, nessun client owner.
-            networkManager.Spawn(bot);
         }
+    }
+
+    private string ResolveBotConfigJson()
+    {
+        if (defaultBotConfig != null && !string.IsNullOrWhiteSpace(defaultBotConfig.text))
+            return defaultBotConfig.text;
+
+        if (VehicleManager.Instance != null)
+            return VehicleManager.Instance.GetVehicleJson();
+
+        return null;
+    }
+
+    private bool EnsurePredictionManager()
+    {
+        if (predictionManager != null && predictionManager.hierarchy != null)
+            return true;
+
+        if (PredictionManager.TryGetInstance(gameObject.scene.handle, out predictionManager) &&
+            predictionManager != null &&
+            predictionManager.hierarchy != null)
+            return true;
+
+        predictionManager = FindFirstObjectByType<PredictionManager>();
+        return predictionManager != null && predictionManager.hierarchy != null;
     }
 }

@@ -2,7 +2,7 @@ using PurrNet;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerIdentity))]
-public class AIRespawner : NetworkBehaviour
+public class AIRespawner : MonoBehaviour
 {
     [Tooltip("Se true, quando il bot entra in una killzone senza aver mai toccato un checkpoint, viene respawnato all'ultima posizione di spawn.")]
     [SerializeField] private bool fallbackToSpawnPosition = true;
@@ -22,7 +22,7 @@ public class AIRespawner : NetworkBehaviour
 
     public void RegisterCheckpoint(Vector3 position, Quaternion rotation)
     {
-        if (!isServer) return;
+        if (!IsServer()) return;
         _checkpointPos = position;
         _checkpointRot = rotation;
         _hasCheckpoint = true;
@@ -30,7 +30,7 @@ public class AIRespawner : NetworkBehaviour
 
     public void RequestRespawn()
     {
-        if (!isServer) return;
+        if (!IsServer()) return;
         if (!_hasCheckpoint) return;
 
         Vector3 position = _checkpointPos + Vector3.up * 10f;
@@ -38,5 +38,10 @@ public class AIRespawner : NetworkBehaviour
 
         var driver = GetComponent<AIDriver>();
         if (driver != null) driver.ResetTracking();
+    }
+
+    private static bool IsServer()
+    {
+        return NetworkManager.main != null && NetworkManager.main.isServer;
     }
 }

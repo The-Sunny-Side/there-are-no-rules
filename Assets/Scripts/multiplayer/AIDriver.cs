@@ -3,7 +3,7 @@ using PurrNet;
 using UnityEngine;
 
 [RequireComponent(typeof(AIInputProvider))]
-public class AIDriver : NetworkBehaviour
+public class AIDriver : MonoBehaviour
 {
     [Header("Road")]
     [Tooltip("Sequenza di road da percorrere in ordine. Il bot passa alla successiva quando si avvicina alla fine della corrente. Viene sovrascritta da Initialize() se chiamato (es. dal BotSpawner).")]
@@ -47,7 +47,7 @@ public class AIDriver : NetworkBehaviour
 
     void FixedUpdate()
     {
-        if (!isServer) return;
+        if (!IsServer()) return;
         if (LobbyState.Instance != null && !LobbyState.Instance.IsRaceActive)
         {
             if (_input != null)
@@ -88,6 +88,11 @@ public class AIDriver : NetworkBehaviour
         _input.Steer = steer;
         _input.Throttle = throttle * throttleScale;
         _input.JumpTapped = false;
+    }
+
+    private static bool IsServer()
+    {
+        return NetworkManager.main != null && NetworkManager.main.isServer;
     }
 
     // Iniettata dal BotSpawner per i bot creati a runtime, dato che i RoadMeshGenerator sono istanze di scena
