@@ -380,10 +380,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1648363606}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000024457739}
-  m_SizeDelta: {x: 0, y: 300}
+  m_AnchoredPosition: {x: 0, y: 0.00024414062}
+  m_SizeDelta: {x: 0, y: 0.00024414062}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &170305911
 MonoBehaviour:
@@ -922,7 +922,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 734451153}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9999998
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2210,7 +2210,7 @@ MonoBehaviour:
   lobbyPanel: {fileID: 2093983485}
   countdownPanel: {fileID: 573323173}
   playerListParent: {fileID: 170305910}
-  playerRowPrefab: {fileID: 2891639771991967302, guid: 9f2f99fb7d2b9334ba1bae5132c589a7, type: 3}
+  playerRowPrefab: {fileID: 4375690728891318680, guid: bba96b14bfbd0bb45bb345e12149bc39, type: 3}
   playerCountLabel: {fileID: 133399346}
   readyButton: {fileID: 1583412358}
   readyButtonLabel: {fileID: 1401056288}
