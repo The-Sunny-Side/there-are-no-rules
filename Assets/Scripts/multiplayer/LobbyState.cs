@@ -73,7 +73,7 @@ public class LobbyState : NetworkBehaviour
         if (_playerOrder.Contains(player)) return;
         _playerOrder.Add(player);
         _readyStates[player] = false;
-        BroadcastPlayerJoined(player);
+        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot());
     }
 
     private void HandlePlayerLeft(PlayerID player, bool asServer)
@@ -81,32 +81,25 @@ public class LobbyState : NetworkBehaviour
         if (!asServer) return;
         if (!_playerOrder.Remove(player)) return;
         _readyStates.Remove(player);
-        BroadcastPlayerLeft(player);
+        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot());
     }
 
     [ObserversRpc(bufferLast: true)]
-    private void BroadcastPlayerJoined(PlayerID player)
+    private void BroadcastLobbySnapshot(PlayerID[] players, bool[] readyStates)
     {
-        if (!_playerOrder.Contains(player))
+        _playerOrder.Clear();
+        _readyStates.Clear();
+
+        int count = players != null ? players.Length : 0;
+        for (int i = 0; i < count; i++)
         {
+            PlayerID player = players[i];
             _playerOrder.Add(player);
-            _readyStates[player] = false;
+
+            bool ready = readyStates != null && i < readyStates.Length && readyStates[i];
+            _readyStates[player] = ready;
         }
-        OnLobbyStateChanged?.Invoke();
-    }
 
-    [ObserversRpc(bufferLast: true)]
-    private void BroadcastPlayerLeft(PlayerID player)
-    {
-        _playerOrder.Remove(player);
-        _readyStates.Remove(player);
-        OnLobbyStateChanged?.Invoke();
-    }
-
-    [ObserversRpc(bufferLast: true)]
-    private void BroadcastReady(PlayerID player, bool ready)
-    {
-        _readyStates[player] = ready;
         OnLobbyStateChanged?.Invoke();
     }
 
@@ -122,7 +115,7 @@ public class LobbyState : NetworkBehaviour
         if (!_readyStates.ContainsKey(info.sender)) return;
         bool newState = !_readyStates[info.sender];
         _readyStates[info.sender] = newState;
-        BroadcastReady(info.sender, newState);
+        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot());
     }
 
     public bool AreAllPlayersReady()
@@ -192,5 +185,13 @@ public class LobbyState : NetworkBehaviour
         IsRaceActive = true;
         OnRaceStarted?.Invoke();
         OnLobbyStateChanged?.Invoke();
+    }
+
+    private bool[] BuildReadySnapshot()
+    {
+        var ready = new bool[_playerOrder.Count];
+        for (int i = 0; i < _playerOrder.Count; i++)
+            ready[i] = IsReady(_playerOrder[i]);
+        return ready;
     }
 }
