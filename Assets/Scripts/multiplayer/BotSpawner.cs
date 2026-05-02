@@ -70,6 +70,10 @@ public class BotSpawner : NetworkBehaviour
                 continue;
             }
 
+            var identity = bot.GetComponent<PlayerIdentity>();
+            if (identity != null)
+                identity.SetBotIdentity(i + 1);
+
             var vehicleConfig = bot.GetComponentInChildren<VehicleNetConfig>(true);
             if (vehicleConfig != null && !string.IsNullOrWhiteSpace(botConfigJson))
                 vehicleConfig.SetServerConfigJson(botConfigJson);
