@@ -32,5 +32,18 @@ public class LobbyPlayerRow : MonoBehaviour
         readyLabel.color = ready ? readyColor : notReadyColor;
     }
 
+    public void Clear()
+    {
+        _id = default;
+        _bound = false;
+
+        if (nameLabel != null) nameLabel.text = string.Empty;
+        if (readyLabel != null)
+        {
+            readyLabel.text = string.Empty;
+            readyLabel.color = notReadyColor;
+        }
+    }
+
     public PlayerID Id => _id;
 }

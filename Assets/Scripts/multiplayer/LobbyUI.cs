@@ -14,6 +14,7 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private Transform playerListParent;
     [SerializeField] private LobbyPlayerRow playerRowPrefab;
     [SerializeField] private TextMeshProUGUI playerCountLabel;
+    [SerializeField] private bool instantiateMissingRows = true;
 
     [Header("Local controls")]
     [SerializeField] private Button readyButton;
@@ -31,11 +32,13 @@ public class LobbyUI : MonoBehaviour
     [Header("Refs")]
     [SerializeField] private BotSpawner botSpawner;
 
-    private readonly Dictionary<PlayerID, LobbyPlayerRow> _rows = new();
+    private readonly List<LobbyPlayerRow> _rowPool = new();
     private LobbyState _subscribedState;
 
     void OnEnable()
     {
+        RebuildRowPool();
+        HideAllRows();
         TrySubscribe();
         if (readyButton != null) readyButton.onClick.AddListener(OnReadyClick);
         if (playButton != null) playButton.onClick.AddListener(OnPlayClick);
@@ -46,7 +49,7 @@ public class LobbyUI : MonoBehaviour
         TryUnsubscribe();
         if (readyButton != null) readyButton.onClick.RemoveListener(OnReadyClick);
         if (playButton != null) playButton.onClick.RemoveListener(OnPlayClick);
-        ClearAllRows();
+        HideAllRows();
     }
 
     private void TrySubscribe()
@@ -70,42 +73,68 @@ public class LobbyUI : MonoBehaviour
 
     private void RebuildPlayerList()
     {
-        if (LobbyState.Instance == null || playerRowPrefab == null || playerListParent == null) return;
+        if (LobbyState.Instance == null || playerListParent == null) return;
 
         var current = LobbyState.Instance.Players;
-        var seen = new HashSet<PlayerID>();
+        EnsureRowCapacity(current.Count);
 
+        int index = 0;
         foreach (var id in current)
         {
-            seen.Add(id);
-            if (!_rows.TryGetValue(id, out var row))
-            {
-                row = Instantiate(playerRowPrefab, playerListParent);
-                row.Bind(id);
-                _rows[id] = row;
-            }
-            else
-            {
-                row.Refresh();
-            }
+            if (index >= _rowPool.Count) break;
+
+            var row = _rowPool[index++];
+            if (row == null) continue;
+
+            if (!row.gameObject.activeSelf) row.gameObject.SetActive(true);
+            row.Bind(id);
         }
 
-        // rimuovi righe orfane
-        var toRemove = new List<PlayerID>();
-        foreach (var kv in _rows)
-            if (!seen.Contains(kv.Key)) toRemove.Add(kv.Key);
-        foreach (var id in toRemove)
+        for (int i = index; i < _rowPool.Count; i++)
         {
-            if (_rows[id] != null) Destroy(_rows[id].gameObject);
-            _rows.Remove(id);
+            var row = _rowPool[i];
+            if (row == null) continue;
+
+            row.Clear();
+            if (row.gameObject.activeSelf) row.gameObject.SetActive(false);
         }
     }
 
-    private void ClearAllRows()
+    private void HideAllRows()
     {
-        foreach (var kv in _rows)
-            if (kv.Value != null) Destroy(kv.Value.gameObject);
-        _rows.Clear();
+        foreach (var row in _rowPool)
+        {
+            if (row == null) continue;
+
+            row.Clear();
+            if (row.gameObject.activeSelf) row.gameObject.SetActive(false);
+        }
+    }
+
+    private void RebuildRowPool()
+    {
+        _rowPool.Clear();
+        if (playerListParent == null) return;
+
+        for (int i = 0; i < playerListParent.childCount; i++)
+        {
+            var child = playerListParent.GetChild(i);
+            if (child.TryGetComponent<LobbyPlayerRow>(out var row))
+                _rowPool.Add(row);
+        }
+    }
+
+    private void EnsureRowCapacity(int requiredCount)
+    {
+        RebuildRowPool();
+        if (!instantiateMissingRows || playerRowPrefab == null || playerListParent == null) return;
+
+        while (_rowPool.Count < requiredCount)
+        {
+            var row = Instantiate(playerRowPrefab, playerListParent, false);
+            row.gameObject.SetActive(false);
+            _rowPool.Add(row);
+        }
     }
 
     private void OnReadyClick()
