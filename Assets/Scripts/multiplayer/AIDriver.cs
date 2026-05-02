@@ -16,12 +16,18 @@ public class AIDriver : NetworkBehaviour
     [SerializeField] private float lookaheadDistance = 6f;
     [Tooltip("Fattore che moltiplica la distanza di lookahead in base alla velocità del rigidbody.")]
     [SerializeField] private float lookaheadSpeedFactor = 0.3f;
+    [Tooltip("Tetto massimo del lookahead. Se vuoi puntare più lontano alza ANCHE questo valore, non solo lookaheadDistance.")]
     [SerializeField] private float minLookahead = 3f;
-    [SerializeField] private float maxLookahead = 20f;
+    [SerializeField] private float maxLookahead = 60f;
+    [Tooltip("Moltiplicatore dello steer prima del clamp. >1 = sterzata più aggressiva (satura prima per offset moderati).")]
+    [SerializeField] private float steerAggression = 2.5f;
 
-    [Header("Throttle (step 1: fisso)")]
+    [Header("Throttle")]
     [Range(0f, 1f)]
     [SerializeField] private float throttle = 1f;
+    [Tooltip("Frazione di throttle a cui scendere quando lo steer è saturato. 1 = nessuna riduzione, 0.7 = -30% in piena sterzata.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float throttleAtFullSteer = 0.7f;
 
     [Header("Debug")]
     [SerializeField] private bool drawGizmos = true;
@@ -31,6 +37,7 @@ public class AIDriver : NetworkBehaviour
     private int _roadIndex;
     private int _closestIndex;
     private Vector3 _debugTarget;
+    private float _debugLookahead;
 
     void Awake()
     {
@@ -60,13 +67,16 @@ public class AIDriver : NetworkBehaviour
         float lookahead = Mathf.Clamp(lookaheadDistance + speed * lookaheadSpeedFactor, minLookahead, maxLookahead);
         Vector3 target = GetLookaheadPoint(_closestIndex, lookahead, points);
         _debugTarget = target;
+        _debugLookahead = lookahead;
 
         Vector3 local = transform.InverseTransformPoint(target);
         float mag = new Vector2(local.x, local.z).magnitude;
-        float steer = mag > 0.0001f ? Mathf.Clamp(local.x / mag, -1f, 1f) : 0f;
+        float steer = mag > 0.0001f ? Mathf.Clamp(local.x / mag * steerAggression, -1f, 1f) : 0f;
+
+        float throttleScale = Mathf.Lerp(1f, throttleAtFullSteer, Mathf.Abs(steer));
 
         _input.Steer = steer;
-        _input.Throttle = throttle;
+        _input.Throttle = throttle * throttleScale;
         _input.JumpTapped = false;
     }
 
@@ -202,6 +212,10 @@ public class AIDriver : NetworkBehaviour
         Gizmos.color = Color.magenta;
         Gizmos.DrawSphere(_debugTarget, 0.4f);
         Gizmos.DrawLine(transform.position, _debugTarget);
+
+        float realDistance = Vector3.Distance(transform.position, _debugTarget);
+        UnityEditor.Handles.Label(transform.position + Vector3.up * 2f,
+            $"lookahead computed: {_debugLookahead:F1}m\nbot→target dist: {realDistance:F1}m");
     }
 #endif
 }

@@ -649,6 +649,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 518646472}
   m_CullTransparentMesh: 1
+--- !u!114 &526039383 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1145436856039811158, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
+  m_PrefabInstance: {fileID: 5708396051438561098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ae8f665d3f7194882dc61ab6d1a9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoadMeshGenerator
 --- !u!1 &537818380
 GameObject:
   m_ObjectHideFlags: 0
@@ -851,6 +862,17 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &629320108 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8769216386687895352, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
+  m_PrefabInstance: {fileID: 5708396051438561098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ae8f665d3f7194882dc61ab6d1a9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoadMeshGenerator
 --- !u!1001 &675728071
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -915,6 +937,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1536615153988124585, guid: 75aa04d39225b8b42b351e03f83e6565, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2083973778}
+    - targetCorrespondingSourceObject: {fileID: 1536615153988124585, guid: 75aa04d39225b8b42b351e03f83e6565, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2083973790}
+    - targetCorrespondingSourceObject: {fileID: 1536615153988124585, guid: 75aa04d39225b8b42b351e03f83e6565, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2083973791}
   m_SourcePrefab: {fileID: 100100000, guid: 75aa04d39225b8b42b351e03f83e6565, type: 3}
 --- !u!1 &744947635
 GameObject:
@@ -1482,6 +1510,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MobileInputManager
   inputActions: {fileID: -944628639613478452, guid: db278d4685d027a438af39d200e7867b, type: 3}
   rotateDeadzone: 0.1
+  weaponSelectDeadzone: 0.5
 --- !u!114 &1118714471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1710,6 +1739,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1225267840}
   m_CullTransparentMesh: 1
+--- !u!114 &1234800647 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 541150967197743641, guid: 03830c801d07a5f40b9ad3d24d234c39, type: 3}
+  m_PrefabInstance: {fileID: 5708396051438561098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ae8f665d3f7194882dc61ab6d1a9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoadMeshGenerator
 --- !u!1 &1335359928
 GameObject:
   m_ObjectHideFlags: 0
@@ -3157,6 +3197,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53767e8d41eb3c3449975cb52e2a05c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIInputProvider
+--- !u!114 &2083973790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083973777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cd9c360b921dc045bb695c635277063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AIDriver
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  roadSequence:
+  - {fileID: 1234800647}
+  - {fileID: 629320108}
+  - {fileID: 526039383}
+  advanceThresholdFromEnd: 3
+  lookaheadDistance: 60
+  lookaheadSpeedFactor: 1
+  minLookahead: 3
+  maxLookahead: 100
+  steerAggression: 2.5
+  throttle: 1
+  throttleAtFullSteer: 0.1
+  drawGizmos: 1
+--- !u!114 &2083973791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083973777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e1649818ec14474fba7b4074ad572bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AIRespawner
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  fallbackToSpawnPosition: 1
 --- !u!1 &2107574304
 GameObject:
   m_ObjectHideFlags: 0
