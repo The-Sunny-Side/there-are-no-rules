@@ -107,6 +107,30 @@ MonoBehaviour:
     m_Key: tutorial
     m_Metadata:
       m_Items: []
+  - m_Id: 22463459552833536
+    m_Key: confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22479833796882432
+    m_Key: name_modal_description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22499692924547072
+    m_Key: yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22499798386126848
+    m_Key: no
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22507524096962560
+    m_Key: player_name_main
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22880481503784960
+    m_Key: show_tutorial_message
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

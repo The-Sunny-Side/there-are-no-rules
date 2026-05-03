@@ -12,11 +12,11 @@ public class VehiclePrefabRegistry : ScriptableObject
 
     [SerializeField] private List<VehicleEntry> baseElements;
     [SerializeField] private List<VehicleEntry> bodyElements;
-    [SerializeField] private List<VehicleEntry> weapons;
+    [SerializeField] private List<VehicleWeaponEntry> weapons;
 
     private Dictionary<string, VehicleEntry> _baseMap;
     private Dictionary<string, VehicleEntry> _bodyMap;
-    private Dictionary<string, VehicleEntry> _weaponMap;
+    private Dictionary<string, VehicleWeaponEntry> _weaponMap;
 
     private void OnEnable()
     {
@@ -29,7 +29,7 @@ public class VehiclePrefabRegistry : ScriptableObject
 
     public List<VehicleEntry> GetAllBodies() => bodyElements;
 
-    public List<VehicleEntry> GetAllWeapons() => weapons;
+    public List<VehicleWeaponEntry> GetAllWeapons() => weapons;
 
     public VehicleEntry GetBase(string key) => _baseMap.TryGetValue(key, out var v) ? v : null;
     public VehicleEntry GetBody(string key) => _bodyMap.TryGetValue(key, out var v) ? v : null;

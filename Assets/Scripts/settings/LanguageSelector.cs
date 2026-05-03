@@ -1,22 +1,25 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
+using UnityEngine.UI;
 
-[RequireComponent(typeof(TMP_Dropdown))]
+[Serializable]
+public class LocaleIconEntry
+{
+    public string localeCode; // "it", "en", "es"
+    public Sprite icon;
+}
+
 public class LanguageSelector : MonoBehaviour
 {
-    [SerializeField] private string tableCollectionName = "ui";
+    [SerializeField] private List<LocaleIconEntry> localeIcons;
+    [SerializeField] private Image selectedLanguageIcon;
 
-    private TMP_Dropdown _dropdown;
-    private List<Locale> _locales;
-    private bool _initialized;
-
-    private void Awake()
-    {
-        _dropdown = GetComponent<TMP_Dropdown>();
-    }
+    private List<Locale> availableLocales;
+    private int selectedLanguage;
 
     private void OnEnable()
     {
@@ -26,91 +29,71 @@ public class LanguageSelector : MonoBehaviour
     private void OnDisable()
     {
         LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
-        _dropdown.onValueChanged.RemoveListener(OnLanguageSelected);
     }
 
     private void Start()
     {
-        _locales = LocalizationSettings.AvailableLocales.Locales;
+        StartCoroutine(InitLocalization());
+    }
 
-        InitializeOptions();
-        UpdateTexts();
+    private IEnumerator InitLocalization()
+    {
+        yield return LocalizationSettings.InitializationOperation;
+
+        availableLocales = LocalizationSettings.AvailableLocales.Locales;
+
+        string currentCode = LocalizationSettings.SelectedLocale?.Identifier.Code ?? "";
+        string currentPrefix = currentCode.Substring(0, Math.Min(2, currentCode.Length));
+
+        int found = availableLocales.FindIndex(l =>
+            l.Identifier.Code.StartsWith(currentPrefix, StringComparison.OrdinalIgnoreCase));
+
+        if (found < 0 && availableLocales.Count > 0)
+            LocalizationSettings.SelectedLocale = availableLocales[0];
+
         UpdateSelection();
-    }
-
-    // =========================
-    // INITIALIZATION
-    // =========================
-
-    private void InitializeOptions()
-    {
-        if (_initialized)
-            return;
-
-        _dropdown.ClearOptions();
-
-        var options = new List<TMP_Dropdown.OptionData>();
-
-        foreach (var _ in _locales)
-            options.Add(new TMP_Dropdown.OptionData(""));
-
-        _dropdown.AddOptions(options);
-
-        _dropdown.onValueChanged.AddListener(OnLanguageSelected);
-
-        _initialized = true;
-    }
-
-    // =========================
-    // UPDATE
-    // =========================
-
-    private void UpdateTexts()
-    {
-        for (int i = 0; i < _locales.Count; i++)
-        {
-            _dropdown.options[i].text = GetTranslatedLocaleName(_locales[i]);
-        }
-
-        _dropdown.RefreshShownValue();
     }
 
     private void UpdateSelection()
     {
-        int index = _locales.IndexOf(LocalizationSettings.SelectedLocale);
+        if (availableLocales == null || availableLocales.Count == 0) return;
 
-        if (index >= 0)
-            _dropdown.SetValueWithoutNotify(index);
+        string currentCode = LocalizationSettings.SelectedLocale?.Identifier.Code ?? "";
+        string currentPrefix = currentCode.Substring(0, Math.Min(2, currentCode.Length));
 
-        _dropdown.RefreshShownValue();
+        int found = availableLocales.FindIndex(l =>
+            l.Identifier.Code.StartsWith(currentPrefix, StringComparison.OrdinalIgnoreCase));
+
+        selectedLanguage = found >= 0 ? found : 0;
+
+        string selectedCode = availableLocales[selectedLanguage].Identifier.Code;
+        var entry = localeIcons.Find(e =>
+            selectedCode.StartsWith(e.localeCode, StringComparison.OrdinalIgnoreCase) ||
+            e.localeCode.StartsWith(selectedCode, StringComparison.OrdinalIgnoreCase));
+
+        if (entry != null)
+            selectedLanguageIcon.sprite = entry.icon;
     }
 
-    private void OnLocaleChanged(Locale locale)
+    private void OnLocaleChanged(Locale locale) => UpdateSelection();
+
+    public void NextLanguage()
     {
-        UpdateTexts();
+        selectedLanguage = (selectedLanguage + 1) % availableLocales.Count;
+        ApplySelection();
+    }
+
+    public void PreviousLanguage()
+    {
+        selectedLanguage = (selectedLanguage - 1 + availableLocales.Count) % availableLocales.Count;
+        ApplySelection();
+    }
+
+    private void ApplySelection()
+    {
+        LocalizationSettings.SelectedLocale = availableLocales[selectedLanguage];
+        GameConfig.Data.language = selectedLanguage;
+        GameConfig.Save();
         UpdateSelection();
-    }
-
-    private void OnLanguageSelected(int index)
-    {
-        if (index >= 0 && index < _locales.Count)
-        { 
-            GameConfig.Data.language = index;
-            LocalizationSettings.SelectedLocale = _locales[index]; }
-    }
-
-    // =========================
-    // HELPERS
-    // =========================
-
-    private string GetTranslatedLocaleName(Locale locale)
-    {
-        var localizedString = new LocalizedString
-        {
-            TableReference = tableCollectionName,
-            TableEntryReference = locale.Identifier.Code,
-        };
-
-        return localizedString.GetLocalizedString();
     }
 }

@@ -383,6 +383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InitGame
   sceneToLoad: MainScene
   audioManager: {fileID: 3005852453413511610}
+  gameConfig: {fileID: 64627778616760384}
 --- !u!225 &1930049546
 CanvasGroup:
   m_ObjectHideFlags: 0

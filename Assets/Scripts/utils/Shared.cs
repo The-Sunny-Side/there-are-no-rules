@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Localization;
 
 [Serializable]
 public class HighlightableElement
@@ -20,4 +21,18 @@ public enum Mode { Host, ServerOnly, Client }
 public class VehicleEntry : VehicleElement
 {
     public string key;
+}
+
+[Serializable]
+public class VehicleWeaponEntry : VehicleEntry
+{
+    public int cooldown = 0;
+}
+
+[Serializable]
+public class LanguageItem
+{
+    public Locale locale;
+    public string text;
+    public Sprite icon;
 }

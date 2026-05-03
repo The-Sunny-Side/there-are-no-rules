@@ -11,6 +11,8 @@ public class GameConfigData
     public float volume = 0.3f;
     public int language = 0;
     public bool audioEnabled = true;
+    public string name;
+    public bool showTutorial = true;
 }
 
 public class GameConfig : MonoBehaviour
@@ -69,5 +71,10 @@ public class GameConfig : MonoBehaviour
     {
         string path = Path.Combine(Application.persistentDataPath, "game_config.json");
         File.WriteAllText(path, JsonUtility.ToJson(newData?? Data, true));
+    }
+
+    public GameConfigData GetConfigData()
+    {
+        return Data;
     }
 }

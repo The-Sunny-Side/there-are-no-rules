@@ -1,16 +1,27 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Components;
+using UnityEngine.UI;
 
 public class MainSceneManager : MonoBehaviour
 {
     [SerializeField] private UiAnimator menu;
     [SerializeField] private GameObject playPanel;
     [SerializeField] private UiAnimator menuButtons;
+    [SerializeField] private UiAnimator playerName;
     [SerializeField] private Composer composer;
+    [SerializeField] private GameObject nameModal;
 
-    public void Start()
+    private UiAnimator[] nameModalAnimators;
+    private TMP_InputField nameInputField;
+
+    private TextMeshProUGUI playerNameText;
+
+    public void Awake()
     {
-    
+        nameModalAnimators = nameModal.GetComponents<UiAnimator>();
+        nameInputField = nameModal.transform.Find("NameInputField").GetComponent<TMP_InputField>();
         Dictionary<string, VehicleEntry> list = VehicleManager.Instance?.LoadVehicleConfig();
 
 
@@ -20,7 +31,7 @@ public class MainSceneManager : MonoBehaviour
             composer.baseElement = Instantiate(baseElement.element);
             composer.bodyElement = Instantiate(bodyElement.element);
 
-            if (list.TryGetValue(VehicleElementsKeys.WeaponBack, out VehicleEntry backWeaponElement) && backWeaponElement?.element!=null)
+            if (list.TryGetValue(VehicleElementsKeys.WeaponBack, out VehicleEntry backWeaponElement) && backWeaponElement?.element != null)
                 composer.weaponBackElement = Instantiate(backWeaponElement.element);
 
             if (list.TryGetValue(VehicleElementsKeys.WeaponFront, out VehicleEntry frontWeaponElement) && frontWeaponElement?.element != null)
@@ -35,7 +46,17 @@ public class MainSceneManager : MonoBehaviour
             composer.AlignComponents();
         }
     }
+    public void Start()
+    {
+        InitMenu();
+    }
 
+    public void HideHud()
+    {
+        playerName.Hide();
+        menuButtons.Hide();
+        playPanel?.GetComponent<UiAnimator>()?.Hide();
+    }
     public void OnPlayButtonClick()
     {
         AudioManager.Instance?.PlayButtonAudio();
@@ -43,6 +64,7 @@ public class MainSceneManager : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(json))
         {
+            HideHud();
             UiLoader.Instance?.Show();
             StartCoroutine(Utilities.DelayedEvent((() =>
             {
@@ -57,8 +79,7 @@ public class MainSceneManager : MonoBehaviour
 
     public void OnPlayAsHost()
     {
-        menuButtons.Hide();
-        playPanel?.GetComponent<UiAnimator>()?.Hide();
+        HideHud();
         GameManager.Instance.SetNetworkMode(Mode.Host);
         GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
         UiLoader.Instance?.Show();
@@ -70,8 +91,7 @@ public class MainSceneManager : MonoBehaviour
 
     public void OnPlayAsClient()
     {
-        menuButtons.Hide();
-        playPanel?.GetComponent<UiAnimator>()?.Hide();
+        HideHud();
         GameManager.Instance?.SetNetworkMode(Mode.Client);
         GameManager.Instance?.SetIpAddress(Utilities.GetLocalIPAddress());
         UiLoader.Instance?.Show();
@@ -84,8 +104,7 @@ public class MainSceneManager : MonoBehaviour
 
     public void OnStartServerOnly()
     {
-        menuButtons.Hide();
-        playPanel?.GetComponent<UiAnimator>()?.Hide();
+        HideHud();
         GameManager.Instance?.SetIpAddress(Utilities.GetLocalIPAddress());
         GameManager.Instance?.SetNetworkMode(Mode.ServerOnly);
         UiLoader.Instance?.Show();
@@ -97,8 +116,7 @@ public class MainSceneManager : MonoBehaviour
 
     public void OnVehicleSelectionButtonClick()
     {
-        menuButtons?.Hide();
-        playPanel?.GetComponent<UiAnimator>()?.Hide();
+        HideHud();
         UiLoader.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
@@ -122,12 +140,44 @@ public class MainSceneManager : MonoBehaviour
     public void OnSandboxButtonClick()
     {
         AudioManager.Instance?.PlayButtonAudio();
-        menuButtons?.Hide();
-        playPanel?.GetComponent<UiAnimator>()?.Hide();
+        HideHud();
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToSandboxScreen();
         }), 0.6f));
+    }
+
+    public void InitPlayerName() {         var localizeEvent = playerName.transform.Find("PlayerNameText").GetComponent<LocalizeStringEvent>();
+        localizeEvent.StringReference.Arguments = new object[] { GameConfig.Data.name };
+        localizeEvent.RefreshString();
+    }
+    public void InitMenu()
+    {
+        menuButtons?.Show();
+        InitPlayerName();
+        playerName.Show();
+    }
+
+    public void OnRenameButtonClick()
+    {
+        nameInputField.text = GameConfig.Data.name;
+
+        foreach (UiAnimator animator in nameModalAnimators)
+        {
+            animator.Show();
+        }
+    }
+
+    public void OnRenameConfirmClick()
+    {
+        string newName = nameModal.transform.Find("NameInputField").Find("TextArea").Find("Text").GetComponent<TextMeshProUGUI>().text;
+        GameConfig.Data.name = newName;
+        GameConfig.Save();
+        InitPlayerName();
+        foreach (UiAnimator animator in nameModalAnimators)
+        {
+            animator.Hide();
+        }
     }
 }

@@ -16,7 +16,8 @@ MonoBehaviour:
     m_Code: en
   m_SharedData: {fileID: 11400000, guid: 1c7afdbd207a8464393d5eed4497def3, type: 2}
   m_Metadata:
-    m_Items: []
+    m_Items:
+    - rid: 1590621729594540107
   m_TableData:
   - m_Id: 16283512832
     m_Localized: Body
@@ -110,6 +111,37 @@ MonoBehaviour:
     m_Localized: Sandbox
     m_Metadata:
       m_Items: []
+  - m_Id: 22463459552833536
+    m_Localized: Confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22479833796882432
+    m_Localized: Insert your nickname
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22499692924547072
+    m_Localized: Yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22499798386126848
+    m_Localized: No
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22507524096962560
+    m_Localized: 'Player: {0}'
+    m_Metadata:
+      m_Items:
+      - rid: 1590621729594540107
+  - m_Id: 22880481503784960
+    m_Localized: Do you want to play the tutorial?
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 1590621729594540107
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 22507524096962560
