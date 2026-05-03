@@ -244,6 +244,7 @@ MonoBehaviour:
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3
   driftReleaseThreshold: 0.2
+  driftMinSpeed: 5
   sideGripFactor: 17
   raysCount: 8
   raySpread: 1
@@ -271,6 +272,8 @@ MonoBehaviour:
   _rigidbody: {fileID: 7717976698245890451}
   _predictedRigidbody: {fileID: 2323636566835742312}
   _predictedTransform: {fileID: 0}
+  _isBot: 0
+  _botRaceId: 0
 --- !u!114 &3131593080025538089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,25 +329,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cd9c360b921dc045bb695c635277063, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIDriver
-  _isSetup: 0
-  _prefabId: -2147483648
-  _componentIndex: -2147483648
-  _shouldBePooled: 0
-  _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
-  _directChildren: []
-  _networkRules: {fileID: 0}
-  _visitiblityRules: {fileID: 0}
   roadSequence:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   advanceThresholdFromEnd: 3
-  lookaheadDistance: 60
+  lookaheadDistance: 30
   lookaheadSpeedFactor: 1
   minLookahead: 3
-  maxLookahead: 100
+  maxLookahead: 50
   steerAggression: 2.5
+  enableNoise: 1
+  variationStrength: 1
+  lineVariation: 1
+  paceVariation: 1
+  variationSpeed: 2
+  noiseSeed: -1
   throttle: 1
   throttleAtFullSteer: 0.1
   drawGizmos: 1
@@ -360,15 +360,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e1649818ec14474fba7b4074ad572bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIRespawner
-  _isSetup: 0
-  _prefabId: -2147483648
-  _componentIndex: -2147483648
-  _shouldBePooled: 0
-  _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
-  _directChildren: []
-  _networkRules: {fileID: 0}
-  _visitiblityRules: {fileID: 0}
   fallbackToSpawnPosition: 1
 --- !u!1 &4351208028245520523
 GameObject:
