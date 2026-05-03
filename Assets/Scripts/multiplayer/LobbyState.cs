@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using PurrNet;
+using PurrNet.Modules;
 using UnityEngine;
 
 // Singleton di scena. Server-auth: gestisce ready states, click Play dell'host, countdown e attivazione gara.
@@ -23,8 +24,6 @@ public class LobbyState : NetworkBehaviour
     private readonly Dictionary<PlayerID, bool> _readyStates = new();
     private readonly Dictionary<PlayerID, string> _displayNames = new();
     private readonly List<PlayerID> _playerOrder = new();
-    // Nomi ricevuti prima che il player sia registrato in _playerOrder.
-    private readonly Dictionary<PlayerID, string> _pendingDisplayNames = new();
 
     public IReadOnlyList<PlayerID> Players => _playerOrder;
     public int PlayerCount => _playerOrder.Count;
@@ -60,45 +59,11 @@ public class LobbyState : NetworkBehaviour
     protected override void OnSpawned()
     {
         base.OnSpawned();
-        Debug.Log($"[LobbyState] OnSpawned. isServer={isServer}, isHost={isHost}");
         if (netManager != null)
         {
             netManager.onPlayerJoined += HandlePlayerJoined;
             netManager.onPlayerLeft += HandlePlayerLeft;
         }
-        StartCoroutine(SubmitLocalDisplayNameWhenReady());
-    }
-
-    private IEnumerator SubmitLocalDisplayNameWhenReady()
-    {
-        while (!localPlayer.HasValue)
-            yield return null;
-        SubmitLocalDisplayName(GameConfig.Data.name);
-    }
-
-    // Sul host info.sender di un ServerRpc è l'identità "Server" e non il PlayerID
-    // del giocatore locale, quindi bypassiamo l'RPC e applichiamo il nome direttamente.
-    private void SubmitLocalDisplayName(string displayName)
-    {
-        if (!localPlayer.HasValue) return;
-        if (isServer)
-            ApplyDisplayName(localPlayer.Value, displayName);
-        else
-            SetDisplayNameServer(displayName);
-    }
-
-    private void ApplyDisplayName(PlayerID player, string displayName)
-    {
-        string normalized = NormalizeDisplayName(displayName, player);
-
-        if (!_playerOrder.Contains(player))
-        {
-            _pendingDisplayNames[player] = normalized;
-            return;
-        }
-
-        _displayNames[player] = normalized;
-        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     private void HandlePlayerJoined(PlayerID player, bool isReconnect, bool asServer)
@@ -107,29 +72,31 @@ public class LobbyState : NetworkBehaviour
         if (_playerOrder.Contains(player)) return;
         _playerOrder.Add(player);
         _readyStates[player] = false;
-
-        if (_pendingDisplayNames.TryGetValue(player, out var pendingName))
-        {
-            _displayNames[player] = pendingName;
-            _pendingDisplayNames.Remove(player);
-        }
-        else if (!_displayNames.ContainsKey(player))
-        {
-            _displayNames[player] = player.ToString();
-        }
-
-        Debug.Log("nome del player da gestire:" + GetDisplayName(player));
+        _displayNames[player] = NormalizeDisplayName(ResolveAuthName(player), player);
         BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     private void HandlePlayerLeft(PlayerID player, bool asServer)
     {
         if (!asServer) return;
-        _pendingDisplayNames.Remove(player);
         if (!_playerOrder.Remove(player)) return;
         _readyStates.Remove(player);
         _displayNames.Remove(player);
         BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
+    }
+
+    // Pesca il nome dal payload di autenticazione PurrNet (vedi NameAuthenticator).
+    // Disponibile su tutti i client appena il player è autenticato, prima di onPlayerJoined.
+    private string ResolveAuthName(PlayerID player)
+    {
+        if (networkManager != null &&
+            networkManager.TryGetModule<PlayersManager>(true, out var players) &&
+            players.TryGetConnection(player, out var conn) &&
+            NameAuthenticator.TryGetName(conn, out var name))
+        {
+            return name;
+        }
+        return null;
     }
 
     [ObserversRpc(bufferLast: true)]
@@ -155,13 +122,6 @@ public class LobbyState : NetworkBehaviour
         }
 
         OnLobbyStateChanged?.Invoke();
-    }
-
-    [ServerRpc(requireOwnership: false)]
-    private void SetDisplayNameServer(string displayName, RPCInfo info = default)
-    {
-        Debug.Log($"Ricevuto nome '{displayName}' da {info.sender}");
-        ApplyDisplayName(info.sender, displayName);
     }
 
     public void RequestToggleReady()

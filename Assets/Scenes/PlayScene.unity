@@ -1032,7 +1032,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 734451153}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.999932
+  m_Size: 0.99999976
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2148,6 +2148,7 @@ Transform:
   - {fileID: 933641083}
   - {fileID: 1118415734}
   - {fileID: 803792342}
+  - {fileID: 860054866}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &734451152
@@ -2311,6 +2312,52 @@ MonoBehaviour:
   netManager: {fileID: 1779854406}
   botSpawner: {fileID: 803792343}
   countdownSeconds: 3
+  maxDisplayNameLength: 24
+--- !u!1 &860054865
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 860054866}
+  - component: {fileID: 860054867}
+  m_Layer: 0
+  m_Name: Authenticator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &860054866
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860054865}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 732933556}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &860054867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860054865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc3d9ef5c67344243bf6fb5280213aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NameAuthenticator
+  _timeout: 5
 --- !u!1 &929013938
 GameObject:
   m_ObjectHideFlags: 0
@@ -4652,7 +4699,7 @@ MonoBehaviour:
   _networkAssets: {fileID: 0}
   _networkRules: {fileID: 11400000, guid: ff5a11973fb33cb488524e4ae0247f93, type: 2}
   _visibilityRules: {fileID: 11400000, guid: 8f014a5bd8dc68646a2a3c0b18c5bbd8, type: 2}
-  _authenticator: {fileID: 0}
+  _authenticator: {fileID: 860054867}
   _tickRate: 20
   _patchLingeringProcessBug: 0
 --- !u!114 &1779854407
