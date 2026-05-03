@@ -23,6 +23,8 @@ public class LobbyState : NetworkBehaviour
     private readonly Dictionary<PlayerID, bool> _readyStates = new();
     private readonly Dictionary<PlayerID, string> _displayNames = new();
     private readonly List<PlayerID> _playerOrder = new();
+    // Nomi ricevuti prima che il player sia registrato in _playerOrder.
+    private readonly Dictionary<PlayerID, string> _pendingDisplayNames = new();
 
     public IReadOnlyList<PlayerID> Players => _playerOrder;
     public int PlayerCount => _playerOrder.Count;
@@ -64,16 +66,39 @@ public class LobbyState : NetworkBehaviour
             netManager.onPlayerJoined += HandlePlayerJoined;
             netManager.onPlayerLeft += HandlePlayerLeft;
         }
+        StartCoroutine(SubmitLocalDisplayNameWhenReady());
+    }
 
-        // Fallback: se il client locale è già connesso (caso host) prima dell'OnSpawned,
-        // l'evento di join è già passato. Lo aggiungiamo manualmente.
-        if (isServer && localPlayer.HasValue)
+    private IEnumerator SubmitLocalDisplayNameWhenReady()
+    {
+        while (!localPlayer.HasValue)
+            yield return null;
+        SubmitLocalDisplayName(GameConfig.Data.name);
+    }
+
+    // Sul host info.sender di un ServerRpc è l'identità "Server" e non il PlayerID
+    // del giocatore locale, quindi bypassiamo l'RPC e applichiamo il nome direttamente.
+    private void SubmitLocalDisplayName(string displayName)
+    {
+        if (!localPlayer.HasValue) return;
+        if (isServer)
+            ApplyDisplayName(localPlayer.Value, displayName);
+        else
+            SetDisplayNameServer(displayName);
+    }
+
+    private void ApplyDisplayName(PlayerID player, string displayName)
+    {
+        string normalized = NormalizeDisplayName(displayName, player);
+
+        if (!_playerOrder.Contains(player))
         {
-            HandlePlayerJoined(localPlayer.Value, false, true);
+            _pendingDisplayNames[player] = normalized;
+            return;
         }
 
-        if (isClient)
-            SetDisplayNameServer(GameConfig.Data.name);
+        _displayNames[player] = normalized;
+        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     private void HandlePlayerJoined(PlayerID player, bool isReconnect, bool asServer)
@@ -82,13 +107,25 @@ public class LobbyState : NetworkBehaviour
         if (_playerOrder.Contains(player)) return;
         _playerOrder.Add(player);
         _readyStates[player] = false;
-        _displayNames[player] = GetDisplayName(player);
+
+        if (_pendingDisplayNames.TryGetValue(player, out var pendingName))
+        {
+            _displayNames[player] = pendingName;
+            _pendingDisplayNames.Remove(player);
+        }
+        else if (!_displayNames.ContainsKey(player))
+        {
+            _displayNames[player] = player.ToString();
+        }
+
+        Debug.Log("nome del player da gestire:" + GetDisplayName(player));
         BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     private void HandlePlayerLeft(PlayerID player, bool asServer)
     {
         if (!asServer) return;
+        _pendingDisplayNames.Remove(player);
         if (!_playerOrder.Remove(player)) return;
         _readyStates.Remove(player);
         _displayNames.Remove(player);
@@ -123,12 +160,8 @@ public class LobbyState : NetworkBehaviour
     [ServerRpc(requireOwnership: false)]
     private void SetDisplayNameServer(string displayName, RPCInfo info = default)
     {
-        if (!_readyStates.ContainsKey(info.sender)) return;
-
-        _displayNames[info.sender] = NormalizeDisplayName(displayName, info.sender);
         Debug.Log($"Ricevuto nome '{displayName}' da {info.sender}");
-
-        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
+        ApplyDisplayName(info.sender, displayName);
     }
 
     public void RequestToggleReady()
