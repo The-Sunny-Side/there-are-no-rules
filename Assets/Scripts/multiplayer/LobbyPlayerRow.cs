@@ -2,7 +2,7 @@ using PurrNet;
 using TMPro;
 using UnityEngine;
 
-// Riga UI per un singolo player nella lobby. Mostra ID + indicatore ready.
+// Riga UI per un singolo player nella lobby. Mostra nome + indicatore ready.
 // Va istanziata dal LobbyUI come prefab e bindata a un PlayerID.
 public class LobbyPlayerRow : MonoBehaviour
 {
@@ -20,7 +20,9 @@ public class LobbyPlayerRow : MonoBehaviour
     {
         _id = id;
         _bound = true;
-        if (nameLabel != null) nameLabel.text = id.ToString();
+        Debug.Log("nome:"+LobbyState.Instance.GetDisplayName(id));
+        if (nameLabel != null)
+            nameLabel.text = LobbyState.Instance != null ? LobbyState.Instance.GetDisplayName(id) : id.ToString();
         Refresh();
     }
 

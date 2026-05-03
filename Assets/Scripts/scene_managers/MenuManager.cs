@@ -57,11 +57,11 @@ public class MenuManager : MonoBehaviour
             }
             else if (isMe)
             {
-                label = "Tu";
+                label = $"{GetPlayerDisplayName(finishHumanIds[i])} (Tu)";
             }
             else
             {
-                label = finishHumanIds[i].ToString();
+                label = GetPlayerDisplayName(finishHumanIds[i]);
             }
 
             sb.AppendLine($"{i + 1}.  {label}");
@@ -72,5 +72,10 @@ public class MenuManager : MonoBehaviour
             sb.AppendLine($"\n({remaining} ancora in gara...)");
 
         textToShowWhenFinished.text = sb.ToString();
+    }
+
+    private static string GetPlayerDisplayName(PlayerID playerId)
+    {
+        return LobbyState.Instance != null ? LobbyState.Instance.GetDisplayName(playerId) : playerId.ToString();
     }
 }

@@ -17,14 +17,20 @@ public class LobbyState : NetworkBehaviour
     [Header("Settings")]
     [Tooltip("Secondi del countdown 3-2-1 prima dell'avvio della gara.")]
     [SerializeField] private int countdownSeconds = 3;
+    [SerializeField] private int maxDisplayNameLength = 24;
 
     // Verità server. Mirrorata sui client tramite ObserversRpc bufferLast.
     private readonly Dictionary<PlayerID, bool> _readyStates = new();
+    private readonly Dictionary<PlayerID, string> _displayNames = new();
     private readonly List<PlayerID> _playerOrder = new();
 
     public IReadOnlyList<PlayerID> Players => _playerOrder;
     public int PlayerCount => _playerOrder.Count;
     public bool IsReady(PlayerID id) => _readyStates.TryGetValue(id, out var r) && r;
+    public string GetDisplayName(PlayerID id) =>
+        _displayNames.TryGetValue(id, out var name) && !string.IsNullOrWhiteSpace(name)
+            ? name
+            : id.ToString();
 
     public bool IsRaceActive { get; private set; }
     public bool CountdownActive { get; private set; }
@@ -65,6 +71,9 @@ public class LobbyState : NetworkBehaviour
         {
             HandlePlayerJoined(localPlayer.Value, false, true);
         }
+
+        if (isClient)
+            SetDisplayNameServer(GameConfig.Data.name);
     }
 
     private void HandlePlayerJoined(PlayerID player, bool isReconnect, bool asServer)
@@ -73,7 +82,8 @@ public class LobbyState : NetworkBehaviour
         if (_playerOrder.Contains(player)) return;
         _playerOrder.Add(player);
         _readyStates[player] = false;
-        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot());
+        _displayNames[player] = GetDisplayName(player);
+        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     private void HandlePlayerLeft(PlayerID player, bool asServer)
@@ -81,14 +91,16 @@ public class LobbyState : NetworkBehaviour
         if (!asServer) return;
         if (!_playerOrder.Remove(player)) return;
         _readyStates.Remove(player);
-        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot());
+        _displayNames.Remove(player);
+        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     [ObserversRpc(bufferLast: true)]
-    private void BroadcastLobbySnapshot(PlayerID[] players, bool[] readyStates)
+    private void BroadcastLobbySnapshot(PlayerID[] players, bool[] readyStates, string[] displayNames)
     {
         _playerOrder.Clear();
         _readyStates.Clear();
+        _displayNames.Clear();
 
         int count = players != null ? players.Length : 0;
         for (int i = 0; i < count; i++)
@@ -98,9 +110,25 @@ public class LobbyState : NetworkBehaviour
 
             bool ready = readyStates != null && i < readyStates.Length && readyStates[i];
             _readyStates[player] = ready;
+
+            string displayName = displayNames != null && i < displayNames.Length
+                ? displayNames[i]
+                : player.ToString();
+            _displayNames[player] = NormalizeDisplayName(displayName, player);
         }
 
         OnLobbyStateChanged?.Invoke();
+    }
+
+    [ServerRpc(requireOwnership: false)]
+    private void SetDisplayNameServer(string displayName, RPCInfo info = default)
+    {
+        if (!_readyStates.ContainsKey(info.sender)) return;
+
+        _displayNames[info.sender] = NormalizeDisplayName(displayName, info.sender);
+        Debug.Log($"Ricevuto nome '{displayName}' da {info.sender}");
+
+        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     public void RequestToggleReady()
@@ -115,7 +143,7 @@ public class LobbyState : NetworkBehaviour
         if (!_readyStates.ContainsKey(info.sender)) return;
         bool newState = !_readyStates[info.sender];
         _readyStates[info.sender] = newState;
-        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot());
+        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     public bool AreAllPlayersReady()
@@ -193,5 +221,25 @@ public class LobbyState : NetworkBehaviour
         for (int i = 0; i < _playerOrder.Count; i++)
             ready[i] = IsReady(_playerOrder[i]);
         return ready;
+    }
+
+    private string[] BuildDisplayNameSnapshot()
+    {
+        var names = new string[_playerOrder.Count];
+        for (int i = 0; i < _playerOrder.Count; i++)
+            names[i] = GetDisplayName(_playerOrder[i]);
+        return names;
+    }
+
+    private string NormalizeDisplayName(string displayName, PlayerID fallbackId)
+    {
+        string normalized = displayName?.Trim();
+        if (string.IsNullOrWhiteSpace(normalized))
+            normalized = fallbackId.ToString();
+
+        if (maxDisplayNameLength > 0 && normalized.Length > maxDisplayNameLength)
+            normalized = normalized.Substring(0, maxDisplayNameLength);
+
+        return normalized;
     }
 }
