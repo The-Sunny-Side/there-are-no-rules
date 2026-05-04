@@ -27,6 +27,11 @@ public class LobbyState : NetworkBehaviour
     // Countdown server-auth con riconciliazione e buffering per late joiner gestiti da PurrNet.
     private readonly SyncTimer _countdownTimer = new();
 
+    // Multipli onChanged dei sync types arrivano back-to-back sullo stesso frame
+    // (es. join player = 3 mutazioni; late-joiner initial state = Cleared + N Added per container).
+    // Coalesciamo in un solo OnLobbyStateChanged a fine frame per evitare rebuild a raffica della UI.
+    private bool _lobbyDirty;
+
     public IReadOnlyList<PlayerID> Players => _playerOrder.list;
     public int PlayerCount => _playerOrder.Count;
     public bool IsReady(PlayerID id) => _readyStates.TryGetValue(id, out var r) && r;
@@ -82,22 +87,33 @@ public class LobbyState : NetworkBehaviour
         _displayNames.onChanged += HandleNameDictChanged;
 
         // Forza un primo refresh così la UI vede subito uno stato eventualmente già popolato dal buffering.
+        MarkLobbyDirty();
+    }
+
+    void LateUpdate()
+    {
+        if (!_lobbyDirty) return;
+        _lobbyDirty = false;
         OnLobbyStateChanged?.Invoke();
     }
 
-    private void HandlePlayerOrderChanged(SyncListChange<PlayerID> change) => OnLobbyStateChanged?.Invoke();
-    private void HandleReadyDictChanged(SyncDictionaryChange<PlayerID, bool> change) => OnLobbyStateChanged?.Invoke();
-    private void HandleNameDictChanged(SyncDictionaryChange<PlayerID, string> change) => OnLobbyStateChanged?.Invoke();
+    private void MarkLobbyDirty() => _lobbyDirty = true;
 
+    private void HandlePlayerOrderChanged(SyncListChange<PlayerID> change) => MarkLobbyDirty();
+    private void HandleReadyDictChanged(SyncDictionaryChange<PlayerID, bool> change) => MarkLobbyDirty();
+    private void HandleNameDictChanged(SyncDictionaryChange<PlayerID, string> change) => MarkLobbyDirty();
+
+    // CountdownActive/CountdownValue sono polled da LobbyUI.Update(): non serve invocare
+    // OnLobbyStateChanged per ogni tick (causerebbe rebuild inutili della player list).
     private void HandleCountdownTick()
     {
         OnCountdownTick?.Invoke(_countdownTimer.remainingInt);
-        OnLobbyStateChanged?.Invoke();
     }
 
     private void HandleCountdownEnd()
     {
-        OnLobbyStateChanged?.Invoke();
+        // BroadcastRaceStarted (server) → setta IsRaceActive e fa partire OnLobbyStateChanged
+        // sia sul server sia sui client, quindi qui non serve invocarlo manualmente.
         if (isServer) BroadcastRaceStarted();
     }
 
@@ -155,6 +171,9 @@ public class LobbyState : NetworkBehaviour
 
     public bool IsLocalReady()
     {
+        // isSpawned: prima di OnSpawned il NetworkIdentity ha networkManager==null
+        // e l'accesso a localPlayer NRE-rebbe internamente (bug noto PurrNet).
+        if (!isSpawned) return false;
         if (!localPlayer.HasValue) return false;
         return IsReady(localPlayer.Value);
     }
@@ -181,7 +200,7 @@ public class LobbyState : NetworkBehaviour
     {
         IsRaceActive = true;
         OnRaceStarted?.Invoke();
-        OnLobbyStateChanged?.Invoke();
+        MarkLobbyDirty();
     }
 
     private string NormalizeDisplayName(string displayName, PlayerID fallbackId)

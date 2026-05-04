@@ -1,7 +1,23 @@
 using PurrNet;
+using PurrNet.Packing;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
+// Stato server-auth: ogni voce è un player o un bot che ha tagliato il traguardo.
+// IPackedAuto fa generare a PurrNet il packer per la replica via SyncList.
+internal struct FinishEntry : IPackedAuto, IEquatable<FinishEntry>
+{
+    public bool isBot;
+    public PlayerID playerId;
+    public int botRaceId;
+
+    public bool Equals(FinishEntry other)
+    {
+        if (isBot != other.isBot) return false;
+        return isBot ? botRaceId == other.botRaceId : playerId == other.playerId;
+    }
+}
 
 public class FinishPoint : NetworkBehaviour
 {
@@ -9,25 +25,28 @@ public class FinishPoint : NetworkBehaviour
     [SerializeField] private MenuManager menuManager;
 
     private readonly List<PlayerID> _playerList = new();
-    private readonly List<FinishEntry> _finishOrder = new();
+    // Replicato + buffering per late joiner gestiti da PurrNet.
+    private readonly SyncList<FinishEntry> _finishOrder = new();
 
-    private struct FinishEntry : IEquatable<FinishEntry>
+    protected override void OnSpawned()
     {
-        public bool isBot;
-        public PlayerID playerId;
-        public int botRaceId;
-
-        public bool Equals(FinishEntry other)
+        base.OnSpawned();
+        if (netManager != null)
         {
-            if (isBot != other.isBot) return false;
-            return isBot ? botRaceId == other.botRaceId : playerId == other.playerId;
+            netManager.onPlayerJoined += OnPlayerJoined;
+            netManager.onPlayerLeft += OnPlayerLeft;
         }
+        _finishOrder.onChanged += HandleFinishOrderChanged;
     }
 
-    void Start()
+    private new void OnDestroy()
     {
-        netManager.onPlayerJoined += OnPlayerJoined;
-        netManager.onPlayerLeft += OnPlayerLeft;
+        if (netManager != null)
+        {
+            netManager.onPlayerJoined -= OnPlayerJoined;
+            netManager.onPlayerLeft -= OnPlayerLeft;
+        }
+        _finishOrder.onChanged -= HandleFinishOrderChanged;
     }
 
     private void OnPlayerJoined(PlayerID player, bool isReconnect, bool asServer)
@@ -49,17 +68,28 @@ public class FinishPoint : NetworkBehaviour
 
         var player = collider.gameObject.GetComponentInParent<PlayerIdentity>();
         if (!TryResolveFinishEntry(player, out FinishEntry finishedEntry)) return;
-
         if (_finishOrder.Contains(finishedEntry)) return;
 
-        _finishOrder.Add(finishedEntry);
-        BroadcastFinishState();
+        _finishOrder.Add(finishedEntry); // SyncList replica e bufferizza per i late joiner
     }
 
-    [ObserversRpc]
-    private void RpcOnPlayerFinished(PlayerID[] finishHumanIds, bool[] finishIsBot, int[] finishBotIds, int totalPlayers)
+    private void HandleFinishOrderChanged(SyncListChange<FinishEntry> change)
     {
-        menuManager.OnPlayerFinished(finishHumanIds, finishIsBot, finishBotIds, localPlayer, totalPlayers);
+        if (menuManager == null) return;
+
+        int count = _finishOrder.Count;
+        var humanIds = new PlayerID[count];
+        var isBotArr = new bool[count];
+        var botIds = new int[count];
+        for (int i = 0; i < count; i++)
+        {
+            var e = _finishOrder[i];
+            humanIds[i] = e.playerId;
+            isBotArr[i] = e.isBot;
+            botIds[i] = e.botRaceId;
+        }
+
+        menuManager.OnPlayerFinished(humanIds, isBotArr, botIds, localPlayer, GetTotalRacers());
     }
 
     private bool TryResolveFinishEntry(PlayerIdentity player, out FinishEntry entry)
@@ -88,24 +118,6 @@ public class FinishPoint : NetworkBehaviour
 
         entry = default;
         return false;
-    }
-
-    private void BroadcastFinishState()
-    {
-        int count = _finishOrder.Count;
-        var finishHumanIds = new PlayerID[count];
-        var finishIsBot = new bool[count];
-        var finishBotIds = new int[count];
-
-        for (int i = 0; i < count; i++)
-        {
-            FinishEntry entry = _finishOrder[i];
-            finishHumanIds[i] = entry.playerId;
-            finishIsBot[i] = entry.isBot;
-            finishBotIds[i] = entry.botRaceId;
-        }
-
-        RpcOnPlayerFinished(finishHumanIds, finishIsBot, finishBotIds, GetTotalRacers());
     }
 
     private int GetTotalRacers()
