@@ -100,7 +100,7 @@ public class RespawnerManager : NetworkBehaviour
         }
     }
 
-    private static void TeleportPlayerIdentity(PlayerIdentity player, Vector3 position, Quaternion rotation)
+    public static void TeleportPlayerIdentity(PlayerIdentity player, Vector3 position, Quaternion rotation)
     {
         var rb = player.Rigidbody;
         if (rb != null)

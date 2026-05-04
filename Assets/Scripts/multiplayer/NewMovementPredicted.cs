@@ -33,6 +33,8 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [SerializeField] private float driftAngleThreshold = 0.3f;
     [Tooltip("Soglia di riallineamento sotto la quale viene rilasciato il boost accumulato dal drift.")]
     [SerializeField] private float driftReleaseThreshold = 0.15f;
+    [Tooltip("Velocita minima sul terreno richiesta per mantenere o accumulare carica drift.")]
+    [SerializeField] private float driftMinSpeed = 5f;
     [Tooltip("Forza con cui viene ridotta la velocità laterale sul terreno. Valori più alti danno più grip e meno scivolamento.")]
     [SerializeField] private float sideGripFactor = 12f;
 
@@ -56,7 +58,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
     private VFXGroup _driftVFX;
 
-    private MobileInputManager _inputManager;
+    private IVehicleInputProvider _input;
 
     public struct State : IPredictedData<State>
     {
@@ -80,7 +82,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
     protected override void LateAwake()
     {
-        _inputManager = MobileInputManager.instance;
+        _input = GetComponent<IVehicleInputProvider>();
         _rigidbody = GetComponent<PredictedRigidbody>();
         TryAssignLocalCamera();
         var loader = GetComponentInChildren<VehicleLoader>();
@@ -161,11 +163,17 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
             // --- DRIFT / BOOST ---
             float totalGroundSpeed = groundVel.magnitude;
-            if (totalGroundSpeed > 1f)
+            if (totalGroundSpeed < driftMinSpeed || totalGroundSpeed <= 1f)
+            {
+                state.boostCharge = 0f;
+                state.driftTimer = 0f;
+                _driftVFX.Stop();
+            }
+            else
             {
                 float dirDot = Vector3.Dot(groundVel.normalized, forward);
                 float misalignment = 1f - Mathf.Clamp01(dirDot);
-                if (misalignment > driftAngleThreshold && totalGroundSpeed > 5f)
+                if (misalignment > driftAngleThreshold)
                 {
                     _driftVFX.Play();
 
@@ -346,13 +354,13 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
     protected override void UpdateInput(ref Input input)
     {
-        input.jump = _inputManager.jumpTapped;
+        input.jump = _input.JumpTapped;
     }
 
     protected override void GetFinalInput(ref Input input)
     {
-        input.steer = _inputManager.rotateHorizontal;
-        input.throttle = _inputManager.rotateVertical;
+        input.steer = _input.Steer;
+        input.throttle = _input.Throttle;
     }
 
     protected override void SanitizeInput(ref Input input)

@@ -29,7 +29,11 @@ public class RoadPrefabSaver : MonoBehaviour
         for (int i = 0; i < generators.Length; i++)
         {
             var gen = generators[i];
-            if (gen._mesh == null || gen._mesh.vertexCount == 0)
+            Mesh sourceMesh = gen._mesh;
+            if (sourceMesh == null)
+                sourceMesh = gen.GetComponent<MeshFilter>()?.sharedMesh;
+
+            if (sourceMesh == null || sourceMesh.vertexCount == 0)
             {
                 Debug.LogWarning($"[RoadPrefabSaver] {gen.gameObject.name}: mesh vuota, ignorata. Esegui prima 'Generate All Roads'.");
                 continue;
@@ -37,10 +41,13 @@ public class RoadPrefabSaver : MonoBehaviour
 
             string meshName = $"{baseName}_{gen.gameObject.name.Replace(" ", "_")}";
             string meshPath = $"{mapFolder}/{meshName}.asset";
-            Mesh meshCopy = Instantiate(gen._mesh);
+            Mesh meshCopy = Instantiate(sourceMesh);
             meshCopy.name = meshName;
             UnityEditor.AssetDatabase.CreateAsset(meshCopy, meshPath);
 
+            gen._mesh = meshCopy;
+            gen._meshFilter ??= gen.GetComponent<MeshFilter>();
+            gen._meshCollider ??= gen.GetComponent<MeshCollider>();
             gen._meshFilter.sharedMesh = meshCopy;
             gen._meshCollider.sharedMesh = meshCopy;
             saved++;

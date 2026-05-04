@@ -1,6 +1,23 @@
 using PurrNet;
+using PurrNet.Packing;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+
+// Stato server-auth: ogni voce è un player o un bot che ha tagliato il traguardo.
+// IPackedAuto fa generare a PurrNet il packer per la replica via SyncList.
+internal struct FinishEntry : IPackedAuto, IEquatable<FinishEntry>
+{
+    public bool isBot;
+    public PlayerID playerId;
+    public int botRaceId;
+
+    public bool Equals(FinishEntry other)
+    {
+        if (isBot != other.isBot) return false;
+        return isBot ? botRaceId == other.botRaceId : playerId == other.playerId;
+    }
+}
 
 public class FinishPoint : NetworkBehaviour
 {
@@ -8,12 +25,28 @@ public class FinishPoint : NetworkBehaviour
     [SerializeField] private MenuManager menuManager;
 
     private readonly List<PlayerID> _playerList = new();
-    private readonly List<PlayerID> _finishOrder = new();
+    // Replicato + buffering per late joiner gestiti da PurrNet.
+    private readonly SyncList<FinishEntry> _finishOrder = new();
 
-    void Start()
+    protected override void OnSpawned()
     {
-        netManager.onPlayerJoined += OnPlayerJoined;
-        netManager.onPlayerLeft += OnPlayerLeft;
+        base.OnSpawned();
+        if (netManager != null)
+        {
+            netManager.onPlayerJoined += OnPlayerJoined;
+            netManager.onPlayerLeft += OnPlayerLeft;
+        }
+        _finishOrder.onChanged += HandleFinishOrderChanged;
+    }
+
+    private new void OnDestroy()
+    {
+        if (netManager != null)
+        {
+            netManager.onPlayerJoined -= OnPlayerJoined;
+            netManager.onPlayerLeft -= OnPlayerLeft;
+        }
+        _finishOrder.onChanged -= HandleFinishOrderChanged;
     }
 
     private void OnPlayerJoined(PlayerID player, bool isReconnect, bool asServer)
@@ -34,17 +67,79 @@ public class FinishPoint : NetworkBehaviour
         if (!isServer) return;
 
         var player = collider.gameObject.GetComponentInParent<PlayerIdentity>();
-        if (player == null || !player.TryGetOwner(out PlayerID finishedId)) return;
+        if (!TryResolveFinishEntry(player, out FinishEntry finishedEntry)) return;
+        if (_finishOrder.Contains(finishedEntry)) return;
 
-        if (_finishOrder.Contains(finishedId)) return;
-
-        _finishOrder.Add(finishedId);
-        RpcOnPlayerFinished(_finishOrder.ToArray(), _playerList.Count);
+        _finishOrder.Add(finishedEntry); // SyncList replica e bufferizza per i late joiner
     }
 
-    [ObserversRpc]
-    private void RpcOnPlayerFinished(PlayerID[] finishOrder, int totalPlayers)
+    private void HandleFinishOrderChanged(SyncListChange<FinishEntry> change)
     {
-        menuManager.OnPlayerFinished(finishOrder, localPlayer, totalPlayers);
+        if (menuManager == null) return;
+
+        int count = _finishOrder.Count;
+        var humanIds = new PlayerID[count];
+        var isBotArr = new bool[count];
+        var botIds = new int[count];
+        for (int i = 0; i < count; i++)
+        {
+            var e = _finishOrder[i];
+            humanIds[i] = e.playerId;
+            isBotArr[i] = e.isBot;
+            botIds[i] = e.botRaceId;
+        }
+
+        menuManager.OnPlayerFinished(humanIds, isBotArr, botIds, localPlayer, GetTotalRacers());
+    }
+
+    private bool TryResolveFinishEntry(PlayerIdentity player, out FinishEntry entry)
+    {
+        if (player != null && player.IsBot && player.BotRaceId > 0)
+        {
+            entry = new FinishEntry
+            {
+                isBot = true,
+                playerId = default,
+                botRaceId = player.BotRaceId
+            };
+            return true;
+        }
+
+        if (player != null && player.TryGetOwner(out PlayerID finishedId))
+        {
+            entry = new FinishEntry
+            {
+                isBot = false,
+                playerId = finishedId,
+                botRaceId = 0
+            };
+            return true;
+        }
+
+        entry = default;
+        return false;
+    }
+
+    private int GetTotalRacers()
+    {
+        var humanIds = new HashSet<PlayerID>();
+        var botIds = new HashSet<int>();
+
+        foreach (var identity in FindObjectsByType<PlayerIdentity>(FindObjectsSortMode.None))
+        {
+            if (identity == null) continue;
+
+            if (identity.IsBot && identity.BotRaceId > 0)
+            {
+                botIds.Add(identity.BotRaceId);
+                continue;
+            }
+
+            if (identity.TryGetOwner(out PlayerID playerId))
+                humanIds.Add(playerId);
+        }
+
+        int humans = humanIds.Count > 0 ? humanIds.Count : _playerList.Count;
+        return humans + botIds.Count;
     }
 }

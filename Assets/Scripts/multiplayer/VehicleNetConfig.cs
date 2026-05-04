@@ -1,5 +1,5 @@
 using PurrNet.Prediction;
-using UnityEngine;       
+using UnityEngine;
 
 // Questo script fa dire al gioco:
 // "Il mio veicolo ha questa configurazione" e la fa vedere a tutti.
@@ -11,7 +11,7 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
     // Numero della "versione" della config (1, 2, 3...).
     private int _nextRevision = 1;
 
-    // Ultima versione già applicata in grafica.
+    // Ultima versione gia' applicata in grafica.
     private int _lastAppliedRevision;
 
     // True = abbiamo una config pronta da spedire.
@@ -20,10 +20,20 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
     // Qui teniamo il testo JSON pronto da mandare.
     private string _pendingJson;
 
-    // Ultimo JSON che abbiamo già mandato (per non rimandarlo uguale).
+    // Ultimo JSON che abbiamo gia' mandato (per non rimandarlo uguale).
     private string _lastSubmittedJson;
 
-    // Viene chiamato quando l'oggetto predicted è pronto.
+    public override void ResetState()
+    {
+        base.ResetState();
+        _nextRevision = 1;
+        _lastAppliedRevision = 0;
+        _hasPendingConfig = false;
+        _pendingJson = null;
+        _lastSubmittedJson = null;
+    }
+
+    // Viene chiamato quando l'oggetto predicted e' pronto.
     protected override void LateAwake()
     {
         // Proviamo subito a prendere la config locale del player.
@@ -34,14 +44,14 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
     // Questo metodo viene chiamato spesso (frame).
     protected override void UpdateInput(ref ConfigInput input)
     {
-        // Controlla se c'è una config nuova sul disco/manager.
+        // Controlla se c'e' una config nuova sul disco/manager.
         TryQueueLatestLocalConfig();
 
-        // Se non c'è niente da inviare, usciamo.
+        // Se non c'e' niente da inviare, usciamo.
         if (!_hasPendingConfig)
             return;
 
-        // Diciamo: "Sì, voglio inviare una config".
+        // Diciamo: "Si', voglio inviare una config".
         input.submit = true;
 
         // Mettiamo il numero di versione.
@@ -50,7 +60,7 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
         // Mettiamo il testo JSON da inviare.
         input.json = _pendingJson;
 
-        // Segniamo che questo JSON è già stato messo in invio.
+        // Segniamo che questo JSON e' gia' stato messo in invio.
         _lastSubmittedJson = _pendingJson;
 
         // Puliamo la coda locale.
@@ -58,18 +68,18 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
         _hasPendingConfig = false;
     }
 
-    // Questa è la "simulazione": se arriva input valido, aggiorna lo stato.
+    // Questa e' la "simulazione": se arriva input valido, aggiorna lo stato.
     protected override void Simulate(ConfigInput input, ref ConfigState state, float delta)
     {
         // Se nessuno ha chiesto di inviare, non fare niente.
         if (!input.submit)
             return;
 
-        // Se la versione è vecchia o uguale, ignorala.
+        // Se la versione e' vecchia o uguale, ignorala.
         if (input.revision <= state.revision)
             return;
 
-        // Se il JSON è vuoto, ignoralo.
+        // Se il JSON e' vuoto, ignoralo.
         if (string.IsNullOrEmpty(input.json))
             return;
 
@@ -91,22 +101,38 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
     protected override void UpdateView(ConfigState viewState, ConfigState? verified)
     {
         // Se manca il loader, non possiamo montare nulla.
-        if (loader == null)
+        if (!EnsureLoader())
             return;
 
-        // Se è una versione già vista, non rifare il lavoro.
+        // Se e' una versione gia' vista, non rifare il lavoro.
         if (viewState.revision <= _lastAppliedRevision)
             return;
 
-        // Se il JSON è vuoto, non applicare.
+        // Se il JSON e' vuoto, non applicare.
         if (string.IsNullOrEmpty(viewState.json))
             return;
 
-        // Segna che questa versione è applicata.
+        // Segna che questa versione e' applicata.
         _lastAppliedRevision = viewState.revision;
 
         // Monta davvero i pezzi del veicolo.
         loader.ApplyConfigJson(viewState.json);
+    }
+
+    // Usato dai bot server-owned: mette in coda una config esplicita invece di leggere quella del player locale.
+    public void SetServerConfigJson(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            Debug.LogWarning("VehicleNetConfig: SetServerConfigJson ricevuto json vuoto");
+            return;
+        }
+
+        QueueConfigJson(json);
+
+        // Il bot nasce con prefab vuoto: costruiamo subito i visuals lato server/host.
+        if (EnsureLoader())
+            loader.ApplyConfigJson(json);
     }
 
     // Guarda la config locale del player e, se nuova, la mette in coda.
@@ -123,11 +149,16 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
         // Leggi il JSON del veicolo locale.
         string json = VehicleManager.Instance.GetVehicleJson();
 
-        // Se è vuoto, niente da fare.
+        // Se e' vuoto, niente da fare.
         if (string.IsNullOrEmpty(json))
             return;
 
-        // Se è uguale all'ultimo già inviato o già in coda, evita duplicati.
+        QueueConfigJson(json);
+    }
+
+    private void QueueConfigJson(string json)
+    {
+        // Se e' uguale all'ultimo gia' inviato o gia' in coda, evita duplicati.
         if (json == _lastSubmittedJson || json == _pendingJson)
             return;
 
@@ -136,7 +167,16 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
         _hasPendingConfig = true;
     }
 
-    // Questo è lo stato condiviso tra tutti.
+    private bool EnsureLoader()
+    {
+        if (loader != null)
+            return true;
+
+        loader = GetComponentInChildren<VehicleLoader>(true);
+        return loader != null;
+    }
+
+    // Questo e' lo stato condiviso tra tutti.
     public struct ConfigState : IPredictedData<ConfigState>
     {
         // Numero versione della config.
@@ -152,7 +192,7 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
         }
     }
 
-    // Questo è il "messaggino" che parte dal controller.
+    // Questo e' il "messaggino" che parte dal controller.
     public struct ConfigInput : IPredictedData
     {
         // True = invia config in questo input.

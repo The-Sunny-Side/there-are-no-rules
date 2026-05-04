@@ -24,16 +24,21 @@ public class RoadMeshGenerator : MonoBehaviour
     [Header("Waypoints")]
     [SerializeField] private Transform waypointsParent;
 
+    [Header("Bake")]
+    [Tooltip("Se false, in Start() viene calcolata SOLO la spline (per il bot AI) ma la mesh non viene rigenerata. Disattivalo dopo il primo bake per saltare il rebuild ad ogni avvio. Il ContextMenu 'Generate Road' ignora sempre questo flag.")]
+    [SerializeField] private bool bakeMeshOnStart = true;
+
     [NonSerialized] public Mesh _mesh;
     [NonSerialized] public MeshFilter _meshFilter;
     [NonSerialized] public MeshCollider _meshCollider;
 
+    private Vector3[] _splinePoints;
+    public IReadOnlyList<Vector3> SplinePoints => _splinePoints;
+    public bool IsGenerated => _splinePoints != null && _splinePoints.Length > 1;
+
     private void Awake()
     {
-        _meshFilter = GetComponent<MeshFilter>();
-        _meshCollider = GetComponent<MeshCollider>();
-        _mesh = new Mesh { name = "RoadMesh" };
-        _meshFilter.mesh = _mesh;
+        EnsureComponents();
 
         var mat = new PhysicsMaterial("RoadSurface")
         {
@@ -43,25 +48,25 @@ public class RoadMeshGenerator : MonoBehaviour
             staticFriction = 0.6f,
             frictionCombine = PhysicsMaterialCombine.Average
         };
-        _meshCollider.material = mat;
+        if (_meshCollider != null)
+            _meshCollider.material = mat;
     }
 
     private void Start()
     {
-        GenerateRoad();
+        GenerateRoadInternal(buildMesh: bakeMeshOnStart);
     }
 
     [ContextMenu("Generate Road")]
     public void GenerateRoad()
     {
+        GenerateRoadInternal(buildMesh: true);
+    }
+
+    private void GenerateRoadInternal(bool buildMesh)
+    {
         if (waypointsParent == null || waypointsParent.childCount < 2) return;
-        if (_mesh == null)
-        {
-            _mesh = new Mesh { name = "RoadMesh" };
-            _meshFilter = GetComponent<MeshFilter>();
-            _meshCollider = GetComponent<MeshCollider>();
-            _meshFilter.mesh = _mesh;
-        }
+        EnsureComponents();
 
         var waypoints = new List<Vector3>();
         var nodeTypes = new List<bool>(); // true = Flat
@@ -80,8 +85,52 @@ public class RoadMeshGenerator : MonoBehaviour
         }
 
         var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes, waypointTensions);
+        _splinePoints = splineData.points.ToArray();
+
+        if (!buildMesh) return;
+
+        EnsureWritableMesh();
         BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles, splineData.meshActive);
         BuildKillZoneNet(splineData.points, splineData.meshActive);
+    }
+
+    private void EnsureComponents()
+    {
+        _meshFilter ??= GetComponent<MeshFilter>();
+        _meshCollider ??= GetComponent<MeshCollider>();
+
+        if (_mesh == null)
+            _mesh = _meshFilter != null && _meshFilter.sharedMesh != null
+                ? _meshFilter.sharedMesh
+                : _meshCollider != null ? _meshCollider.sharedMesh : null;
+
+        if (_mesh == null)
+            _mesh = CreateRuntimeMesh();
+
+        if (_meshFilter != null && _meshFilter.sharedMesh == null)
+            _meshFilter.sharedMesh = _mesh;
+
+        if (_meshCollider != null && _meshCollider.sharedMesh == null)
+            _meshCollider.sharedMesh = _mesh;
+    }
+
+    private void EnsureWritableMesh()
+    {
+        EnsureComponents();
+
+        if (_mesh == null || _mesh.name != "RoadMesh")
+            _mesh = CreateRuntimeMesh();
+
+        if (_meshFilter != null)
+            _meshFilter.sharedMesh = _mesh;
+
+        if (_meshCollider != null)
+            _meshCollider.sharedMesh = _mesh;
+    }
+
+    private static Mesh CreateRuntimeMesh()
+    {
+        return new Mesh { name = "RoadMesh" };
     }
 
     private (List<Vector3> points, List<float> flatWeights, List<float> bankAngles, List<bool> meshActive) GenerateSplinePoints(

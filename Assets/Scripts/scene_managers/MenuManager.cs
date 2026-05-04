@@ -24,39 +24,58 @@ public class MenuManager : MonoBehaviour
         }), 0.6f));
     }
 
-    public void OnPlayerFinished(PlayerID[] finishOrder, PlayerID? localPlayerId, int totalPlayers)
+    public void OnPlayerFinished(PlayerID[] finishHumanIds, bool[] finishIsBot, int[] finishBotIds, PlayerID? localPlayerId, int totalPlayers)
     {
-        // mostra il pannello solo quando arriva il giocatore locale
         if (!_finishPanelShown)
         {
-            foreach (var id in finishOrder)
+            for (int i = 0; i < finishHumanIds.Length; i++)
             {
-                if (localPlayerId.HasValue && id == localPlayerId.Value)
-                {
-                    _finishPanelShown = true;
-                    pauseManager.HideUi();
-                    InGamePanel.Hide();
-                    finishedGamePanel.SetActive(true);
-                    break;
-                }
+                if (finishIsBot != null && i < finishIsBot.Length && finishIsBot[i]) continue;
+                if (!localPlayerId.HasValue || finishHumanIds[i] != localPlayerId.Value) continue;
+
+                _finishPanelShown = true;
+                pauseManager.HideUi();
+                InGamePanel.Hide();
+                finishedGamePanel.SetActive(true);
+                break;
             }
         }
 
         if (!_finishPanelShown) return;
 
-        // aggiorna la classifica
         var sb = new System.Text.StringBuilder();
-        for (int i = 0; i < finishOrder.Length; i++)
+        for (int i = 0; i < finishHumanIds.Length; i++)
         {
-            bool isMe = localPlayerId.HasValue && finishOrder[i] == localPlayerId.Value;
-            string label = isMe ? "Tu" : $"Avversario {i + 1}";
-            sb.AppendLine($"{i + 1}°  {label}");
+            bool isBot = finishIsBot != null && i < finishIsBot.Length && finishIsBot[i];
+            bool isMe = !isBot && localPlayerId.HasValue && finishHumanIds[i] == localPlayerId.Value;
+
+            string label;
+            if (isBot)
+            {
+                int botId = finishBotIds != null && i < finishBotIds.Length ? finishBotIds[i] : i + 1;
+                label = $"Bot {botId}";
+            }
+            else if (isMe)
+            {
+                label = $"{GetPlayerDisplayName(finishHumanIds[i])} (Tu)";
+            }
+            else
+            {
+                label = GetPlayerDisplayName(finishHumanIds[i]);
+            }
+
+            sb.AppendLine($"{i + 1}.  {label}");
         }
 
-        int remaining = totalPlayers - finishOrder.Length;
+        int remaining = totalPlayers - finishHumanIds.Length;
         if (remaining > 0)
             sb.AppendLine($"\n({remaining} ancora in gara...)");
 
         textToShowWhenFinished.text = sb.ToString();
+    }
+
+    private static string GetPlayerDisplayName(PlayerID playerId)
+    {
+        return LobbyState.Instance != null ? LobbyState.Instance.GetDisplayName(playerId) : playerId.ToString();
     }
 }
