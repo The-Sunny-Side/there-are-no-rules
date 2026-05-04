@@ -1,15 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using PurrNet;
 using PurrNet.Packing;
 using UnityEngine;
 
 // Server-auth. Concatena tutti i RoadMeshGenerator in UNA SOLA spline (array flat di Vector3).
-// Per ogni PlayerIdentity nella scena proietta la posizione su questa spline e ottiene un singolo
-// indice intero -> arc length cumulativa = progresso scalare.
-// Sort discendente -> rank. Replica via SyncDictionary<RacerKey,int>.
+// Per ogni PlayerIdentity nella scena, ogni updateRate secondi, scan globale dei punti spline ->
+// punto più vicino -> arc length cumulativa = progress scalare. Sort desc -> rank.
+// Stateless: nessuna proiezione precedente, nessun monotonic, nessun fallback. Sempre corretto.
 public class RaceStandings : NetworkBehaviour
 {
     public static RaceStandings Instance { get; private set; }
@@ -20,22 +19,13 @@ public class RaceStandings : NetworkBehaviour
     [Header("Settings")]
     [Tooltip("Frequenza di ricalcolo dei rank sul server (secondi). 0.1 = 10Hz.")]
     [SerializeField] private float updateRate = 0.1f;
-    [Tooltip("Indici INDIETRO da scansionare attorno alla posizione precedente.")]
-    [SerializeField] private int lookBack = 5;
-    [Tooltip("Indici AVANTI da scansionare attorno alla posizione precedente. Tieni largo: copre i salti del veloce.")]
-    [SerializeField] private int lookForward = 100;
-    [Tooltip("Distanza max (m) entro cui consideriamo valida la proiezione locale. Oltre, fa fallback a scan globale.")]
-    [SerializeField] private float fallbackDistance = 15f;
-    [Tooltip("Stampa il ranking per-tick sul server (abilitalo per debug).")]
-    [SerializeField] private bool verboseDebug = false;
 
     private readonly SyncDictionary<RacerKey, int> _ranks = new();
 
     // Server-only
     private Vector3[] _allPoints;
     private float[] _cumLen;
-    private readonly Dictionary<RacerKey, int> _projection = new(); // racer -> indice corrente in _allPoints
-    private readonly List<(RacerKey key, float progress, int idx)> _scratch = new();
+    private readonly List<(RacerKey key, float progress)> _scratch = new();
     private readonly HashSet<RacerKey> _seenKeys = new();
     private readonly List<RacerKey> _staleKeys = new();
     private Coroutine _tickCo;
@@ -82,8 +72,6 @@ public class RaceStandings : NetworkBehaviour
         base.OnSpawned();
         if (!isServer) return;
         BuildFlatSpline();
-        if (verboseDebug)
-            Debug.Log($"[RaceStandings] Built flat spline: {_allPoints?.Length ?? 0} points, total length {(_cumLen != null && _cumLen.Length > 0 ? _cumLen[_cumLen.Length - 1] : 0):F1}m");
         _tickCo = StartCoroutine(TickRoutine());
     }
 
@@ -140,44 +128,18 @@ public class RaceStandings : NetworkBehaviour
             if (!TryGetRacerKey(id, out var key)) continue;
             _seenKeys.Add(key);
 
-            Vector3 pos = id.transform.position;
-
-            int idx;
-            float bestDistSqr;
-            if (_projection.TryGetValue(key, out var prev))
-            {
-                (idx, bestDistSqr) = ProjectLocal(pos, prev);
-                // Se la proiezione locale è troppo distante, qualcosa non va: rifai globale.
-                if (bestDistSqr > fallbackDistance * fallbackDistance)
-                {
-                    if (verboseDebug)
-                        Debug.LogWarning($"[RaceStandings] {KeyName(key)}: local proj distance {Mathf.Sqrt(bestDistSqr):F1}m > {fallbackDistance}m, fallback global");
-                    (idx, _) = ProjectGlobal(pos);
-                }
-                // Monotonic: il progresso non torna mai indietro (evita flicker da movimento laterale).
-                if (idx < prev) idx = prev;
-            }
-            else
-            {
-                (idx, _) = ProjectGlobal(pos);
-            }
-            _projection[key] = idx;
-
-            float progress = _cumLen[idx];
-            _scratch.Add((key, progress, idx));
+            int idx = FindClosestIndex(id.transform.position);
+            _scratch.Add((key, _cumLen[idx]));
         }
 
-        // Cleanup despawned racer
+        // Cleanup: rimuovi dalle _ranks i racer che non sono più nella scena
         _staleKeys.Clear();
-        foreach (var k in _projection.Keys)
+        foreach (var k in _ranks.Keys)
             if (!_seenKeys.Contains(k)) _staleKeys.Add(k);
         for (int i = 0; i < _staleKeys.Count; i++)
-        {
-            _projection.Remove(_staleKeys[i]);
-            if (_ranks.ContainsKey(_staleKeys[i])) _ranks.Remove(_staleKeys[i]);
-        }
+            _ranks.Remove(_staleKeys[i]);
 
-        // Sort desc per progress; tie-break deterministico.
+        // Sort desc per progress; tie-break deterministico via hash della key.
         _scratch.Sort(static (a, b) =>
         {
             int c = b.progress.CompareTo(a.progress);
@@ -190,17 +152,6 @@ public class RaceStandings : NetworkBehaviour
             int rank = i + 1;
             if (!_ranks.TryGetValue(k, out var existing) || existing != rank)
                 _ranks[k] = rank;
-        }
-
-        if (verboseDebug && _scratch.Count > 0)
-        {
-            var sb = new StringBuilder("[RaceStandings] ");
-            for (int i = 0; i < _scratch.Count; i++)
-            {
-                var s = _scratch[i];
-                sb.Append($"#{i + 1} {KeyName(s.key)} idx={s.idx}/{_allPoints.Length - 1} prog={s.progress:F1}m  ");
-            }
-            Debug.Log(sb.ToString());
         }
     }
 
@@ -220,10 +171,8 @@ public class RaceStandings : NetworkBehaviour
         return false;
     }
 
-    private static string KeyName(RacerKey k) => k.isBot ? $"bot{k.botRaceId}" : $"p{k.playerId}";
-
-    // Scan globale di TUTTI i punti della spline unificata.
-    private (int idx, float distSqr) ProjectGlobal(Vector3 pos)
+    // Scan globale: il punto più vicino fra tutti quelli della spline unificata.
+    private int FindClosestIndex(Vector3 pos)
     {
         int best = 0;
         float bestDist = float.MaxValue;
@@ -232,23 +181,7 @@ public class RaceStandings : NetworkBehaviour
             float d = (pos - _allPoints[i]).sqrMagnitude;
             if (d < bestDist) { bestDist = d; best = i; }
         }
-        return (best, bestDist);
-    }
-
-    // Scan locale ±lookBack/±lookForward attorno all'indice precedente. Restituisce anche distSqr per fallback.
-    private (int idx, float distSqr) ProjectLocal(Vector3 pos, int hint)
-    {
-        int n = _allPoints.Length;
-        int from = Mathf.Max(0, hint - lookBack);
-        int to = Mathf.Min(n - 1, hint + lookForward);
-        int best = Mathf.Clamp(hint, 0, n - 1);
-        float bestDist = float.MaxValue;
-        for (int i = from; i <= to; i++)
-        {
-            float d = (pos - _allPoints[i]).sqrMagnitude;
-            if (d < bestDist) { bestDist = d; best = i; }
-        }
-        return (best, bestDist);
+        return best;
     }
 }
 
