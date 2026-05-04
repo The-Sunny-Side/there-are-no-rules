@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using PurrNet;
 using PurrNet.Packing;
+using TMPro;
 using UnityEngine;
 
 // Server-auth. Concatena tutti i RoadMeshGenerator in UNA SOLA spline (array flat di Vector3).
@@ -12,6 +13,7 @@ using UnityEngine;
 public class RaceStandings : NetworkBehaviour
 {
     public static RaceStandings Instance { get; private set; }
+    [Header("UI")] [SerializeField] private TextMeshProUGUI localRankText;
 
     [Header("Refs")]
     [SerializeField] private List<RoadMeshGenerator> roadSequence = new();
@@ -42,7 +44,6 @@ public class RaceStandings : NetworkBehaviour
         }
     }
 
-    // Debug: log locale ad ogni cambio di rank/totale.
     private int _lastLoggedRank = -1;
     private int _lastLoggedTotal = -1;
     void Update()
@@ -53,7 +54,7 @@ public class RaceStandings : NetworkBehaviour
         if (rank == _lastLoggedRank && total == _lastLoggedTotal) return;
         _lastLoggedRank = rank;
         _lastLoggedTotal = total;
-        Debug.Log($"[RaceStandings] LocalRank={rank} TotalRacers={total}");
+        localRankText.text = $"{rank}/{total}";
     }
 
     void Awake()
