@@ -5,7 +5,7 @@ using PurrNet.Modules;
 using UnityEngine;
 
 // Singleton di scena. Server-auth: gestisce ready states, click Play dell'host, countdown e attivazione gara.
-// Stato propagato ai client via ObserversRpc.
+// Stato replicato ai client tramite SyncList/SyncDictionary/SyncTimer (auto-buffering per i late joiner).
 public class LobbyState : NetworkBehaviour
 {
     public static LobbyState Instance { get; private set; }
@@ -19,15 +19,15 @@ public class LobbyState : NetworkBehaviour
     [SerializeField] private int countdownSeconds = 3;
     [SerializeField] private int maxDisplayNameLength = 24;
 
-    // Verità server. Mirrorata sui client tramite ObserversRpc bufferLast.
-    private readonly Dictionary<PlayerID, bool> _readyStates = new();
-    private readonly Dictionary<PlayerID, string> _displayNames = new();
-    private readonly List<PlayerID> _playerOrder = new();
+    // Verità server. Replication + buffering per late joiner gestiti da PurrNet.
+    private readonly SyncList<PlayerID> _playerOrder = new();
+    private readonly SyncDictionary<PlayerID, bool> _readyStates = new();
+    private readonly SyncDictionary<PlayerID, string> _displayNames = new();
 
     // Countdown server-auth con riconciliazione e buffering per late joiner gestiti da PurrNet.
     private readonly SyncTimer _countdownTimer = new();
 
-    public IReadOnlyList<PlayerID> Players => _playerOrder;
+    public IReadOnlyList<PlayerID> Players => _playerOrder.list;
     public int PlayerCount => _playerOrder.Count;
     public bool IsReady(PlayerID id) => _readyStates.TryGetValue(id, out var r) && r;
     public string GetDisplayName(PlayerID id) =>
@@ -58,6 +58,9 @@ public class LobbyState : NetworkBehaviour
         _countdownTimer.onTimerStart -= HandleCountdownTick;
         _countdownTimer.onTimerSecondTick -= HandleCountdownTick;
         _countdownTimer.onTimerEnd -= HandleCountdownEnd;
+        _playerOrder.onChanged -= HandlePlayerOrderChanged;
+        _readyStates.onChanged -= HandleReadyDictChanged;
+        _displayNames.onChanged -= HandleNameDictChanged;
         if (Instance == this) Instance = null;
     }
 
@@ -73,7 +76,18 @@ public class LobbyState : NetworkBehaviour
         _countdownTimer.onTimerStart += HandleCountdownTick;
         _countdownTimer.onTimerSecondTick += HandleCountdownTick;
         _countdownTimer.onTimerEnd += HandleCountdownEnd;
+
+        _playerOrder.onChanged += HandlePlayerOrderChanged;
+        _readyStates.onChanged += HandleReadyDictChanged;
+        _displayNames.onChanged += HandleNameDictChanged;
+
+        // Forza un primo refresh così la UI vede subito uno stato eventualmente già popolato dal buffering.
+        OnLobbyStateChanged?.Invoke();
     }
+
+    private void HandlePlayerOrderChanged(SyncListChange<PlayerID> change) => OnLobbyStateChanged?.Invoke();
+    private void HandleReadyDictChanged(SyncDictionaryChange<PlayerID, bool> change) => OnLobbyStateChanged?.Invoke();
+    private void HandleNameDictChanged(SyncDictionaryChange<PlayerID, string> change) => OnLobbyStateChanged?.Invoke();
 
     private void HandleCountdownTick()
     {
@@ -94,7 +108,6 @@ public class LobbyState : NetworkBehaviour
         _playerOrder.Add(player);
         _readyStates[player] = false;
         _displayNames[player] = NormalizeDisplayName(ResolveAuthName(player), player);
-        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     private void HandlePlayerLeft(PlayerID player, bool asServer)
@@ -103,7 +116,6 @@ public class LobbyState : NetworkBehaviour
         if (!_playerOrder.Remove(player)) return;
         _readyStates.Remove(player);
         _displayNames.Remove(player);
-        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
     }
 
     // Pesca il nome dal payload di autenticazione PurrNet (vedi NameAuthenticator).
@@ -120,31 +132,6 @@ public class LobbyState : NetworkBehaviour
         return null;
     }
 
-    [ObserversRpc(bufferLast: true)]
-    private void BroadcastLobbySnapshot(PlayerID[] players, bool[] readyStates, string[] displayNames)
-    {
-        _playerOrder.Clear();
-        _readyStates.Clear();
-        _displayNames.Clear();
-
-        int count = players != null ? players.Length : 0;
-        for (int i = 0; i < count; i++)
-        {
-            PlayerID player = players[i];
-            _playerOrder.Add(player);
-
-            bool ready = readyStates != null && i < readyStates.Length && readyStates[i];
-            _readyStates[player] = ready;
-
-            string displayName = displayNames != null && i < displayNames.Length
-                ? displayNames[i]
-                : player.ToString();
-            _displayNames[player] = NormalizeDisplayName(displayName, player);
-        }
-
-        OnLobbyStateChanged?.Invoke();
-    }
-
     public void RequestToggleReady()
     {
         ToggleReadyServer();
@@ -155,9 +142,7 @@ public class LobbyState : NetworkBehaviour
     {
         if (IsRaceActive || CountdownActive) return;
         if (!_readyStates.ContainsKey(info.sender)) return;
-        bool newState = !_readyStates[info.sender];
-        _readyStates[info.sender] = newState;
-        BroadcastLobbySnapshot(_playerOrder.ToArray(), BuildReadySnapshot(), BuildDisplayNameSnapshot());
+        _readyStates[info.sender] = !_readyStates[info.sender];
     }
 
     public bool AreAllPlayersReady()
@@ -197,22 +182,6 @@ public class LobbyState : NetworkBehaviour
         IsRaceActive = true;
         OnRaceStarted?.Invoke();
         OnLobbyStateChanged?.Invoke();
-    }
-
-    private bool[] BuildReadySnapshot()
-    {
-        var ready = new bool[_playerOrder.Count];
-        for (int i = 0; i < _playerOrder.Count; i++)
-            ready[i] = IsReady(_playerOrder[i]);
-        return ready;
-    }
-
-    private string[] BuildDisplayNameSnapshot()
-    {
-        var names = new string[_playerOrder.Count];
-        for (int i = 0; i < _playerOrder.Count; i++)
-            names[i] = GetDisplayName(_playerOrder[i]);
-        return names;
     }
 
     private string NormalizeDisplayName(string displayName, PlayerID fallbackId)
