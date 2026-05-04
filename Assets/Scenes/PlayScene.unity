@@ -1032,7 +1032,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 734451153}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.99999976
+  m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2237,6 +2237,7 @@ GameObject:
   - component: {fileID: 803792342}
   - component: {fileID: 803792344}
   - component: {fileID: 803792343}
+  - component: {fileID: 803792345}
   m_Layer: 0
   m_Name: LobbyManager
   m_TagString: Untagged
@@ -2313,6 +2314,33 @@ MonoBehaviour:
   botSpawner: {fileID: 803792343}
   countdownSeconds: 3
   maxDisplayNameLength: 24
+--- !u!114 &803792345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803792341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d530bbd672fe4e5a9a6fca3213eb376, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RaceStandings
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  roadSequence:
+  - {fileID: 536188688}
+  - {fileID: 536188687}
+  - {fileID: 536188686}
+  updateRate: 0.1
+  searchRadius: 8
 --- !u!1 &860054865
 GameObject:
   m_ObjectHideFlags: 0
