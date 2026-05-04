@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using PurrNet;
 using PurrNet.Modules;
@@ -25,6 +24,9 @@ public class LobbyState : NetworkBehaviour
     private readonly Dictionary<PlayerID, string> _displayNames = new();
     private readonly List<PlayerID> _playerOrder = new();
 
+    // Countdown server-auth con riconciliazione e buffering per late joiner gestiti da PurrNet.
+    private readonly SyncTimer _countdownTimer = new();
+
     public IReadOnlyList<PlayerID> Players => _playerOrder;
     public int PlayerCount => _playerOrder.Count;
     public bool IsReady(PlayerID id) => _readyStates.TryGetValue(id, out var r) && r;
@@ -34,8 +36,8 @@ public class LobbyState : NetworkBehaviour
             : id.ToString();
 
     public bool IsRaceActive { get; private set; }
-    public bool CountdownActive { get; private set; }
-    public int CountdownValue { get; private set; }
+    public bool CountdownActive => _countdownTimer.isRunning;
+    public int CountdownValue => _countdownTimer.remainingInt;
 
     public event Action OnLobbyStateChanged;
     public event Action<int> OnCountdownTick;
@@ -53,6 +55,9 @@ public class LobbyState : NetworkBehaviour
             netManager.onPlayerJoined -= HandlePlayerJoined;
             netManager.onPlayerLeft -= HandlePlayerLeft;
         }
+        _countdownTimer.onTimerStart -= HandleCountdownTick;
+        _countdownTimer.onTimerSecondTick -= HandleCountdownTick;
+        _countdownTimer.onTimerEnd -= HandleCountdownEnd;
         if (Instance == this) Instance = null;
     }
 
@@ -64,6 +69,22 @@ public class LobbyState : NetworkBehaviour
             netManager.onPlayerJoined += HandlePlayerJoined;
             netManager.onPlayerLeft += HandlePlayerLeft;
         }
+
+        _countdownTimer.onTimerStart += HandleCountdownTick;
+        _countdownTimer.onTimerSecondTick += HandleCountdownTick;
+        _countdownTimer.onTimerEnd += HandleCountdownEnd;
+    }
+
+    private void HandleCountdownTick()
+    {
+        OnCountdownTick?.Invoke(_countdownTimer.remainingInt);
+        OnLobbyStateChanged?.Invoke();
+    }
+
+    private void HandleCountdownEnd()
+    {
+        OnLobbyStateChanged?.Invoke();
+        if (isServer) BroadcastRaceStarted();
     }
 
     private void HandlePlayerJoined(PlayerID player, bool isReconnect, bool asServer)
@@ -167,42 +188,12 @@ public class LobbyState : NetworkBehaviour
         if (botSpawner != null)
             botSpawner.SpawnBotsForHumanCount(_playerOrder.Count);
 
-        StartCoroutine(CountdownRoutine());
-    }
-
-    private IEnumerator CountdownRoutine()
-    {
-        BroadcastCountdownStart();
-        for (int t = countdownSeconds; t > 0; t--)
-        {
-            BroadcastCountdownTick(t);
-            yield return new WaitForSeconds(1f);
-        }
-        BroadcastRaceStarted();
-    }
-
-    [ObserversRpc(bufferLast: true)]
-    private void BroadcastCountdownStart()
-    {
-        CountdownActive = true;
-        CountdownValue = countdownSeconds;
-        OnLobbyStateChanged?.Invoke();
-    }
-
-    [ObserversRpc(bufferLast: true)]
-    private void BroadcastCountdownTick(int value)
-    {
-        CountdownActive = true;
-        CountdownValue = value;
-        OnCountdownTick?.Invoke(value);
-        OnLobbyStateChanged?.Invoke();
+        _countdownTimer.StartTimer(countdownSeconds);
     }
 
     [ObserversRpc(bufferLast: true)]
     private void BroadcastRaceStarted()
     {
-        CountdownActive = false;
-        CountdownValue = 0;
         IsRaceActive = true;
         OnRaceStarted?.Invoke();
         OnLobbyStateChanged?.Invoke();
