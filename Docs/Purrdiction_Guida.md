@@ -319,7 +319,57 @@ public class VehicleNetConfig : PredictedIdentity<VehicleNetConfig.ConfigInput, 
 
 ---
 
-## 10) Debug rapido
+## 10) Trigger e collisioni predicted
+
+Con `PredictedRigidbody`, i trigger non vanno gestiti con metodi custom tipo:
+
+```csharp
+void OnTriggerEnter(ref State state, Collider col) { }
+```
+
+Quel metodo non e un callback Unity valido e PurrDiction non lo chiama.
+
+Il pattern pratico e iscriversi agli eventi del `PredictedRigidbody`:
+
+```csharp
+protected override void LateAwake()
+{
+    _rigidbody = GetComponent<PredictedRigidbody>();
+    _rigidbody.onTriggerEnter += HandlePredictedTriggerEnter;
+    _rigidbody.onTriggerExit += HandlePredictedTriggerExit;
+}
+
+protected override void Destroyed()
+{
+    if (_rigidbody == null) return;
+
+    _rigidbody.onTriggerEnter -= HandlePredictedTriggerEnter;
+    _rigidbody.onTriggerExit -= HandlePredictedTriggerExit;
+}
+
+private void HandlePredictedTriggerEnter(GameObject other)
+{
+    ref var state = ref currentState;
+    // aggiorna solo dati di simulazione
+}
+
+private void HandlePredictedTriggerExit(GameObject other)
+{
+    ref var state = ref currentState;
+    // aggiorna solo dati di simulazione
+}
+```
+
+Regole pratiche:
+- Non usare `isOwner` per decidere se cambiare `currentState`: lo state deve restare coerente tra owner, server e replay.
+- Usa `isOwner` solo per input locale, camera, UI e view locali.
+- Nei callback trigger aggiorna solo dati simulati; VFX/UI vanno letti dallo state o dalla view.
+- Se puoi entrare in piu zone uguali contemporaneamente, preferisci un contatore nello `State` invece di un singolo `bool`.
+- Gli eventi fisici predicted risolvono l'altro oggetto tramite `PredictedIdentity`; se ti serve distinguere un child trigger specifico, dagli un marker/componento predetto dedicato.
+
+---
+
+## 11) Debug rapido
 
 Se qualcosa non torna:
 1. Verifica che prefab sia spawnato da predicted hierarchy/spawner.
@@ -330,7 +380,7 @@ Se qualcosa non torna:
 
 ---
 
-## 11) Mini cheat-sheet override
+## 12) Mini cheat-sheet override
 
 Per `PredictedIdentity<INPUT, STATE>` i più usati:
 
@@ -345,7 +395,7 @@ Per `PredictedIdentity<INPUT, STATE>` i più usati:
 
 ---
 
-## 12) Consiglio architetturale per questo progetto
+## 13) Consiglio architetturale per questo progetto
 
 Nel tuo progetto conviene mantenere questa regola:
 - **Movimento/azioni/config runtime player**: predicted (`PredictedIdentity`)

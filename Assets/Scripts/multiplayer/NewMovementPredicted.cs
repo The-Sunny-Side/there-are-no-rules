@@ -1,4 +1,5 @@
 using PurrNet.Prediction;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input, NewMovementPredicted.State>
@@ -55,6 +56,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     private bool _cameraAssigned;
     private bool _lastPivotGrounded = true;
     private float _airTime;
+    bool _lastRecordInTrail = false;
 
     private VFXGroup _driftVFX;
 
@@ -67,6 +69,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         public bool hasNormal;
         public float boostCharge;
         public float driftTimer;
+        public bool inTrail;
 
         public void Dispose() { }
     }
@@ -84,11 +87,26 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     {
         _input = GetComponent<IVehicleInputProvider>();
         _rigidbody = GetComponent<PredictedRigidbody>();
+        _rigidbody.onTriggerEnter += HandlePredictedTriggerEnter;
+        _rigidbody.onTriggerExit += HandlePredictedTriggerExit;
         TryAssignLocalCamera();
         var loader = GetComponentInChildren<VehicleLoader>();
 
         if (loader != null)
             loader.OnVehicleBuilt += CacheVehicleVFX;
+    }
+    protected override void Destroyed()
+    {
+        if (_rigidbody != null)
+        {
+            _rigidbody.onTriggerEnter -= HandlePredictedTriggerEnter;
+            _rigidbody.onTriggerExit -= HandlePredictedTriggerExit;
+
+        }
+        var loader = GetComponentInChildren<VehicleLoader>();
+
+        if (loader != null)
+            loader.OnVehicleBuilt -= CacheVehicleVFX;
     }
 
     private void CacheVehicleVFX()
@@ -98,6 +116,8 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
     protected override void Simulate(Input input, ref State state, float delta)
     {
+        bool isTrailAligned= IsTrailAligned(ref state, delta);
+
         Rigidbody rb = _rigidbody.GetComponent<Rigidbody>();
         state.grounded = IsGrounded();
 
@@ -144,7 +164,19 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             // --- ACCELERAZIONE / FRENATA ---
             if (input.throttle > 0.1f)
             {
-                float targetSpeed = maxSpeed * input.throttle;
+                float targetSpeed = 0;
+                if (isTrailAligned)
+                {
+                    targetSpeed = maxSpeed * input.throttle*50;
+                    Debug.Log("provo velocità maxima:"+targetSpeed);
+                }
+                else
+                {
+                    targetSpeed = maxSpeed * input.throttle;
+                    Debug.Log("provo velocità mediama:" + targetSpeed);
+
+                }
+
                 float newSpeed = Mathf.MoveTowards(forwardSpeed, targetSpeed, acceleration * delta);
                 forwardSpeed = newSpeed;
             }
@@ -246,6 +278,8 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             state.driftTimer = 0f;
         }
     }
+
+    
 
     private void AlignToGround(ref State state, float delta)
     {
@@ -367,5 +401,64 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     {
         input.steer = Mathf.Clamp(input.steer, -1f, 1f);
         input.throttle = Mathf.Clamp(input.throttle, -1f, 1f);
+    }
+
+
+    private Transform _currentTrailSource;
+
+    private void HandlePredictedTriggerEnter(GameObject other)
+    {
+        ref var state = ref currentState;
+
+        if (other == gameObject) return;
+
+        // filtro temporaneo: se per ora il trail e' l'unico trigger del player
+        if (!other.TryGetComponent<TrailZone>(out var trail)) return;
+        if (trail.Source.root == transform.root) return;
+        _currentTrailSource = trail.Source;
+
+        state.inTrail = true;
+    }
+
+    private void HandlePredictedTriggerExit(GameObject other)
+    {
+        ref var state = ref currentState;
+
+        if (other == gameObject) return;
+        if (!other.TryGetComponent<TrailZone>(out var trail)) return;
+        if (trail.Source.root == transform.root) return;
+        _currentTrailSource = null;
+        state.inTrail = false;
+    }
+
+    private bool IsTrailAligned(ref State state, float delta)
+    {
+        if (state.inTrail != _lastRecordInTrail)
+        {
+            Debug.Log("in trail:" + state.inTrail);
+            _lastRecordInTrail = state.inTrail;
+            
+
+            
+        }
+        if (_lastRecordInTrail)
+        {
+            Vector3 trailForward = _currentTrailSource.forward;
+            Vector3 groundVel = Vector3.ProjectOnPlane(_rigidbody.linearVelocity, state.smoothedNormal).normalized;
+            Vector3 trailDir = Vector3.ProjectOnPlane(trailForward, state.smoothedNormal).normalized;
+            float alignment = Vector3.Dot(groundVel, trailDir);
+            //if (isOwner)
+            //{
+            //    Debug.Log(
+            //        $"self={name} source={_currentTrailSource?.name} " +
+            //        $"speed={groundVel.magnitude} alignment={alignment}"
+            //    );
+            //}
+            return alignment > 0.9;
+            
+
+        }
+
+        return false;
     }
 }

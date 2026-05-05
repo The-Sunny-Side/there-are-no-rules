@@ -1168,7 +1168,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 734451153}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9999997
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2425,7 +2425,7 @@ MonoBehaviour:
   - {fileID: 536188688}
   - {fileID: 536188687}
   - {fileID: 536188686}
-  targetRacerCount: 8
+  targetRacerCount: 4
 --- !u!114 &803792344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2504,7 +2504,6 @@ MonoBehaviour:
   countdownLabel: {fileID: 2109684761}
   goText: GO!
   botSpawner: {fileID: 803792343}
-  localRankText: {fileID: 0}
 --- !u!1 &860054865
 GameObject:
   m_ObjectHideFlags: 0
@@ -3540,7 +3539,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 268234332}
   m_HandleRect: {fileID: 268234331}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
