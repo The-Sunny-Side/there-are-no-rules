@@ -116,13 +116,16 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
     protected override void Simulate(Input input, ref State state, float delta)
     {
+        // --- ALLINEAMENTO VISUALS AL TERRENO ---
+        AlignToGround(ref state, delta);
+
+
         bool isTrailAligned= IsTrailAligned(ref state, delta);
 
         Rigidbody rb = _rigidbody.GetComponent<Rigidbody>();
         state.grounded = IsGrounded();
 
-        // --- ALLINEAMENTO VISUALS AL TERRENO ---
-        AlignToGround(ref state, delta);
+        
 
         // --- STERZATA ---
         if (state.grounded)
@@ -435,30 +438,28 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     {
         if (state.inTrail != _lastRecordInTrail)
         {
-            Debug.Log("in trail:" + state.inTrail);
+            if (isOwner)
+                Debug.Log("in trail:" + state.inTrail);
+
             _lastRecordInTrail = state.inTrail;
-            
-
-            
-        }
-        if (_lastRecordInTrail)
-        {
-            Vector3 trailForward = _currentTrailSource.forward;
-            Vector3 groundVel = Vector3.ProjectOnPlane(_rigidbody.linearVelocity, state.smoothedNormal).normalized;
-            Vector3 trailDir = Vector3.ProjectOnPlane(trailForward, state.smoothedNormal).normalized;
-            float alignment = Vector3.Dot(groundVel, trailDir);
-            //if (isOwner)
-            //{
-            //    Debug.Log(
-            //        $"self={name} source={_currentTrailSource?.name} " +
-            //        $"speed={groundVel.magnitude} alignment={alignment}"
-            //    );
-            //}
-            return alignment > 0.9;
-            
-
         }
 
-        return false;
+        if (!state.inTrail || _currentTrailSource == null)
+            return false;
+
+        Vector3 normal = state.hasNormal ? state.smoothedNormal : Vector3.up;
+
+        Vector3 groundVel = Vector3.ProjectOnPlane(_rigidbody.linearVelocity, normal);
+        if (groundVel.sqrMagnitude < 1f)
+            return false;
+
+        Vector3 trailDir = Vector3.ProjectOnPlane(_currentTrailSource.forward, normal);
+        if (trailDir.sqrMagnitude < 0.001f)
+            return false;
+
+        float alignment = Vector3.Dot(groundVel.normalized, trailDir.normalized);
+
+        return alignment > 0.9f;
     }
+
 }
