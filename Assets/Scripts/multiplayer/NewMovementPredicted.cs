@@ -15,6 +15,9 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [SerializeField] private float naturalDeceleration = 15f;
     [SerializeField] private float groundRotationSpeed = 180f;
     [SerializeField] private float airRotationSpeed = 60f;
+    [SerializeField] private float voidTrailVelocityMax = 50f;
+    [SerializeField] private GameObject selfTrail;
+    
 
     [Header("SALTO")]
     [SerializeField] private float jumpForce = 14f;
@@ -170,18 +173,17 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
                 float targetSpeed = 0;
                 if (isTrailAligned)
                 {
-                    targetSpeed = maxSpeed * input.throttle*50;
-                    Debug.Log("provo velocità maxima:"+targetSpeed);
+                    targetSpeed = maxSpeed * input.throttle*voidTrailVelocityMax;
                 }
                 else
                 {
                     targetSpeed = maxSpeed * input.throttle;
-                    Debug.Log("provo velocità mediama:" + targetSpeed);
 
                 }
 
                 float newSpeed = Mathf.MoveTowards(forwardSpeed, targetSpeed, acceleration * delta);
                 forwardSpeed = newSpeed;
+               
             }
             else if (input.throttle < -0.1f)
             {
@@ -192,6 +194,17 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             {
                 forwardSpeed = Mathf.MoveTowards(forwardSpeed, 0f, naturalDeceleration * delta);
             }
+
+            // --- ABILITA/DISABILITA LA SCIA D'ARIA ---
+            if (!selfTrail.activeSelf && forwardSpeed > 90f)
+            {
+                selfTrail.SetActive(true);
+            }
+            else if (selfTrail.activeSelf && forwardSpeed < 90f)
+            {
+                selfTrail.SetActive(false);
+            }
+
 
             // --- GRIP LATERALE (riduce scivolamento) ---
             sideSpeed = Mathf.MoveTowards(sideSpeed, 0f, sideGripFactor * delta);
