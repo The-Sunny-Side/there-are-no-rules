@@ -47,6 +47,7 @@ public class LobbyState : NetworkBehaviour
     public event Action OnLobbyStateChanged;
     public event Action<int> OnCountdownTick;
     public event Action OnRaceStarted;
+    public bool showLobbyPanel = true;
 
     void Awake()
     {
@@ -191,7 +192,7 @@ public class LobbyState : NetworkBehaviour
 
         if (botSpawner != null)
             botSpawner.SpawnBotsForHumanCount(_playerOrder.Count);
-
+        showLobbyPanel = false;
         _countdownTimer.StartTimer(countdownSeconds);
     }
 

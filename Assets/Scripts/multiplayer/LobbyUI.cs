@@ -171,7 +171,7 @@ public class LobbyUI : MonoBehaviour
             return;
         }
 
-        if (lobbyPanel != null) lobbyPanel.SetActive(true);
+        if (lobbyPanel != null) lobbyPanel.SetActive(LobbyState.Instance.showLobbyPanel);
         if (countdownPanel != null) countdownPanel.SetActive(false);
 
         if (playerCountLabel != null)

@@ -19,15 +19,19 @@ public class ProfileManager : MonoBehaviour
 
     TextMeshProUGUI playerNameText;
 
+    private CanvasGroup profileModalCanvasGroup;
+
     private void Start()
     {
         playerNameAnimators= renameModal.GetComponents<UiAnimator>();
         profileModalAnimators = profileModal.GetComponents<UiAnimator>();
+        profileModalCanvasGroup = profileModal.GetComponent<CanvasGroup>();
         playerNameText = profileModal.transform.Find("ProfilePlayerName").Find("Text").GetComponent<TextMeshProUGUI>();
         playerNameText.text = GameConfig.Data.name;
     }
     public void ShowProfileModal()
     {
+        GetComponent<UiAnimator>()?.Show();
         foreach(UiAnimator animator in profileModalAnimators)
         {
             animator.Show();
@@ -40,10 +44,13 @@ public class ProfileManager : MonoBehaviour
         {
             animator.Hide();
         }
+        GetComponent<UiAnimator>()?.Hide();
     }
 
     public void ShowRenameModal()
     {
+        profileModalCanvasGroup.interactable = false;
+        profileModalCanvasGroup.alpha = 0.2f;
         foreach (UiAnimator animator in playerNameAnimators)
         {
             animator.Show();
@@ -56,6 +63,8 @@ public class ProfileManager : MonoBehaviour
         {
             animator.Hide();
         }
+        profileModalCanvasGroup.interactable = true;
+        profileModalCanvasGroup.alpha = 1f;
     }
 
     public void OnRenameConfirmClick()
@@ -68,9 +77,13 @@ public class ProfileManager : MonoBehaviour
         var localizeEvent = playerNameLabel.GetComponent<LocalizeStringEvent>();
         localizeEvent.StringReference.Arguments = new object[] { newName };
         localizeEvent.RefreshString();
+
+
         foreach (UiAnimator animator in playerNameAnimators)
         {
             animator.Hide();
         }
+        profileModalCanvasGroup.interactable = true;
+        profileModalCanvasGroup.alpha = 1f;
     }
 }

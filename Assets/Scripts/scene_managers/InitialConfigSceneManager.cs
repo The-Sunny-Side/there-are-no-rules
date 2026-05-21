@@ -31,6 +31,9 @@ public class InitialConfigSceneManager : MonoBehaviour
         {
             animator.Hide();
         }
+
+        UiLoader.Instance?.switchLoader(LoaderType.NoRulez);
+
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
@@ -72,6 +75,7 @@ public class InitialConfigSceneManager : MonoBehaviour
         {
             animator.Hide();
         }
+        UiLoader.Instance?.switchLoader(LoaderType.NoRulez);
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {

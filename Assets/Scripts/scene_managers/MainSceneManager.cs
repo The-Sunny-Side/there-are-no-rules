@@ -12,14 +12,17 @@ public class MainSceneManager : MonoBehaviour
     [SerializeField] private UiAnimator playerName;
     [SerializeField] private Composer composer;
     [SerializeField] private GameObject nameModal;
+    [SerializeField] private GameObject logo;
 
     private UiAnimator[] nameModalAnimators;
     private TMP_InputField nameInputField;
+    private UiAnimator[] logoAnimators;
 
     public void Awake()
     {
         nameModalAnimators = nameModal.GetComponents<UiAnimator>();
         nameInputField = nameModal.transform.Find("NameInputField").GetComponent<TMP_InputField>();
+        logoAnimators = logo.GetComponents<UiAnimator>();
         nameInputField.text = GameConfig.Data.name;
 
         Dictionary<string, VehicleEntry> list = VehicleManager.Instance?.LoadVehicleConfig();
@@ -49,10 +52,15 @@ public class MainSceneManager : MonoBehaviour
     public void Start()
     {
         InitMenu();
+        UiLoader.Instance?.switchLoader(LoaderType.NoRulez);
     }
 
     public void HideHud()
     {
+        foreach(UiAnimator animator in logoAnimators)
+        {
+            animator.Hide();
+        }
         playerName.Hide();
         menuButtons.Hide();
         playPanel?.GetComponent<UiAnimator>()?.Hide();
@@ -158,6 +166,10 @@ public class MainSceneManager : MonoBehaviour
         menuButtons?.Show();
         InitPlayerName();
         playerName.Show();
+        foreach(UiAnimator animator in logoAnimators)
+        {
+            animator.Show();
+        }
     }
 
     public void OnRenameButtonClick()

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class RotateAnimator : MonoBehaviour
 {
+    public bool animate = true;
+
     [Header("Rotation Settings")]
     [SerializeField] private float rotationSpeed = 180f;
     [SerializeField] private bool clockwise = true;
@@ -18,6 +20,8 @@ public class RotateAnimator : MonoBehaviour
 
     private void Update()
     {
+        if(!animate) return;
+
         float delta = direction * rotationSpeed * Time.deltaTime;
 
         Vector3 rotation = axis switch
