@@ -136,6 +136,14 @@ MonoBehaviour:
     m_Localized: Do you want to play the tutorial?
     m_Metadata:
       m_Items: []
+  - m_Id: 29592039059533824
+    m_Localized: 'Still in the running: '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29592720344526848
+    m_Localized: Profile
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

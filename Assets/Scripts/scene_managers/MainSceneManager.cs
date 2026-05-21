@@ -16,12 +16,12 @@ public class MainSceneManager : MonoBehaviour
     private UiAnimator[] nameModalAnimators;
     private TMP_InputField nameInputField;
 
-    private TextMeshProUGUI playerNameText;
-
     public void Awake()
     {
         nameModalAnimators = nameModal.GetComponents<UiAnimator>();
         nameInputField = nameModal.transform.Find("NameInputField").GetComponent<TMP_InputField>();
+        nameInputField.text = GameConfig.Data.name;
+
         Dictionary<string, VehicleEntry> list = VehicleManager.Instance?.LoadVehicleConfig();
 
 
@@ -148,7 +148,8 @@ public class MainSceneManager : MonoBehaviour
         }), 0.6f));
     }
 
-    public void InitPlayerName() {         var localizeEvent = playerName.transform.Find("PlayerNameText").GetComponent<LocalizeStringEvent>();
+    public void InitPlayerName() {         
+        var localizeEvent = playerName.transform.Find("PlayerNameText").GetComponent<LocalizeStringEvent>();
         localizeEvent.StringReference.Arguments = new object[] { GameConfig.Data.name };
         localizeEvent.RefreshString();
     }
@@ -161,23 +162,10 @@ public class MainSceneManager : MonoBehaviour
 
     public void OnRenameButtonClick()
     {
-        nameInputField.text = GameConfig.Data.name;
 
         foreach (UiAnimator animator in nameModalAnimators)
         {
             animator.Show();
-        }
-    }
-
-    public void OnRenameConfirmClick()
-    {
-        string newName = nameModal.transform.Find("NameInputField").Find("TextArea").Find("Text").GetComponent<TextMeshProUGUI>().text;
-        GameConfig.Data.name = newName;
-        GameConfig.Save();
-        InitPlayerName();
-        foreach (UiAnimator animator in nameModalAnimators)
-        {
-            animator.Hide();
         }
     }
 }
