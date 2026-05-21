@@ -44,7 +44,7 @@ public class UiLoader : MonoBehaviour
             noRulezLoader.GetComponent<Image>().color = uiConfig.noRulezLoaderColor;
             SceneManager.sceneLoaded += onSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
-            noRulezLogoGearAnimator= noRulezLoader.transform.Find("LogoPanel").Find("Logo").Find("Gear").GetComponent<RotateAnimator>();
+            noRulezLogoGearAnimator= noRulezLoader.FindChildWithName("Logo").transform.Find("Gear").GetComponent<RotateAnimator>();
             DontDestroyOnLoad(gameObject);
         }
         else
