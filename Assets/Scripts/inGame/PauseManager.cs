@@ -49,7 +49,7 @@ public class PauseManager : MonoBehaviour
     public void OnRestartClick()
     {
         HideUi();
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
@@ -61,7 +61,7 @@ public class PauseManager : MonoBehaviour
     public void OnHomeButtonClick()
     {
         HideUi();
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {

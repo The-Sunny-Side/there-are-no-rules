@@ -8,9 +8,9 @@ using UnityEngine.UI;
 
 public enum LoaderType { TheSunnySide, NoRulez, Garage }
 
-public class UiLoader : MonoBehaviour
+public class LoaderManager : MonoBehaviour
 {
-    public static UiLoader Instance;
+    public static LoaderManager Instance;
 
     public bool noHiding = false;
 

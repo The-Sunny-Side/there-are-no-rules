@@ -7,7 +7,7 @@ public class ServerConnectionSceneManager : MonoBehaviour
     public void OnRetryConnectionButtonClick()
     {
         ServerConnectionButtons.Hide();
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
@@ -18,7 +18,7 @@ public class ServerConnectionSceneManager : MonoBehaviour
     public void OnMenuButtonClick()
     {
         ServerConnectionButtons.Hide();
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
@@ -28,7 +28,7 @@ public class ServerConnectionSceneManager : MonoBehaviour
 
     public void OnServerIpFound(string foundIP)
     {
-        UiLoader.Instance?.setNoHiding(false);
+        LoaderManager.Instance?.setNoHiding(false);
         GameManager.Instance?.SetIpAddress(foundIP);
         GameManager.Instance?.SetNetworkMode(Mode.Client);
         GameManager.Instance?.GoToPlayScreen();
@@ -36,8 +36,8 @@ public class ServerConnectionSceneManager : MonoBehaviour
 
     public void OnServerIpNotFound()
     {
-        UiLoader.Instance?.setNoHiding(false);
-        UiLoader.Instance?.Hide();
+        LoaderManager.Instance?.setNoHiding(false);
+        LoaderManager.Instance?.Hide();
         ServerConnectionButtons.Show();
     }
 }

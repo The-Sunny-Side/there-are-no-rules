@@ -32,9 +32,9 @@ public class InitialConfigSceneManager : MonoBehaviour
             animator.Hide();
         }
 
-        UiLoader.Instance?.switchLoader(LoaderType.NoRulez);
+        LoaderManager.Instance?.switchLoader(LoaderType.NoRulez);
 
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToSandboxScreen();
@@ -75,8 +75,8 @@ public class InitialConfigSceneManager : MonoBehaviour
         {
             animator.Hide();
         }
-        UiLoader.Instance?.switchLoader(LoaderType.NoRulez);
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.switchLoader(LoaderType.NoRulez);
+        LoaderManager.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToHomeScreen();

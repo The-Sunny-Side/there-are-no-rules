@@ -272,7 +272,7 @@ public class VehicleSelectorManager : MonoBehaviour
         SetHudVisibility(false);
         topButtons.Hide();
 
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
 
         VehicleEntry baseElement = baseElements[selectedBaseIndex];
         VehicleEntry bodyElement = bodyElements[selectedBodyIndex];

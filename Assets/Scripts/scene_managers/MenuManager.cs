@@ -20,7 +20,7 @@ public class MenuManager : MonoBehaviour
         pauseManager.HideUi();
         finishedGamePanel.GetComponent<FadeAnimator>()?.Hide();
         GameManager.Instance?.Resume();
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {

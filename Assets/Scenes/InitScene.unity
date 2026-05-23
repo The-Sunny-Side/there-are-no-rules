@@ -1369,7 +1369,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f36d8e14a28e3ae4e8d124439f4275f7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UiLoader
+  m_EditorClassIdentifier: Assembly-CSharp::LoaderManager
   noHiding: 0
   uiConfig: {fileID: 11400000, guid: a7291db95d6859c45a06a0326c5db632, type: 2}
   topElement: {fileID: 3561712384259428691}

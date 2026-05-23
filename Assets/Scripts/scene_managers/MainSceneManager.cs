@@ -52,7 +52,7 @@ public class MainSceneManager : MonoBehaviour
     public void Start()
     {
         InitMenu();
-        UiLoader.Instance?.switchLoader(LoaderType.NoRulez);
+        LoaderManager.Instance?.switchLoader(LoaderType.NoRulez);
     }
 
     public void HideHud()
@@ -73,7 +73,7 @@ public class MainSceneManager : MonoBehaviour
         if (string.IsNullOrWhiteSpace(json))
         {
             HideHud();
-            UiLoader.Instance?.Show();
+            LoaderManager.Instance?.Show();
             StartCoroutine(Utilities.DelayedEvent((() =>
             {
                 GameManager.Instance?.GoToVehicleScreen();
@@ -90,7 +90,7 @@ public class MainSceneManager : MonoBehaviour
         HideHud();
         GameManager.Instance.SetNetworkMode(Mode.Host);
         GameManager.Instance.SetIpAddress(Utilities.GetLocalIPAddress());
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToPlayScreen();
@@ -102,8 +102,8 @@ public class MainSceneManager : MonoBehaviour
         HideHud();
         GameManager.Instance?.SetNetworkMode(Mode.Client);
         GameManager.Instance?.SetIpAddress(Utilities.GetLocalIPAddress());
-        UiLoader.Instance?.Show();
-        UiLoader.Instance.setNoHiding(true);
+        LoaderManager.Instance?.Show();
+        LoaderManager.Instance.setNoHiding(true);
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToLocalLobbyScreen();
@@ -115,7 +115,7 @@ public class MainSceneManager : MonoBehaviour
         HideHud();
         GameManager.Instance?.SetIpAddress(Utilities.GetLocalIPAddress());
         GameManager.Instance?.SetNetworkMode(Mode.ServerOnly);
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToPlayScreen();
@@ -125,7 +125,7 @@ public class MainSceneManager : MonoBehaviour
     public void OnVehicleSelectionButtonClick()
     {
         HideHud();
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
@@ -149,7 +149,7 @@ public class MainSceneManager : MonoBehaviour
     {
         AudioManager.Instance?.PlayButtonAudio();
         HideHud();
-        UiLoader.Instance?.Show();
+        LoaderManager.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToSandboxScreen();
