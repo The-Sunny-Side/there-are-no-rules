@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 740222398}
   - component: {fileID: 740222400}
   - component: {fileID: 740222399}
+  - component: {fileID: 740222401}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -153,7 +154,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6, y: 0}
+  m_AnchoredPosition: {x: 2.5, y: 2.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &740222399
@@ -194,6 +195,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 740222397}
   m_CullTransparentMesh: 1
+--- !u!114 &740222401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 740222397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88ba48e64e0b402489389541b102dec0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScalePulseAnimator
+  animated: 1
+  minScale: 0.9
+  maxScale: 1.1
+  speed: 6.12
 --- !u!1 &1120301951
 GameObject:
   m_ObjectHideFlags: 0

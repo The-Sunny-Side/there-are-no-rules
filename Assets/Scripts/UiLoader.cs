@@ -21,6 +21,7 @@ public class UiLoader : MonoBehaviour
     [SerializeField] private GameObject garageLoader;
 
     private RotateAnimator noRulezLogoGearAnimator;
+    private ScalePulseAnimator noRulezLogoTextAnimator;
 
     private List<UiAnimator> animators;
     private CanvasGroup canvasGroup;
@@ -45,6 +46,7 @@ public class UiLoader : MonoBehaviour
             SceneManager.sceneLoaded += onSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
             noRulezLogoGearAnimator= noRulezLoader.FindChildWithName("Logo").transform.Find("Gear").GetComponent<RotateAnimator>();
+            noRulezLogoTextAnimator = noRulezLoader.FindChildWithName("Logo").transform.Find("Text").GetComponent<ScalePulseAnimator>();
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -88,6 +90,7 @@ public class UiLoader : MonoBehaviour
     public void Show(UnityAction callback = null)
     {
         noRulezLogoGearAnimator.animate = currentLoaderType == LoaderType.NoRulez;
+        noRulezLogoTextAnimator.animate = currentLoaderType == LoaderType.NoRulez;
         UnityEvent onShowEvent = new UnityEvent();
         onShowEvent.AddListener(callback ?? new UnityAction(Utilities.DefaultCallback));
         onShowEvent.AddListener(() => {
@@ -104,6 +107,7 @@ public class UiLoader : MonoBehaviour
         if (!noHiding)
         {
             noRulezLogoGearAnimator.animate = false;
+            noRulezLogoTextAnimator.animate = false;
             UnityEvent onHideEvent = new UnityEvent();
             onHideEvent.AddListener(callback ?? new UnityAction(Utilities.DefaultCallback));
             onHideEvent.AddListener(() =>

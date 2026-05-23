@@ -8,6 +8,7 @@ public class SettingsModal : MonoBehaviour
     [Header("Audio")]
     public Slider volumeSlider;
     public Toggle audioToggle;
+    public Toggle fpsToggle;
 
     [Header("Animators")]
     [SerializeField] private GameObject settingsModalPanel;
@@ -42,16 +43,19 @@ public class SettingsModal : MonoBehaviour
         // Init audio state
         volumeSlider.value = AudioManager.Instance?.volume ?? 0f;
         audioToggle.SetIsOnWithoutNotify(AudioManager.Instance?.audioEnabled ?? false);
+        fpsToggle.SetIsOnWithoutNotify(GameConfig.Data.highFpsMode);
 
         // Listeners
         volumeSlider.onValueChanged.AddListener(UpdateVolume);
         audioToggle.onValueChanged.AddListener(OnToggleAudio);
+        fpsToggle.onValueChanged.AddListener(OnToggleFps);
     }
 
     void OnDestroy()
     {
         volumeSlider.onValueChanged.RemoveListener(UpdateVolume);
         audioToggle.onValueChanged.RemoveListener(OnToggleAudio);
+        fpsToggle.onValueChanged.RemoveListener(OnToggleFps);
     }
 
     // =====================================================
@@ -106,5 +110,18 @@ public class SettingsModal : MonoBehaviour
     {
         AudioManager.Instance?.PlayButtonAudio();
         AudioManager.Instance?.ToggleAudio();
+    }
+
+    public void OnToggleFps(bool isOn)
+    {
+        AudioManager.Instance?.PlayButtonAudio();
+        GameConfig.Data.highFpsMode = isOn;
+        if (isOn)
+        {
+            Application.targetFrameRate = 60;
+        }else
+        {
+            Application.targetFrameRate = -1;
+        }
     }
 }

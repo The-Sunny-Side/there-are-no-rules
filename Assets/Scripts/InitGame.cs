@@ -1,8 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Localization.Settings;
-using UnityEngine.Localization.Tables;
-using System.Collections;
 
 public class InitGame : MonoBehaviour
 {
@@ -21,6 +18,14 @@ public class InitGame : MonoBehaviour
     void Start()
     {
         audioManager?.PlayBackground("background_menu");
+
+        if (gameConfig.GetConfigData().highFpsMode)
+        {
+          Application.targetFrameRate = 60;
+        }
+        else { 
+          Application.targetFrameRate = -1;
+        }
 
         if (string.IsNullOrEmpty(gameConfig.GetConfigData().name))
         {

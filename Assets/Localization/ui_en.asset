@@ -148,6 +148,10 @@ MonoBehaviour:
     m_Localized: Ready
     m_Metadata:
       m_Items: []
+  - m_Id: 30152962212016128
+    m_Localized: High graphic
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

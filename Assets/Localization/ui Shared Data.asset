@@ -143,6 +143,10 @@ MonoBehaviour:
     m_Key: ready
     m_Metadata:
       m_Items: []
+  - m_Id: 30152962212016128
+    m_Key: settings_highfps
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
