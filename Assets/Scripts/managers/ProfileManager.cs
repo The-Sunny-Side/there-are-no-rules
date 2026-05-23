@@ -14,8 +14,8 @@ public class ProfileManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI playerNameLabel;
 
-    UiAnimator[] profileModalAnimators;
-    UiAnimator[] playerNameAnimators;
+    UiTransition[] profileModalAnimators;
+    UiTransition[] playerNameAnimators;
 
     TextMeshProUGUI playerNameText;
 
@@ -23,16 +23,16 @@ public class ProfileManager : MonoBehaviour
 
     private void Start()
     {
-        playerNameAnimators= renameModal.GetComponents<UiAnimator>();
-        profileModalAnimators = profileModal.GetComponents<UiAnimator>();
+        playerNameAnimators= renameModal.GetComponents<UiTransition>();
+        profileModalAnimators = profileModal.GetComponents<UiTransition>();
         profileModalCanvasGroup = profileModal.GetComponent<CanvasGroup>();
         playerNameText = profileModal.transform.Find("ProfilePlayerName").Find("Text").GetComponent<TextMeshProUGUI>();
         playerNameText.text = GameConfig.Data.name;
     }
     public void ShowProfileModal()
     {
-        GetComponent<UiAnimator>()?.Show();
-        foreach(UiAnimator animator in profileModalAnimators)
+        GetComponent<UiTransition>()?.Show();
+        foreach(UiTransition animator in profileModalAnimators)
         {
             animator.Show();
         }
@@ -40,18 +40,18 @@ public class ProfileManager : MonoBehaviour
 
     public void HideProfileModal()
     {
-        foreach (UiAnimator animator in profileModalAnimators)
+        foreach (UiTransition animator in profileModalAnimators)
         {
             animator.Hide();
         }
-        GetComponent<UiAnimator>()?.Hide();
+        GetComponent<UiTransition>()?.Hide();
     }
 
     public void ShowRenameModal()
     {
         profileModalCanvasGroup.interactable = false;
         profileModalCanvasGroup.alpha = 0.2f;
-        foreach (UiAnimator animator in playerNameAnimators)
+        foreach (UiTransition animator in playerNameAnimators)
         {
             animator.Show();
         }
@@ -59,7 +59,7 @@ public class ProfileManager : MonoBehaviour
 
     public void HideRenameModal()
     {
-        foreach (UiAnimator animator in playerNameAnimators)
+        foreach (UiTransition animator in playerNameAnimators)
         {
             animator.Hide();
         }
@@ -79,7 +79,7 @@ public class ProfileManager : MonoBehaviour
         localizeEvent.RefreshString();
 
 
-        foreach (UiAnimator animator in playerNameAnimators)
+        foreach (UiTransition animator in playerNameAnimators)
         {
             animator.Hide();
         }

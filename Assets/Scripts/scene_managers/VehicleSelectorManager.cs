@@ -6,10 +6,10 @@ using UnityEngine.UI;
 public class VehicleSelectorManager : MonoBehaviour
 {
     [SerializeField] private Composer Composer;
-    [SerializeField] private UiAnimator elementsPanel;
-    [SerializeField] private UiAnimator stepsBar;
-    [SerializeField] private UiAnimator weaponsPanel;
-    [SerializeField] private UiAnimator topButtons;
+    [SerializeField] private UiTransition elementsPanel;
+    [SerializeField] private UiTransition stepsBar;
+    [SerializeField] private UiTransition weaponsPanel;
+    [SerializeField] private UiTransition topButtons;
     [SerializeField] private GameObject vehicle;
     [SerializeField] private GameObject[] elementsBoxes;
     [SerializeField] private GameObject[] stepButtons;

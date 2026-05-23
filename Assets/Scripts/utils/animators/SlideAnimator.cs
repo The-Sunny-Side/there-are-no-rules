@@ -3,7 +3,7 @@ using System.Collections;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(CanvasGroup))]
-public class SlideAnimator : UiAnimator
+public class SlideAnimator : UiTransition
 {
     [SerializeField] private float duration = 0.25f;
 

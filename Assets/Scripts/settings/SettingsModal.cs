@@ -12,7 +12,7 @@ public class SettingsModal : MonoBehaviour
 
     [Header("Animators")]
     [SerializeField] private GameObject settingsModalPanel;
-    [SerializeField] private UiAnimator[] settingsModalAnimators;
+    [SerializeField] private UiTransition[] settingsModalAnimators;
 
     private Canvas _canvas;
     private CanvasGroup _canvasGroup;
@@ -65,13 +65,13 @@ public class SettingsModal : MonoBehaviour
     public void Show()
     {
         OnShow();
-        foreach(UiAnimator animator in settingsModalAnimators)
+        foreach(UiTransition animator in settingsModalAnimators)
             animator.Show();
     }
 
     public void Hide()
     {
-        foreach (UiAnimator animator in settingsModalAnimators)
+        foreach (UiTransition animator in settingsModalAnimators)
             animator.Hide();
     }
 

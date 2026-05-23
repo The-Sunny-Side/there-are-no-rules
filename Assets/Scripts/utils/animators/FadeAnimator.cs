@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class FadeAnimator : UiAnimator
+public class FadeAnimator : UiTransition
 {
     [SerializeField] private float duration = 0.25f;
 

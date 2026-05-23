@@ -20,23 +20,21 @@ public class UiLoader : MonoBehaviour
     [SerializeField] private GameObject noRulezLoader;
     [SerializeField] private GameObject garageLoader;
 
-    private RotateAnimator noRulezLogoGearAnimator;
-    private ScalePulseAnimator noRulezLogoTextAnimator;
-
-    private List<UiAnimator> animators;
+    private List<UiAnimator> noRulezLogoAnimators;
+    private List<UiTransition> animators;
     private CanvasGroup canvasGroup;
     private LoaderType currentLoaderType = LoaderType.TheSunnySide;
-    private List<UiAnimator> theSunnySideAnimators;
+    private List<UiTransition> theSunnySideAnimators;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            theSunnySideAnimators = new List<UiAnimator>();
+            theSunnySideAnimators = new List<UiTransition>();
             canvasGroup = GetComponent<CanvasGroup>();
-            theSunnySideAnimators.Add(topElement.GetComponent<UiAnimator>());
-            theSunnySideAnimators.Add(bottomElement.GetComponent<UiAnimator>());
+            theSunnySideAnimators.Add(topElement.GetComponent<UiTransition>());
+            theSunnySideAnimators.Add(bottomElement.GetComponent<UiTransition>());
             animators = theSunnySideAnimators;
             topElement.GetComponent<Image>().color = uiConfig.loaderPrimaryColor;
             topElement.transform.Find("Text").GetComponent<Image>().color = uiConfig.loaderSecondaryColor;
@@ -45,8 +43,7 @@ public class UiLoader : MonoBehaviour
             noRulezLoader.GetComponent<Image>().color = uiConfig.noRulezLoaderColor;
             SceneManager.sceneLoaded += onSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
-            noRulezLogoGearAnimator= noRulezLoader.FindChildWithName("Logo").transform.Find("Gear").GetComponent<RotateAnimator>();
-            noRulezLogoTextAnimator = noRulezLoader.FindChildWithName("Logo").transform.Find("Text").GetComponent<ScalePulseAnimator>();
+            noRulezLogoAnimators= new List<UiAnimator>{noRulezLoader.FindChildWithName("Logo").transform.Find("Gear").GetComponent<RotateAnimator>(), noRulezLoader.FindChildWithName("Logo").transform.Find("Text").GetComponent<ScalePulseAnimator>()};
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -74,11 +71,11 @@ public class UiLoader : MonoBehaviour
         switch (type)
         {
             case LoaderType.NoRulez:
-                animators = noRulezLoader.GetComponents<UiAnimator>().ToList();
+                animators = noRulezLoader.GetComponents<UiTransition>().ToList();
                 break;
             
             case LoaderType.Garage:
-                animators = garageLoader.GetComponents<UiAnimator>().ToList();
+                animators = garageLoader.GetComponents<UiTransition>().ToList();
                 break;
             
             default:
@@ -89,8 +86,11 @@ public class UiLoader : MonoBehaviour
 
     public void Show(UnityAction callback = null)
     {
-        noRulezLogoGearAnimator.animate = currentLoaderType == LoaderType.NoRulez;
-        noRulezLogoTextAnimator.animate = currentLoaderType == LoaderType.NoRulez;
+        foreach(UiAnimator animator in noRulezLogoAnimators)
+        {
+            animator.animate = currentLoaderType == LoaderType.NoRulez;
+        }
+
         UnityEvent onShowEvent = new UnityEvent();
         onShowEvent.AddListener(callback ?? new UnityAction(Utilities.DefaultCallback));
         onShowEvent.AddListener(() => {
@@ -98,7 +98,7 @@ public class UiLoader : MonoBehaviour
             canvasGroup.blocksRaycasts = true;
         });
         animators[0].onShow = onShowEvent;
-        foreach (UiAnimator animator in animators)
+        foreach (UiTransition animator in animators)
             animator?.Show();
     }
 
@@ -106,8 +106,10 @@ public class UiLoader : MonoBehaviour
     {
         if (!noHiding)
         {
-            noRulezLogoGearAnimator.animate = false;
-            noRulezLogoTextAnimator.animate = false;
+            foreach (UiAnimator animator in noRulezLogoAnimators)
+            {
+                animator.animate = false;
+            }
             UnityEvent onHideEvent = new UnityEvent();
             onHideEvent.AddListener(callback ?? new UnityAction(Utilities.DefaultCallback));
             onHideEvent.AddListener(() =>
@@ -118,7 +120,7 @@ public class UiLoader : MonoBehaviour
 
             animators[0].onHide = onHideEvent;
 
-            foreach (UiAnimator animator in animators)
+            foreach (UiTransition animator in animators)
                 animator?.Hide();
         }
     }

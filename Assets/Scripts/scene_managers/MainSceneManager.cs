@@ -6,23 +6,23 @@ using UnityEngine.UI;
 
 public class MainSceneManager : MonoBehaviour
 {
-    [SerializeField] private UiAnimator menu;
+    [SerializeField] private UiTransition menu;
     [SerializeField] private GameObject playPanel;
-    [SerializeField] private UiAnimator menuButtons;
-    [SerializeField] private UiAnimator playerName;
+    [SerializeField] private UiTransition menuButtons;
+    [SerializeField] private UiTransition playerName;
     [SerializeField] private Composer composer;
     [SerializeField] private GameObject nameModal;
     [SerializeField] private GameObject logo;
 
-    private UiAnimator[] nameModalAnimators;
+    private UiTransition[] nameModalAnimators;
     private TMP_InputField nameInputField;
-    private UiAnimator[] logoAnimators;
+    private UiTransition[] logoAnimators;
 
     public void Awake()
     {
-        nameModalAnimators = nameModal.GetComponents<UiAnimator>();
+        nameModalAnimators = nameModal.GetComponents<UiTransition>();
         nameInputField = nameModal.transform.Find("NameInputField").GetComponent<TMP_InputField>();
-        logoAnimators = logo.GetComponents<UiAnimator>();
+        logoAnimators = logo.GetComponents<UiTransition>();
         nameInputField.text = GameConfig.Data.name;
 
         Dictionary<string, VehicleEntry> list = VehicleManager.Instance?.LoadVehicleConfig();
@@ -57,13 +57,13 @@ public class MainSceneManager : MonoBehaviour
 
     public void HideHud()
     {
-        foreach(UiAnimator animator in logoAnimators)
+        foreach(UiTransition animator in logoAnimators)
         {
             animator.Hide();
         }
         playerName.Hide();
         menuButtons.Hide();
-        playPanel?.GetComponent<UiAnimator>()?.Hide();
+        playPanel?.GetComponent<UiTransition>()?.Hide();
     }
     public void OnPlayButtonClick()
     {
@@ -82,7 +82,7 @@ public class MainSceneManager : MonoBehaviour
             return;
         }
 
-        playPanel?.GetComponent<UiAnimator>()?.ToggleAnimator();
+        playPanel?.GetComponent<UiTransition>()?.ToggleAnimator();
     }
 
     public void OnPlayAsHost()
@@ -166,7 +166,7 @@ public class MainSceneManager : MonoBehaviour
         menuButtons?.Show();
         InitPlayerName();
         playerName.Show();
-        foreach(UiAnimator animator in logoAnimators)
+        foreach(UiTransition animator in logoAnimators)
         {
             animator.Show();
         }
@@ -175,7 +175,7 @@ public class MainSceneManager : MonoBehaviour
     public void OnRenameButtonClick()
     {
 
-        foreach (UiAnimator animator in nameModalAnimators)
+        foreach (UiTransition animator in nameModalAnimators)
         {
             animator.Show();
         }
