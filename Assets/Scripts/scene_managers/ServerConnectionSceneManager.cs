@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ServerConnectionSceneManager : MonoBehaviour
 {
-    [SerializeField] private UiAnimator ServerConnectionButtons;
+    [SerializeField] private UiTransition ServerConnectionButtons;
 
     public void OnRetryConnectionButtonClick()
     {

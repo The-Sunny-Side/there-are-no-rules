@@ -6,22 +6,25 @@ using UnityEngine.UI;
 
 public class MainSceneManager : MonoBehaviour
 {
-    [SerializeField] private UiAnimator menu;
+    [SerializeField] private UiTransition menu;
     [SerializeField] private GameObject playPanel;
-    [SerializeField] private UiAnimator menuButtons;
-    [SerializeField] private UiAnimator playerName;
+    [SerializeField] private UiTransition menuButtons;
+    [SerializeField] private UiTransition playerName;
     [SerializeField] private Composer composer;
     [SerializeField] private GameObject nameModal;
+    [SerializeField] private GameObject logo;
 
-    private UiAnimator[] nameModalAnimators;
+    private UiTransition[] nameModalAnimators;
     private TMP_InputField nameInputField;
-
-    private TextMeshProUGUI playerNameText;
+    private UiTransition[] logoAnimators;
 
     public void Awake()
     {
-        nameModalAnimators = nameModal.GetComponents<UiAnimator>();
+        nameModalAnimators = nameModal.GetComponents<UiTransition>();
         nameInputField = nameModal.transform.Find("NameInputField").GetComponent<TMP_InputField>();
+        logoAnimators = logo.GetComponents<UiTransition>();
+        nameInputField.text = GameConfig.Data.name;
+
         Dictionary<string, VehicleEntry> list = VehicleManager.Instance?.LoadVehicleConfig();
 
 
@@ -49,13 +52,18 @@ public class MainSceneManager : MonoBehaviour
     public void Start()
     {
         InitMenu();
+        UiLoader.Instance?.switchLoader(LoaderType.NoRulez);
     }
 
     public void HideHud()
     {
+        foreach(UiTransition animator in logoAnimators)
+        {
+            animator.Hide();
+        }
         playerName.Hide();
         menuButtons.Hide();
-        playPanel?.GetComponent<UiAnimator>()?.Hide();
+        playPanel?.GetComponent<UiTransition>()?.Hide();
     }
     public void OnPlayButtonClick()
     {
@@ -74,7 +82,7 @@ public class MainSceneManager : MonoBehaviour
             return;
         }
 
-        playPanel?.GetComponent<UiAnimator>()?.ToggleAnimator();
+        playPanel?.GetComponent<UiTransition>()?.ToggleAnimator();
     }
 
     public void OnPlayAsHost()
@@ -148,7 +156,8 @@ public class MainSceneManager : MonoBehaviour
         }), 0.6f));
     }
 
-    public void InitPlayerName() {         var localizeEvent = playerName.transform.Find("PlayerNameText").GetComponent<LocalizeStringEvent>();
+    public void InitPlayerName() {         
+        var localizeEvent = playerName.transform.Find("PlayerNameText").GetComponent<LocalizeStringEvent>();
         localizeEvent.StringReference.Arguments = new object[] { GameConfig.Data.name };
         localizeEvent.RefreshString();
     }
@@ -157,27 +166,18 @@ public class MainSceneManager : MonoBehaviour
         menuButtons?.Show();
         InitPlayerName();
         playerName.Show();
-    }
-
-    public void OnRenameButtonClick()
-    {
-        nameInputField.text = GameConfig.Data.name;
-
-        foreach (UiAnimator animator in nameModalAnimators)
+        foreach(UiTransition animator in logoAnimators)
         {
             animator.Show();
         }
     }
 
-    public void OnRenameConfirmClick()
+    public void OnRenameButtonClick()
     {
-        string newName = nameModal.transform.Find("NameInputField").Find("TextArea").Find("Text").GetComponent<TextMeshProUGUI>().text;
-        GameConfig.Data.name = newName;
-        GameConfig.Save();
-        InitPlayerName();
-        foreach (UiAnimator animator in nameModalAnimators)
+
+        foreach (UiTransition animator in nameModalAnimators)
         {
-            animator.Hide();
+            animator.Show();
         }
     }
 }

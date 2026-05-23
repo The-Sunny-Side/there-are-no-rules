@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Events;
 
-public class ZoomAnimator : UiAnimator
+public class ZoomAnimator : UiTransition
 {
     [SerializeField] private float duration = 0.25f;
     [SerializeField] private Vector3 shownScale = Vector3.one;

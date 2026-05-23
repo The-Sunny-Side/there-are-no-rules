@@ -136,6 +136,22 @@ MonoBehaviour:
     m_Localized: Vuoi giocare il tutorial?
     m_Metadata:
       m_Items: []
+  - m_Id: 29592039059533824
+    m_Localized: 'Ancora in gara: '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29592720344526848
+    m_Localized: Profilo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29693259086475264
+    m_Localized: Pronto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30152962212016128
+    m_Localized: Grafica alta
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

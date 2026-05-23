@@ -1,13 +1,17 @@
 using PurrNet;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] private PauseManager pauseManager;
     [SerializeField] private GameObject finishedGamePanel;
     [SerializeField] private FadeAnimator InGamePanel;
-    [SerializeField] private TextMeshProUGUI textToShowWhenFinished;
+    [SerializeField] private TextMeshProUGUI leaderboardContent;
+    [SerializeField] private GameObject leaderboardRemainingBox;
+
+    private TextMeshProUGUI leaderboardRemainingCount;
 
     private bool _finishPanelShown;
 
@@ -32,23 +36,22 @@ public class MenuManager : MonoBehaviour
             {
                 if (finishIsBot != null && i < finishIsBot.Length && finishIsBot[i]) continue;
                 if (!localPlayerId.HasValue || finishHumanIds[i] != localPlayerId.Value) continue;
-
                 _finishPanelShown = true;
                 pauseManager.HideUi();
                 InGamePanel.Hide();
                 finishedGamePanel.SetActive(true);
+                leaderboardRemainingCount = leaderboardRemainingBox.transform.Find("RemainingNumber")?.GetComponent<TextMeshProUGUI>();
                 break;
             }
         }
-
         if (!_finishPanelShown) return;
-
+        
         var sb = new System.Text.StringBuilder();
         for (int i = 0; i < finishHumanIds.Length; i++)
         {
             bool isBot = finishIsBot != null && i < finishIsBot.Length && finishIsBot[i];
             bool isMe = !isBot && localPlayerId.HasValue && finishHumanIds[i] == localPlayerId.Value;
-
+            
             string label;
             if (isBot)
             {
@@ -63,15 +66,21 @@ public class MenuManager : MonoBehaviour
             {
                 label = GetPlayerDisplayName(finishHumanIds[i]);
             }
-
             sb.AppendLine($"{i + 1}.  {label}");
         }
-
         int remaining = totalPlayers - finishHumanIds.Length;
         if (remaining > 0)
-            sb.AppendLine($"\n({remaining} ancora in gara...)");
-
-        textToShowWhenFinished.text = sb.ToString();
+            leaderboardRemainingCount.text = $"{remaining}";
+        else
+        {
+            leaderboardRemainingBox.SetActive(false);
+        }
+        if (leaderboardContent != null)
+        {
+            leaderboardContent.text = sb.ToString();
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(leaderboardContent.rectTransform);
+        }
     }
 
     private static string GetPlayerDisplayName(PlayerID playerId)

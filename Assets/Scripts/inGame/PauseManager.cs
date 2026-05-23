@@ -3,10 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class PauseManager : MonoBehaviour
 {
-    [SerializeField] private UiAnimator overlay;
-    [SerializeField] private UiAnimator hudPanel;
-    [SerializeField] private UiAnimator pausePanel;
-    [SerializeField] private UiAnimator gamePanel;
+    [SerializeField] private UiTransition overlay;
+    [SerializeField] private UiTransition hudPanel;
+    [SerializeField] private UiTransition pausePanel;
+    [SerializeField] private UiTransition gamePanel;
 
     private Canvas canvas;
 

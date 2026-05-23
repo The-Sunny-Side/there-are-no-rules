@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RotateAnimator : MonoBehaviour
+public class RotateAnimator : UiAnimator
 {
     [Header("Rotation Settings")]
     [SerializeField] private float rotationSpeed = 180f;
@@ -16,7 +16,7 @@ public class RotateAnimator : MonoBehaviour
         direction = clockwise ? -1f : 1f;
     }
 
-    private void Update()
+    public override void Animate()
     {
         float delta = direction * rotationSpeed * Time.deltaTime;
 

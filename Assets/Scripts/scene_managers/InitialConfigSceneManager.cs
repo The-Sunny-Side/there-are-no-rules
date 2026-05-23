@@ -7,14 +7,14 @@ public class InitialConfigSceneManager : MonoBehaviour
     [SerializeField] private GameObject tutorialModal;
 
     private TextMeshProUGUI nameInputText;
-    private UiAnimator[] nameModalAnimators = { };
-    private UiAnimator[] tutorialModalAnimators = { };
+    private UiTransition[] nameModalAnimators = { };
+    private UiTransition[] tutorialModalAnimators = { };
 
     void Start()
     {
-        nameModalAnimators = nameModal.GetComponents<UiAnimator>();
+        nameModalAnimators = nameModal.GetComponents<UiTransition>();
 
-        tutorialModalAnimators = tutorialModal.GetComponents<UiAnimator>();
+        tutorialModalAnimators = tutorialModal.GetComponents<UiTransition>();
 
         nameInputText = nameModal.transform.Find("NameInputField").Find("TextArea").Find("Text").GetComponent<TextMeshProUGUI>();
     }
@@ -23,14 +23,17 @@ public class InitialConfigSceneManager : MonoBehaviour
     {
         AudioManager.Instance?.PlayButtonAudio();
 
-        foreach (UiAnimator animator in nameModalAnimators)
+        foreach (UiTransition animator in nameModalAnimators)
         {
             animator.Hide();
         }
-        foreach (UiAnimator animator in tutorialModalAnimators)
+        foreach (UiTransition animator in tutorialModalAnimators)
         {
             animator.Hide();
         }
+
+        UiLoader.Instance?.switchLoader(LoaderType.NoRulez);
+
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
@@ -52,12 +55,12 @@ public class InitialConfigSceneManager : MonoBehaviour
 
         GameConfig.Data.name = newName;
         GameConfig.Save();
-        foreach (UiAnimator animator in nameModalAnimators)
+        foreach (UiTransition animator in nameModalAnimators)
         {
             animator.Hide();
         }
 
-        foreach (UiAnimator animator in tutorialModalAnimators)
+        foreach (UiTransition animator in tutorialModalAnimators)
         {
             animator.Show();
         }
@@ -68,10 +71,11 @@ public class InitialConfigSceneManager : MonoBehaviour
     {
         AudioManager.Instance?.PlayButtonAudio();
 
-        foreach (UiAnimator animator in tutorialModalAnimators)
+        foreach (UiTransition animator in tutorialModalAnimators)
         {
             animator.Hide();
         }
+        UiLoader.Instance?.switchLoader(LoaderType.NoRulez);
         UiLoader.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {

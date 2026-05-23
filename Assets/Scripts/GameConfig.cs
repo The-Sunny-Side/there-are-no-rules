@@ -13,6 +13,7 @@ public class GameConfigData
     public bool audioEnabled = true;
     public string name;
     public bool showTutorial = true;
+    public bool highFpsMode = false;
 }
 
 public class GameConfig : MonoBehaviour
