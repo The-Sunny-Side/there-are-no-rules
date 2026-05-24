@@ -1,10 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public enum LoaderType { TheSunnySide, NoRulez, Garage }
 
@@ -15,35 +12,30 @@ public class LoaderManager : MonoBehaviour
     public bool noHiding = false;
 
     [SerializeField] private UiConfig uiConfig;
-    [SerializeField] private GameObject topElement;
-    [SerializeField] private GameObject bottomElement;
-    [SerializeField] private GameObject noRulezLoader;
-    [SerializeField] private GameObject garageLoader;
+    [SerializeField] private List<UiLoader> loaderAnimations;
 
-    private List<UiAnimator> noRulezLogoAnimators;
-    private List<UiTransition> animators;
     private CanvasGroup canvasGroup;
-    private LoaderType currentLoaderType = LoaderType.TheSunnySide;
-    private List<UiTransition> theSunnySideAnimators;
+    private UiLoader currentLoader;
+    private Dictionary<LoaderType, UiLoader> loadersMap;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            theSunnySideAnimators = new List<UiTransition>();
+            loadersMap = new Dictionary<LoaderType, UiLoader>();
+
+            foreach (UiLoader loader in loaderAnimations)
+            {
+                loadersMap[loader.key] = loader;
+            }
+
             canvasGroup = GetComponent<CanvasGroup>();
-            theSunnySideAnimators.Add(topElement.GetComponent<UiTransition>());
-            theSunnySideAnimators.Add(bottomElement.GetComponent<UiTransition>());
-            animators = theSunnySideAnimators;
-            topElement.GetComponent<Image>().color = uiConfig.loaderPrimaryColor;
-            topElement.transform.Find("Text").GetComponent<Image>().color = uiConfig.loaderSecondaryColor;
-            bottomElement.GetComponent<Image>().color = uiConfig.loaderSecondaryColor;
-            bottomElement.transform.Find("Text").GetComponent<Image>().color = uiConfig.loaderPrimaryColor;
-            noRulezLoader.GetComponent<Image>().color = uiConfig.noRulezLoaderColor;
+
+            currentLoader=loadersMap[LoaderType.TheSunnySide];
+
             SceneManager.sceneLoaded += onSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
-            noRulezLogoAnimators= new List<UiAnimator>{noRulezLoader.FindChildWithName("Logo").transform.Find("Gear").GetComponent<RotateAnimator>(), noRulezLoader.FindChildWithName("Logo").transform.Find("Text").GetComponent<ScalePulseAnimator>()};
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -66,29 +58,14 @@ public class LoaderManager : MonoBehaviour
     }
 
     public void switchLoader(LoaderType type) {
-        currentLoaderType = type;
-
-        switch (type)
-        {
-            case LoaderType.NoRulez:
-                animators = noRulezLoader.GetComponents<UiTransition>().ToList();
-                break;
-            
-            case LoaderType.Garage:
-                animators = garageLoader.GetComponents<UiTransition>().ToList();
-                break;
-            
-            default:
-                animators = theSunnySideAnimators;
-                break;
-        }
+        currentLoader = loadersMap[type];
     }
 
     public void Show(UnityAction callback = null)
     {
-        foreach(UiAnimator animator in noRulezLogoAnimators)
+        foreach(UiAnimator animator in currentLoader.animators)
         {
-            animator.animate = currentLoaderType == LoaderType.NoRulez;
+            animator.animate = true;
         }
 
         UnityEvent onShowEvent = new UnityEvent();
@@ -97,8 +74,8 @@ public class LoaderManager : MonoBehaviour
             canvasGroup.interactable = true; 
             canvasGroup.blocksRaycasts = true;
         });
-        animators[0].onShow = onShowEvent;
-        foreach (UiTransition animator in animators)
+        currentLoader.transitions[0].onShow = onShowEvent;
+        foreach (UiTransition animator in currentLoader.transitions)
             animator?.Show();
     }
 
@@ -106,7 +83,7 @@ public class LoaderManager : MonoBehaviour
     {
         if (!noHiding)
         {
-            foreach (UiAnimator animator in noRulezLogoAnimators)
+            foreach (UiAnimator animator in currentLoader.animators)
             {
                 animator.animate = false;
             }
@@ -118,9 +95,9 @@ public class LoaderManager : MonoBehaviour
                 canvasGroup.blocksRaycasts = false;
             });
 
-            animators[0].onHide = onHideEvent;
+            currentLoader.transitions[0].onHide = onHideEvent;
 
-            foreach (UiTransition animator in animators)
+            foreach (UiTransition animator in currentLoader.transitions)
                 animator?.Hide();
         }
     }

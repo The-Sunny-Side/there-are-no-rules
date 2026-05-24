@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ba48e64e0b402489389541b102dec0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScalePulseAnimator
-  animated: 1
+  animate: 1
   minScale: 0.9
   maxScale: 1.1
   speed: 6.12
@@ -838,7 +838,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1630cc8183f325d48bba3fc5f26408bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RotateAnimator
-  animate: 0
+  animate: 1
   rotationSpeed: 180
   clockwise: 1
   axis: 2
@@ -1321,6 +1321,7 @@ GameObject:
   - component: {fileID: 5674147208114208053}
   - component: {fileID: 3690154553986780000}
   - component: {fileID: 1735858679457044878}
+  - component: {fileID: 5674147208114208054}
   m_Layer: 5
   m_Name: Top
   m_TagString: Untagged
@@ -1372,10 +1373,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoaderManager
   noHiding: 0
   uiConfig: {fileID: 11400000, guid: a7291db95d6859c45a06a0326c5db632, type: 2}
-  topElement: {fileID: 3561712384259428691}
-  bottomElement: {fileID: 1638608029414089601}
-  noRulezLoader: {fileID: 2113236729}
-  garageLoader: {fileID: 0}
+  loaderAnimations:
+  - key: 0
+    transitions:
+    - {fileID: 1735858679457044878}
+    - {fileID: 8817798415682065306}
+    animators: []
+  - key: 1
+    transitions:
+    - {fileID: 2113236733}
+    animators:
+    - {fileID: 1991263980}
+    - {fileID: 740222401}
+  - key: 2
+    transitions:
+    - {fileID: 2113236733}
+    animators:
+    - {fileID: 1991263980}
+    - {fileID: 740222401}
 --- !u!114 &4574678607581222655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1521,6 +1536,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5674147208114208054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3561712384259428691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1defb2ef13310ee46abb688bf6511455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InitComponentUi
+  componentType: 3
+  isSelected: 0
 --- !u!114 &5830713626669573932
 MonoBehaviour:
   m_ObjectHideFlags: 0
