@@ -17,6 +17,7 @@ public class MainSceneManager : MonoBehaviour
     private UiTransition[] nameModalAnimators;
     private TMP_InputField nameInputField;
     private UiTransition[] logoAnimators;
+    private Canvas rootCanvas;
 
     public void Awake()
     {
@@ -51,13 +52,15 @@ public class MainSceneManager : MonoBehaviour
     }
     public void Start()
     {
+        rootCanvas = playerName.gameObject.GetComponentInParent<Canvas>().rootCanvas;
         InitMenu();
         LoaderManager.Instance?.switchLoader(LoaderType.NoRulez);
     }
 
     public void HideHud()
     {
-        foreach(UiTransition animator in logoAnimators)
+        rootCanvas.sortingOrder = -1;
+        foreach (UiTransition animator in logoAnimators)
         {
             animator.Hide();
         }
@@ -130,7 +133,7 @@ public class MainSceneManager : MonoBehaviour
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
             GameManager.Instance?.GoToVehicleScreen();
-        }), 0.6f));
+        }), 0.8f));
     }
 
     public void OnExitButtonClick()

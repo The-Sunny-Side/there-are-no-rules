@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 740222400}
   - component: {fileID: 740222399}
   - component: {fileID: 740222401}
+  - component: {fileID: 740222402}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -202,7 +203,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 740222397}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88ba48e64e0b402489389541b102dec0, type: 3}
   m_Name: 
@@ -211,6 +212,41 @@ MonoBehaviour:
   minScale: 0.9
   maxScale: 1.1
   speed: 6.12
+--- !u!114 &740222402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 740222397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: def9298092f098041976174cdfbeb85e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TiltTransition
+  IsVisible: 0
+  initiallyVisible: 0
+  interactableOnAnimation: 0
+  showOnStart: 0
+  hideOnStart: 0
+  showOnEnable: 0
+  hideOnEnable: 0
+  showOnDisable: 0
+  hideOnDisable: 0
+  onShow:
+    m_PersistentCalls:
+      m_Calls: []
+  onHide:
+    m_PersistentCalls:
+      m_Calls: []
+  animationDelay: 0
+  onShowDelay: 0
+  onHideDelay: 0
+  duration: 0.44
+  showTiltAngle: 15
+  showTiltAxis: {x: 0, y: 0, z: 1}
+  hideTiltAngle: 15
+  hideTiltAxis: {x: 0, y: 0, z: 1}
 --- !u!1 &1120301951
 GameObject:
   m_ObjectHideFlags: 0
@@ -880,7 +916,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 1700, y: 0}
-  m_SizeDelta: {x: 394.3, y: 492.4}
+  m_SizeDelta: {x: 405, y: 492.4}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2113236731
 MonoBehaviour:
@@ -954,6 +990,10 @@ MonoBehaviour:
   hiddenPosition: {x: 1700, y: 0}
   shownPosition: {x: -2702, y: 0}
   noHide: 1
+  bounceIn: 1
+  bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!225 &2113236734
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1107,6 +1147,10 @@ MonoBehaviour:
   hiddenPosition: {x: 1000, y: 756}
   shownPosition: {x: -1366, y: -13}
   noHide: 1
+  bounceIn: 0
+  bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!114 &1862448267267637400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1261,7 +1305,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   backgroundClips:
   - name: background_menu
-    clip: {fileID: 8300000, guid: 7fde86d4a9c91184cbb9b5f174177c65, type: 3}
+    clip: {fileID: 8300000, guid: aeb57c0f84a83bc41b1cbb453220db13, type: 3}
+  - name: background_race
+    clip: {fileID: 8300000, guid: da6568a4da0d8b74781f44c4963b1dfe, type: 3}
   oneShotClips:
   - name: notification_ok
     clip: {fileID: 8300000, guid: 0748b37d6cfb248f5a06e485e3114155, type: 3}
@@ -1382,6 +1428,7 @@ MonoBehaviour:
   - key: 1
     transitions:
     - {fileID: 2113236733}
+    - {fileID: 740222402}
     animators:
     - {fileID: 1991263980}
     - {fileID: 740222401}
@@ -1767,6 +1814,10 @@ MonoBehaviour:
   hiddenPosition: {x: -3300, y: -1621}
   shownPosition: {x: -1118, y: -912}
   noHide: 1
+  bounceIn: 0
+  bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!222 &8824481734918087550
 CanvasRenderer:
   m_ObjectHideFlags: 0

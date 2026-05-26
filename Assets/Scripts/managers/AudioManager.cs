@@ -46,7 +46,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayBackground(string name)
     {
-        if (!backgroundLibrary.TryGetValue(name, out var clip) || !audioEnabled)
+        if (!backgroundLibrary.TryGetValue(name, out var clip))
             return;
 
         musicSource.clip = clip;
@@ -71,9 +71,13 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(buttonTapAudio, volume);
     }
 
-    public void SetVolume(float newVolume)
+    public void SetVolume(float newVolume, bool saveActualVolume = true)
     {
         volume = Mathf.Clamp01(newVolume);
+
+        if(saveActualVolume)
+            savedVolume = volume;
+
         sfxSource.volume = volume;
         musicSource.volume = volume;
         GameConfig.Data.volume = volume;
@@ -89,7 +93,7 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            SetVolume(0);
+            SetVolume(0, false);
         }
     }
 }

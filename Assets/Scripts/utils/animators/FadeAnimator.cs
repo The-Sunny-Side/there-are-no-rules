@@ -21,19 +21,21 @@ public class FadeAnimator : UiTransition
     public override void Show()
     {
         IsVisible = true;
-        StartAnim(false, interactableOnAnimation);
+        StartAnim(false, interactableOnAnimation, onShowDelay);
     }
 
     public override void Hide()
     {
         IsVisible = false;
-        StartAnim(true, interactableOnAnimation);
+        StartAnim(true, interactableOnAnimation, onHideDelay);
     }
 
-    private void StartAnim(bool hide, bool interactable)
+    private void StartAnim(bool hide, bool interactable, float delay)
     {
         if (anim != null) StopCoroutine(anim);
-        anim = StartCoroutine(Fade(hide, interactableOnAnimation, hide ? onHide : onShow));
+
+        StartCoroutine(Utilities.DelayedEvent(() => { anim = StartCoroutine(Fade(hide, interactable, hide ? onHide : onShow)); }, delay));
+        
     }
 
     private IEnumerator Fade(bool hide, bool interactable, UnityEvent onEnd)

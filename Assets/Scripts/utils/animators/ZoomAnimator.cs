@@ -24,24 +24,28 @@ public class ZoomAnimator : UiTransition
     public override void Show()
     {
         IsVisible = true;
-        StartAnim(false);
+        StartAnim(false, onShowDelay);
     }
 
     public override void Hide()
     {
         IsVisible = false;
-        StartAnim(true);
+        StartAnim(true, onHideDelay);
     }
 
-    private void StartAnim(bool hide)
+    private void StartAnim(bool hide, float delay)
     {
         if (anim != null)
             StopCoroutine(anim);
 
-        anim = StartCoroutine(Zoom(
+        StartCoroutine(Utilities.DelayedEvent(() => {
+            anim = StartCoroutine(Zoom(
             hide,
             hide ? onHide : onShow
         ));
+        }, delay));
+
+        
     }
 
     private IEnumerator Zoom(bool hide, UnityEvent onEnd)

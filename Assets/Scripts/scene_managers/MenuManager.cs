@@ -10,22 +10,26 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private FadeAnimator InGamePanel;
     [SerializeField] private TextMeshProUGUI leaderboardContent;
     [SerializeField] private GameObject leaderboardRemainingBox;
+    [SerializeField] private GameObject finalPosition;
 
     private TextMeshProUGUI leaderboardRemainingCount;
+    private TextMeshProUGUI leaderboardTitle;
 
     private bool _finishPanelShown;
 
     public void GoToHomeScreen()
     {
+        finalPosition.SetActive(false);
         pauseManager.HideUi();
         finishedGamePanel.GetComponent<FadeAnimator>()?.Hide();
+        finishedGamePanel.GetComponentInParent<Canvas>().sortingOrder = -1;
         GameManager.Instance?.Resume();
         LoaderManager.Instance?.Show();
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.GoToHomeScreen();
-        }), 0.6f));
+            GameManager.Instance?.GoToHomeScreen(true);
+        }), 0.5f));
     }
 
     public void OnPlayerFinished(PlayerID[] finishHumanIds, bool[] finishIsBot, int[] finishBotIds, PlayerID? localPlayerId, int totalPlayers)
@@ -39,13 +43,18 @@ public class MenuManager : MonoBehaviour
                 _finishPanelShown = true;
                 pauseManager.HideUi();
                 InGamePanel.Hide();
-                finishedGamePanel.SetActive(true);
-                leaderboardRemainingCount = leaderboardRemainingBox.transform.Find("RemainingNumber")?.GetComponent<TextMeshProUGUI>();
+                finalPosition.GetComponent<TextMeshProUGUI>()?.SetText((i+1).ToString());
+                
                 break;
             }
         }
         if (!_finishPanelShown) return;
-        
+
+        finalPosition.SetActive(true);
+
+        finishedGamePanel.SetActive(true);
+        leaderboardRemainingCount = leaderboardRemainingBox.transform.Find("RemainingNumber")?.GetComponent<TextMeshProUGUI>();
+
         var sb = new System.Text.StringBuilder();
         for (int i = 0; i < finishHumanIds.Length; i++)
         {

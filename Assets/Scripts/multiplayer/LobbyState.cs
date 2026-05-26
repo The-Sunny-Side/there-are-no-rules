@@ -19,6 +19,8 @@ public class LobbyState : NetworkBehaviour
     [SerializeField] private int countdownSeconds = 3;
     [SerializeField] private int maxDisplayNameLength = 24;
 
+    [SerializeField] private RaceSemaphore raceSemaphore;
+
     // Verità server. Replication + buffering per late joiner gestiti da PurrNet.
     private readonly SyncList<PlayerID> _playerOrder = new();
     private readonly SyncDictionary<PlayerID, bool> _readyStates = new();
@@ -116,6 +118,9 @@ public class LobbyState : NetworkBehaviour
         // BroadcastRaceStarted (server) → setta IsRaceActive e fa partire OnLobbyStateChanged
         // sia sul server sia sui client, quindi qui non serve invocarlo manualmente.
         if (isServer) BroadcastRaceStarted();
+        raceSemaphore.GreenLights();
+        foreach(UiTransition transition in raceSemaphore.gameObject.GetComponents<UiTransition>())
+            transition.Hide();
     }
 
     private void HandlePlayerJoined(PlayerID player, bool isReconnect, bool asServer)

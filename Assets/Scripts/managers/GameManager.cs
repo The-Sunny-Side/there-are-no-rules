@@ -39,13 +39,18 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadSceneAsync(scene);
     }
 
-    public void GoToHomeScreen()
+    public void GoToHomeScreen(bool playBackground = false)
     {
+        if (playBackground)
+        {
+            AudioManager.Instance?.PlayBackground("background_menu");
+        }
         LoadSceneAsync("MainScene");
     }
 
     public void GoToPlayScreen()
     {
+        AudioManager.Instance?.PlayBackground("background_race");
         LoadSceneAsync("PlayScene");
     }
 
@@ -61,6 +66,7 @@ public class GameManager : MonoBehaviour
 
     public void GoToSandboxScreen()
     {
+        AudioManager.Instance?.PlayBackground("background_race");
         LoadSceneAsync("SandboxScene");
     }
 

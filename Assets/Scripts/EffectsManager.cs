@@ -5,6 +5,8 @@ public class EffectsManager : MonoBehaviour
     public static EffectsManager Instance { get; private set; }
 
     [SerializeField] private GameObject hitBalloon;
+    [SerializeField] private GameObject greenLight;
+
     private Canvas _canvas;
     private Camera _camera;
 
@@ -14,6 +16,24 @@ public class EffectsManager : MonoBehaviour
         else { Destroy(gameObject); return; }
 
         _canvas = GetComponent<Canvas>();
+    }
+
+    public void SpawnGreenLight(Vector3 worldPosition)
+    {
+        if (_camera == null)
+            _camera = Camera.main;
+        if (_camera == null)
+            return;
+        Vector2 screenPos = _camera.WorldToScreenPoint(worldPosition);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            _canvas.GetComponent<RectTransform>(),
+            screenPos,
+            null, 
+            out Vector2 localPoint
+        );
+        GameObject spawned = Instantiate(greenLight, _canvas.transform);
+        spawned.GetComponent<RectTransform>().localPosition = localPoint;
+        StartCoroutine(Utilities.DelayedEvent(() => Destroy(spawned), 0.5f));
     }
 
     public void SpawnBalloon(Vector3 worldPosition)

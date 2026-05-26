@@ -31,6 +31,7 @@ public class VehicleSelectorManager : MonoBehaviour
     private int selectedBaseIndex = 0;
     private int selectedBodyIndex = 0;
     private Image[] weaponIcons = new Image[4];
+    private Canvas rootCanvas;
 
     void Awake()
     {
@@ -121,6 +122,7 @@ public class VehicleSelectorManager : MonoBehaviour
 
     void Start()
     {
+        rootCanvas = topButtons.gameObject.GetComponentInParent<Canvas>().rootCanvas;
         SetStep(0);
     }
 
@@ -269,6 +271,7 @@ public class VehicleSelectorManager : MonoBehaviour
     public void FinalizeVehicle()
     {
         AudioManager.Instance?.PlayButtonAudio();
+        rootCanvas.sortingOrder = -1;
         SetHudVisibility(false);
         topButtons.Hide();
 

@@ -25,12 +25,10 @@ public class LobbyUI : MonoBehaviour
     [Header("Host controls")]
     [SerializeField] private Button playButton;
 
-    [Header("Countdown")]
-    [SerializeField] private TextMeshProUGUI countdownLabel;
-    [SerializeField] private string goText = "GO!";
-
     [Header("Refs")]
     [SerializeField] private BotSpawner botSpawner;
+
+    [SerializeField] private RaceSemaphore raceSemaphore;
 
     private readonly List<LobbyPlayerRow> _rowPool = new();
     private LobbyState _subscribedState;
@@ -158,16 +156,25 @@ public class LobbyUI : MonoBehaviour
         if (state.IsRaceActive)
         {
             if (lobbyPanel != null) lobbyPanel.SetActive(false);
-            if (countdownPanel != null) countdownPanel.SetActive(false);
+            if (countdownPanel != null) {
+                countdownPanel.SetActive(false); 
+            }
             return;
         }
 
         if (state.CountdownActive)
         {
+            foreach(UiTransition transition in raceSemaphore.gameObject.GetComponents<UiTransition>())
+            {
+                transition.Show();
+            }
             if (lobbyPanel != null) lobbyPanel.SetActive(false);
             if (countdownPanel != null) countdownPanel.SetActive(true);
-            if (countdownLabel != null)
-                countdownLabel.text = state.CountdownValue > 0 ? state.CountdownValue.ToString() : goText;
+                if(state.CountdownValue > 0 && state.CountdownValue < 3)
+                    raceSemaphore.DeactivateLight(state.CountdownValue);
+
+                if(state.CountdownValue == 0)
+                    raceSemaphore.GreenLights();
             return;
         }
 

@@ -34,7 +34,7 @@ public class LoaderManager : MonoBehaviour
 
             currentLoader=loadersMap[LoaderType.TheSunnySide];
 
-            SceneManager.sceneLoaded += onSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
             DontDestroyOnLoad(gameObject);
         }
@@ -50,7 +50,7 @@ public class LoaderManager : MonoBehaviour
             Show();
     }
 
-    private void onSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
 
         if (scene.name != "Init")

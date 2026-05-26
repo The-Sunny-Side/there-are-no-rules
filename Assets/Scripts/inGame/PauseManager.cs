@@ -17,7 +17,7 @@ public class PauseManager : MonoBehaviour
 
     public void OnHide()
     {
-        canvas.sortingOrder = 0;
+        canvas.sortingOrder = -1;
     }
 
     public void OnShow()
@@ -65,7 +65,7 @@ public class PauseManager : MonoBehaviour
         AudioManager.Instance?.PlayButtonAudio();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.GoToHomeScreen();
+            GameManager.Instance?.GoToHomeScreen(true);
         }), 0.6f));
 
     }

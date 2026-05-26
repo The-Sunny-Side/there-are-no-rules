@@ -3616,7 +3616,6 @@ GameObject:
   - component: {fileID: 729519134}
   - component: {fileID: 729519137}
   - component: {fileID: 729519136}
-  - component: {fileID: 729519138}
   m_Layer: 5
   m_Name: ElementChooserBox
   m_TagString: Untagged
@@ -3673,7 +3672,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0625fdf4a5e43f94c897425a3bdae8c4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 85b690d1c1ed05640a7c16c3e22a5a08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3737,20 +3736,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &729519138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 729519132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1defb2ef13310ee46abb688bf6511455, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InitComponentUi
-  componentType: 1
-  isSelected: 0
 --- !u!1 &776875467
 GameObject:
   m_ObjectHideFlags: 0
@@ -7023,8 +7008,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoaderManager
   noHiding: 0
   uiConfig: {fileID: 11400000, guid: a7291db95d6859c45a06a0326c5db632, type: 2}
-  topElement: {fileID: 223390870}
-  bottomElement: {fileID: 878513371}
+  loaderAnimations: []
 --- !u!225 &2100852260
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7133,7 +7117,6 @@ GameObject:
   - component: {fileID: 2122283005}
   - component: {fileID: 2122283008}
   - component: {fileID: 2122283009}
-  - component: {fileID: 2122283010}
   m_Layer: 5
   m_Name: WeaponSelectorsPanel
   m_TagString: Untagged
@@ -7184,7 +7167,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 83a82fb9020f42a47834f228c766d510, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b86c2400ad0da8946a9be4d93e438826, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7248,20 +7231,6 @@ MonoBehaviour:
   hiddenPosition: {x: 506, y: -539.9003}
   shownPosition: {x: 3, y: -539.9003}
   noHide: 1
---- !u!114 &2122283010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2122283003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1defb2ef13310ee46abb688bf6511455, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InitComponentUi
-  componentType: 1
-  isSelected: 0
 --- !u!1 &2139671589
 GameObject:
   m_ObjectHideFlags: 0

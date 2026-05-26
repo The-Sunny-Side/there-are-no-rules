@@ -41,8 +41,10 @@ public class SettingsModal : MonoBehaviour
     void Start()
     {
         // Init audio state
+        bool audioEnabled = AudioManager.Instance?.audioEnabled ?? false;
         volumeSlider.value = AudioManager.Instance?.volume ?? 0f;
-        audioToggle.SetIsOnWithoutNotify(AudioManager.Instance?.audioEnabled ?? false);
+        volumeSlider.interactable = audioEnabled;
+        audioToggle.SetIsOnWithoutNotify(audioEnabled);
         fpsToggle.SetIsOnWithoutNotify(GameConfig.Data.highFpsMode);
 
         // Listeners
@@ -110,6 +112,7 @@ public class SettingsModal : MonoBehaviour
     {
         AudioManager.Instance?.PlayButtonAudio();
         AudioManager.Instance?.ToggleAudio();
+        volumeSlider.interactable = isOn;
     }
 
     public void OnToggleFps(bool isOn)
