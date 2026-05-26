@@ -1,6 +1,8 @@
 using PurrNet;
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
@@ -13,7 +15,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject finalPosition;
 
     private TextMeshProUGUI leaderboardRemainingCount;
-    private TextMeshProUGUI leaderboardTitle;
+    private string[] positionSuffixesIt = new string[] { "°", "°", "°", "°", "°", "°", "°", "°" };
+    private string[] positionSuffixesEn = new string[] { "st", "nd", "rd", "th", "th", "th", "th", "th" };
 
     private bool _finishPanelShown;
 
@@ -43,8 +46,13 @@ public class MenuManager : MonoBehaviour
                 _finishPanelShown = true;
                 pauseManager.HideUi();
                 InGamePanel.Hide();
-                finalPosition.GetComponent<TextMeshProUGUI>()?.SetText((i+1).ToString());
-                
+                string currentCode = LocalizationSettings.SelectedLocale?.Identifier.Code ?? "";
+                string currentPrefix = currentCode.Substring(0, Math.Min(2, currentCode.Length));
+
+                string[] suffixes = currentPrefix == "en" ? positionSuffixesEn : positionSuffixesIt;
+                finalPosition.transform.Find("Position").GetComponent<TextMeshProUGUI>()?.SetText((i+1).ToString());
+                finalPosition.transform.Find("Suffix").GetComponent<TextMeshProUGUI>()?.SetText(suffixes[i]);
+
                 break;
             }
         }
