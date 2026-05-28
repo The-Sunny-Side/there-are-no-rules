@@ -124,25 +124,25 @@ public class VehicleManager : MonoBehaviour
         if (data.weaponRight != null)
         {
             VehicleEntry weaponRightObj = vehiclePrefabRegistry.GetWeapon(data.weaponRight);
-            result[VehicleElementsKeys.WeaponRight] = weaponRightObj;
+            if (weaponRightObj != null) result[VehicleElementsKeys.WeaponRight] = weaponRightObj;
         }
 
         if (data.weaponFront != null)
         {
             VehicleEntry weaponFrontObj = vehiclePrefabRegistry.GetWeapon(data.weaponFront);
-            result[VehicleElementsKeys.WeaponFront] = weaponFrontObj;
+            if (weaponFrontObj != null) result[VehicleElementsKeys.WeaponFront] = weaponFrontObj;
         }
 
         if (data.weaponBack != null)
         {
             VehicleEntry weaponBackObj = vehiclePrefabRegistry.GetWeapon(data.weaponBack);
-            result[VehicleElementsKeys.WeaponBack] = weaponBackObj;
+            if (weaponBackObj != null) result[VehicleElementsKeys.WeaponBack] = weaponBackObj;
         }
 
         if (data.weaponLeft != null)
         {
             VehicleEntry weaponLeftObj = vehiclePrefabRegistry.GetWeapon(data.weaponLeft);
-            result[VehicleElementsKeys.WeaponLeft] = weaponLeftObj;
+            if (weaponLeftObj != null) result[VehicleElementsKeys.WeaponLeft] = weaponLeftObj;
         }
 
         result[VehicleElementsKeys.Body] = bodyObj ?? vehiclePrefabRegistry.GetBody(defaultBody);
