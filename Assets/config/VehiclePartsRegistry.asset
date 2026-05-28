@@ -35,9 +35,9 @@ MonoBehaviour:
   - element: {fileID: 585243397375712758, guid: daf1dade928ac22448da554809be96a6, type: 3}
     icon: {fileID: 21300000, guid: e5ae4a189146bf8489027845ae9f9077, type: 3}
     key: piano
-  - element: {fileID: 7968280193111092051, guid: f595d3a7b0cffe34aa952d8c0eef2f69, type: 3}
-    icon: {fileID: 21300000, guid: 29746cbdbb407ea42baa8e8b41231866, type: 3}
-    key: wc
+  - element: {fileID: 2672907120137023651, guid: 5e602965b3d323d4ab28394caf4192f1, type: 3}
+    icon: {fileID: 21300000, guid: 19c7939cde6544949afef355921d8185, type: 3}
+    key: dj
   weapons:
   - element: {fileID: 3925080907645985337, guid: 965d393dd41f0244bb7dfd4d5840a65a, type: 3}
     icon: {fileID: 21300000, guid: 7511ba900fd4f5d46a134ccc53f72909, type: 3}
