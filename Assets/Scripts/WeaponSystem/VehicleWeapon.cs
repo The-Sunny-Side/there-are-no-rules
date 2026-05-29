@@ -3,6 +3,7 @@ using UnityEngine;
 public class VehicleWeapon : MonoBehaviour
 {
     public bool isHitting = false;
+    public bool isEmpty = false;
 
     private Animator _animator;
 

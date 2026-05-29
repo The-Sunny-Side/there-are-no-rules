@@ -66,10 +66,9 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
         {
             VehicleWeapon weapon = gameObject.FindChildWithName(weaponHud?.weaponPart)?.FindChildWithTag("Weapon")?.GetComponent<VehicleWeapon>();
 
-            if (!weaponHud.sliceFill.IsFilling && weapon != null)
+            if (!weaponHud.sliceFill.IsFilling && weapon != null && !weapon.isEmpty)
             {
                 Debug.Log("Triggering weapon: " + direction);
-                weaponHud.sliceFill.CooldownDuration = weaponHud.cooldownTime;
                 weaponHud.sliceFill.StartCooldown();
                 weapon.ActivateWeapon();
             }

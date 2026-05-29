@@ -110,5 +110,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccd8df69a4a41734c926f65abf93b3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VeichleWeapon
-  cooldown: 0
-  isActive: 1
+  isHitting: 0
+  isEmpty: 1
