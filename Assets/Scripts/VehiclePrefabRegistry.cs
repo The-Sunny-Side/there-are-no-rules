@@ -33,5 +33,5 @@ public class VehiclePrefabRegistry : ScriptableObject
 
     public VehicleEntry GetBase(string key) => _baseMap.TryGetValue(key, out var v) ? v : null;
     public VehicleEntry GetBody(string key) => _bodyMap.TryGetValue(key, out var v) ? v : null;
-    public VehicleEntry GetWeapon(string key) => _weaponMap.TryGetValue(key, out var v) ? v : null;
+    public VehicleWeaponEntry GetWeapon(string key) => _weaponMap.TryGetValue(key, out var v) ? v : null;
 }

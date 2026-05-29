@@ -6,24 +6,23 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
 {
     private IVehicleInputProvider _input;
     private SwipeDetector _swipeDetector;
-    private Dictionary<string, string> weaponsKey = new Dictionary<string, string>();
+    private Dictionary<string, WeaponHud> weaponsKey = new Dictionary<string, WeaponHud>();
 
     protected override void LateAwake()
     {
         _input = GetComponent<IVehicleInputProvider>();
-        weaponsKey.Add("front", AnchorNames.WeaponFrontAnchor);
-        weaponsKey.Add("back", AnchorNames.WeaponBackAnchor);
-        weaponsKey.Add("left", AnchorNames.WeaponLeftAnchor);
-        weaponsKey.Add("right", AnchorNames.WeaponRightAnchor);
 
+        weaponsKey = VehicleManager.Instance.GetWeaponsHud();
     }
+
     protected override void UpdateInput(ref Input input)
     {
-            input.useFront = _input.UseFront;
-            input.useBack = _input.UseBack;
-            input.useRight = _input.UseRight;
-            input.useLeft = _input.UseLeft;
+        input.useFront = _input.UseFront;
+        input.useBack = _input.UseBack;
+        input.useRight = _input.UseRight;
+        input.useLeft = _input.UseLeft;
     }
+
     public struct Input : IPredictedData
     {
         public bool useFront;
@@ -32,6 +31,7 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
         public bool useLeft;
         public void Dispose() { }
     }
+
     public struct State : IPredictedData<State>
     {
         public void Dispose() { }
@@ -62,11 +62,15 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
     }
     public void ActivateWeapon(string direction)
     {
-        if (weaponsKey.TryGetValue(direction, out string partName))
+        if (weaponsKey.TryGetValue(direction, out WeaponHud weaponHud))
         {
-            VehicleWeapon weapon = gameObject.FindChildWithName(partName)?.FindChildWithTag("Weapon")?.GetComponent<VehicleWeapon>();
-            if (weapon != null)
+            VehicleWeapon weapon = gameObject.FindChildWithName(weaponHud?.weaponPart)?.FindChildWithTag("Weapon")?.GetComponent<VehicleWeapon>();
+
+            if (!weaponHud.sliceFill.IsFilling && weapon != null)
             {
+                Debug.Log("Triggering weapon: " + direction);
+                weaponHud.sliceFill.CooldownDuration = weaponHud.cooldownTime;
+                weaponHud.sliceFill.StartCooldown();
                 weapon.ActivateWeapon();
             }
         }

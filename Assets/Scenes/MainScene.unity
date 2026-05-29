@@ -265,6 +265,8 @@ MonoBehaviour:
   noHide: 1
   bounceIn: 0
   bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!225 &13668971
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1831,6 +1833,8 @@ MonoBehaviour:
   noHide: 1
   bounceIn: 0
   bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!225 &361956705
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3226,6 +3230,8 @@ MonoBehaviour:
   noHide: 1
   bounceIn: 0
   bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!1 &575585238
 GameObject:
   m_ObjectHideFlags: 0
@@ -6147,6 +6153,8 @@ MonoBehaviour:
   noHide: 1
   bounceIn: 0
   bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!225 &1114841795
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -6208,7 +6216,6 @@ GameObject:
   - component: {fileID: 1169289963}
   - component: {fileID: 1169289962}
   - component: {fileID: 1169289961}
-  - component: {fileID: 1169289960}
   - component: {fileID: 1169289959}
   - component: {fileID: 1169289958}
   - component: {fileID: 1169289957}
@@ -6295,20 +6302,6 @@ MonoBehaviour:
   duration: 0.25
   shownScale: {x: 0.5078381, y: 0.57575, z: 1}
   hiddenScale: {x: 0.22, y: 0.24942005, z: 0.43320894}
---- !u!114 &1169289960
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1169289956}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1defb2ef13310ee46abb688bf6511455, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InitComponentUi
-  componentType: 4
-  isSelected: 0
 --- !u!114 &1169289961
 MonoBehaviour:
   m_ObjectHideFlags: 0

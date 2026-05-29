@@ -3,6 +3,34 @@ using System.IO;
 using UnityEngine;
 using static VehiclePrefabRegistry;
 
+public class WeaponHud
+{
+    public string weaponPart;
+    public SliceFillController sliceFill;
+    public float cooldownTime = 0f;
+
+    public WeaponHud(string weaponPart, SliceFillController sliceFill, float cooldownTime)
+    {
+        this.weaponPart = weaponPart;
+        this.sliceFill = sliceFill;
+        this.cooldownTime = cooldownTime;
+    }
+}
+
+public class WeaponSliceItem
+{
+    public string sliceContainer;
+    public string weaponKey;
+    public string anchorName;
+
+    public WeaponSliceItem(string sliceContainer, string weaponKey, string anchorName)
+    {
+        this.sliceContainer = sliceContainer;
+        this.weaponKey = weaponKey;
+        this.anchorName = anchorName;
+    }
+}
+
 [System.Serializable]
 public class Vehicle
 {
@@ -40,6 +68,12 @@ public class VehicleManager : MonoBehaviour
     private bool resyncVehicle = true;
     private Dictionary<string, VehicleEntry> savedVehicle = new Dictionary<string, VehicleEntry>();
     private string cachedVehicleJson = "";
+    private Dictionary<string, WeaponSliceItem> weaponSliceMap = new Dictionary<string, WeaponSliceItem>{
+        {"front", new WeaponSliceItem("WeaponSelectorTop", VehicleElementsKeys.WeaponFront, AnchorNames.WeaponFrontAnchor)},
+        {"back", new WeaponSliceItem("WeaponSelectorBottom", VehicleElementsKeys.WeaponBack, AnchorNames.WeaponBackAnchor)},
+        {"left", new WeaponSliceItem("WeaponSelectorLeft", VehicleElementsKeys.WeaponLeft, AnchorNames.WeaponLeftAnchor)},
+        {"right", new WeaponSliceItem("WeaponSelectorRight", VehicleElementsKeys.WeaponRight, AnchorNames.WeaponRightAnchor)}
+        };
 
     void Awake()
     {
@@ -160,5 +194,23 @@ public class VehicleManager : MonoBehaviour
     public string GetVehicleJson()
     {
         return cachedVehicleJson;
+    }
+
+    public Dictionary<string, WeaponHud> GetWeaponsHud() {
+
+        Dictionary<string, WeaponHud> weaponsKey = new Dictionary<string, WeaponHud>();
+        GameObject parent = GameObject.Find("Hud").FindChildWithName("RightStick");
+        VehiclePrefabRegistry registry = GameConfig.VehiclePrefabRegistry;
+
+        foreach (string key in weaponSliceMap.Keys)
+        {
+            WeaponSliceItem weaponSlice = weaponSliceMap[key];
+            SliceFillController sliceFill = parent.FindChildWithName(weaponSlice.sliceContainer)?.GetComponent<SliceFillController>();
+            sliceFill.FlashColor = GameConfig.UiConfig.primaryColor;
+            weaponsKey.Add(key, new WeaponHud(weaponSlice.anchorName, sliceFill, registry.GetWeapon(savedVehicle.GetValueOrDefault(weaponSlice.weaponKey).key).cooldown));
+        }
+
+        return weaponsKey;
+
     }
 }
