@@ -1407,7 +1407,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SliceFillController
   FillAmount: 1
-  FillDirection: 1
+  FillDirection: 0
   CooldownDuration: 2
   EaseCurve:
     serializedVersion: 2
@@ -4966,7 +4966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SliceFillController
   FillAmount: 1
-  FillDirection: 3
+  FillDirection: 2
   CooldownDuration: 2
   EaseCurve:
     serializedVersion: 2
@@ -5324,7 +5324,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SliceFillController
   FillAmount: 1
-  FillDirection: 0
+  FillDirection: 1
   CooldownDuration: 2
   EaseCurve:
     serializedVersion: 2
@@ -6095,7 +6095,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SliceFillController
   FillAmount: 1
-  FillDirection: 2
+  FillDirection: 3
   CooldownDuration: 2
   EaseCurve:
     serializedVersion: 2
