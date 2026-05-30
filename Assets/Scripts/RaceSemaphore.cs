@@ -9,17 +9,20 @@ public class RaceSemaphore : MonoBehaviour
 {
     [SerializeField] private List<GameObject> lights;
     [SerializeField] private TextMeshProUGUI label;
+    [SerializeField] private Sprite redLight;
+    [SerializeField] private Sprite greenLight;
+    [SerializeField] private Sprite offLight;
 
     private int currentCount=3;
 
     public void ActivateLight(int index)
     {
-        lights[index].GetComponent<Image>().color = Color.red;
+        lights[index].GetComponent<Image>().sprite = redLight;
     }
 
     public void DeactivateLight(int index)
         {
-            lights[index].GetComponent<Image>().color = Color.black;
+            lights[index].GetComponent<Image>().sprite = offLight;
             currentCount--;
             label.text = index.ToString();
     }
@@ -28,7 +31,7 @@ public class RaceSemaphore : MonoBehaviour
     {
         foreach (var light in lights)
         {
-            light.GetComponent<Image>().color = Color.green;
+            light.GetComponent<Image>().sprite = greenLight;
         }
 
         label.text = "GOOO!!!";

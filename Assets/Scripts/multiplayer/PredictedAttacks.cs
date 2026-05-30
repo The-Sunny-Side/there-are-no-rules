@@ -5,14 +5,12 @@ using UnityEngine;
 public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, PredictedAttacks.State>
 {
     private IVehicleInputProvider _input;
-    private SwipeDetector _swipeDetector;
-    private Dictionary<string, WeaponHud> weaponsKey = new Dictionary<string, WeaponHud>();
+    private Dictionary<string, WeaponHud> weaponsSelectors = new();
 
     protected override void LateAwake()
     {
         _input = GetComponent<IVehicleInputProvider>();
-
-        weaponsKey = VehicleManager.Instance.GetWeaponsHud();
+        weaponsSelectors = PlayerHudManager.Instance.GetWeaponsHud();
     }
 
     protected override void UpdateInput(ref Input input)
@@ -62,11 +60,11 @@ public class PredictedAttacks : PredictedIdentity<PredictedAttacks.Input, Predic
     }
     public void ActivateWeapon(string direction)
     {
-        if (weaponsKey.TryGetValue(direction, out WeaponHud weaponHud))
+        if (weaponsSelectors.TryGetValue(direction, out WeaponHud weaponHud))
         {
             VehicleWeapon weapon = gameObject.FindChildWithName(weaponHud?.weaponPart)?.FindChildWithTag("Weapon")?.GetComponent<VehicleWeapon>();
 
-            if (!weaponHud.sliceFill.IsFilling && weapon != null && !weapon.isEmpty)
+            if (weapon!=null && !weaponHud.sliceFill.IsFilling && !weapon.isEmpty)
             {
                 Debug.Log("Triggering weapon: " + direction);
                 weaponHud.sliceFill.StartCooldown();

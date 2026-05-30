@@ -20,6 +20,11 @@ public class MenuManager : MonoBehaviour
 
     private bool _finishPanelShown;
 
+    public void Start()
+    {
+        PlayerHudManager.Instance?.InitPlaySceneHud();
+    }
+
     public void GoToHomeScreen()
     {
         finalPosition.SetActive(false);

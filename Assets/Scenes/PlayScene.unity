@@ -6178,15 +6178,19 @@ MonoBehaviour:
       m_Calls: []
   animationDelay: 0
   onShowDelay: 0
-  onHideDelay: 0
-  duration: 0.25
+  onHideDelay: 0.2
+  duration: 0.39
   hiddenPosition: {x: 0, y: 938}
   shownPosition: {x: 0, y: 207}
   noHide: 1
   bounceIn: 1
-  bounceOut: 0
-  easeInShow: 0
-  easeInHide: 0
+  bounceOut: 1
+  easeInShow: 1
+  easeInHide: 1
+  bounceOnDepart: 1
+  bounceOnDepartAmount: 0.08
+  tiltOnDepart: 1
+  tiltMaxAngle: 8
 --- !u!114 &1524535169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6194,7 +6198,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1524535167}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: def9298092f098041976174cdfbeb85e, type: 3}
   m_Name: 
@@ -6216,7 +6220,7 @@ MonoBehaviour:
       m_Calls: []
   animationDelay: 0
   onShowDelay: 0
-  onHideDelay: 0
+  onHideDelay: 0.1
   duration: 0.25
   showTiltAngle: 15
   showTiltAxis: {x: 0, y: 0, z: 1}
