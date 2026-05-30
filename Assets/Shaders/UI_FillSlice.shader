@@ -8,6 +8,8 @@ Shader "Custom/UI_FillSlice"
         _FillAmount  ("Fill Amount", Range(0,1)) = 0.5
         _EdgeWidth   ("Edge Glow Width", Range(0, 0.05)) = 0.015
         _EdgeColor   ("Edge Glow Color", Color) = (0.6, 0.9, 1.0, 1.0)
+        // 0 = Bottom→Top  1 = Top→Bottom  2 = Left→Right  3 = Right→Left
+        [IntRange] _FillDirection ("Fill Direction", Range(0,3)) = 0
 
         // Richiesti da Unity UI
         _StencilComp ("Stencil Comparison", Float) = 8
@@ -79,6 +81,7 @@ Shader "Custom/UI_FillSlice"
             float       _FillAmount;
             float       _EdgeWidth;
             fixed4      _EdgeColor;
+            int         _FillDirection;
             float4      _ClipRect;
 
             v2f vert(appdata_t v)
@@ -107,20 +110,25 @@ Shader "Custom/UI_FillSlice"
                 half clipAlpha = UnityGet2DClipping(i.worldPos.xy, _ClipRect);
                 clip(clipAlpha - 0.001);
 
-                // Determina se il pixel è sopra o sotto il livello fill
-                float y = i.localUV.y;   // 0 = basso, 1 = alto
+                // Seleziona la coordinata in base alla direzione del fill
+                // 0 Bottom→Top  1 Top→Bottom  2 Left→Right  3 Right→Left
+                float coord;
+                if      (_FillDirection == 1) coord = 1.0 - i.localUV.y;
+                else if (_FillDirection == 2) coord = i.localUV.x;
+                else if (_FillDirection == 3) coord = 1.0 - i.localUV.x;
+                else                          coord = i.localUV.y; // default: Bottom→Top
 
                 fixed4 col;
 
-                if (y < _FillAmount - _EdgeWidth)
+                if (coord < _FillAmount - _EdgeWidth)
                 {
                     // Zona piena
                     col = _FillColor;
                 }
-                else if (y < _FillAmount)
+                else if (coord < _FillAmount)
                 {
                     // Bordo luminoso (edge glow)
-                    float t = (y - (_FillAmount - _EdgeWidth)) / _EdgeWidth;
+                    float t = (coord - (_FillAmount - _EdgeWidth)) / _EdgeWidth;
                     col = lerp(_FillColor, _EdgeColor, t);
                 }
                 else

@@ -5,10 +5,21 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class SliceFillController : MonoBehaviour
 {
+    public enum EFillDirection
+    {
+        BottomToTop = 0,  // default originale
+        TopToBottom = 1,
+        LeftToRight = 2,
+        RightToLeft = 3,
+    }
+
     // ── Inspector ─────────────────────────────────────────────────────────
     [Header("Fill")]
     [Range(0f, 1f)]
     public float FillAmount = 0f;
+
+    [Tooltip("Direzione del riempimento")]
+    public EFillDirection FillDirection = EFillDirection.BottomToTop;
 
     [Header("Cooldown")]
     [Tooltip("Durata in secondi dell'animazione di riempimento (0 -> 1)")]
@@ -23,12 +34,9 @@ public class SliceFillController : MonoBehaviour
     public float FlashDuration = 0.35f;
     public AnimationCurve FlashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    [Header("Fix")]
-    [Tooltip("Inverti direzione del fill se lo shader va al contrario")]
-    public bool FlipY = false;
-
     // ── privati ──────────────────────────────────────────────────────────
     public bool IsFilling = false;
+
 
     private Image _image;
     private Material _matInstance;
@@ -37,13 +45,16 @@ public class SliceFillController : MonoBehaviour
     private Coroutine _flashCoroutine;
     private Color _originalColor;
 
-    private static readonly int PropFill = Shader.PropertyToID("_FillAmount");
+    private static readonly int PropFill      = Shader.PropertyToID("_FillAmount");
     private static readonly int PropFillColor = Shader.PropertyToID("_FillColor");
+    private static readonly int PropDirection = Shader.PropertyToID("_FillDirection");
+    private CanvasGroup children;
 
     // ── Unity ─────────────────────────────────────────────────────────────
     void Awake()
     {
         _image = GetComponent<Image>();
+        children = transform.GetChild(0).GetComponent<CanvasGroup>();
 
         if (_image.material != null)
             _matInstance = new Material(_image.material);
@@ -76,6 +87,7 @@ public class SliceFillController : MonoBehaviour
             StopCoroutine(_animCoroutine);
 
         IsFilling = true;
+        children.alpha = 0.4f;
         _animCoroutine = StartCoroutine(AnimateFill(target, duration ?? CooldownDuration));
     }
 
@@ -103,6 +115,8 @@ public class SliceFillController : MonoBehaviour
             StopCoroutine(_animCoroutine);
 
         IsFilling = false;
+        children.alpha = 1f;
+
         _currentFill = FillAmount = Mathf.Clamp01(amount);
         PushToShader(_currentFill);
     }
@@ -118,6 +132,7 @@ public class SliceFillController : MonoBehaviour
         {
             IsFilling = false;
             if (FlashOnComplete) TriggerFlash();
+            children.alpha = 1f;
             yield break;
         }
 
@@ -141,6 +156,7 @@ public class SliceFillController : MonoBehaviour
 
         _currentFill = FillAmount = target;
         PushToShader(_currentFill);
+        children.alpha = 1f;
         IsFilling = false;
         _animCoroutine = null;
 
@@ -188,8 +204,8 @@ public class SliceFillController : MonoBehaviour
     void PushToShader(float value)
     {
         if (_matInstance == null) return;
-        float shaderValue = FlipY ? 1f - value : value;
-        _matInstance.SetFloat(PropFill, shaderValue);
+        _matInstance.SetFloat(PropFill, value);
+        _matInstance.SetInt(PropDirection, (int)FillDirection);
     }
 
 #if UNITY_EDITOR
