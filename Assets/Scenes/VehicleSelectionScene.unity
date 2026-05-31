@@ -658,6 +658,10 @@ MonoBehaviour:
   hiddenPosition: {x: 1000, y: 756}
   shownPosition: {x: -1366, y: -13}
   noHide: 1
+  bounceIn: 0
+  bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!225 &223390873
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2919,6 +2923,10 @@ MonoBehaviour:
   hiddenPosition: {x: 0, y: 119}
   shownPosition: {x: 0, y: -101}
   noHide: 1
+  bounceIn: 0
+  bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!225 &655051986
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3600,6 +3608,10 @@ MonoBehaviour:
   hiddenPosition: {x: -461, y: -5}
   shownPosition: {x: -461, y: 236}
   noHide: 1
+  bounceIn: 0
+  bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!225 &725104790
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3802,6 +3814,7 @@ GameObject:
   - component: {fileID: 729519134}
   - component: {fileID: 729519137}
   - component: {fileID: 729519136}
+  - component: {fileID: 729519138}
   m_Layer: 5
   m_Name: ElementChooserBox
   m_TagString: Untagged
@@ -3910,6 +3923,10 @@ MonoBehaviour:
   hiddenPosition: {x: -503, y: 540}
   shownPosition: {x: 0, y: 540}
   noHide: 0
+  bounceIn: 0
+  bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!225 &729519137
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3932,7 +3949,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1defb2ef13310ee46abb688bf6511455, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InitComponentUi
   componentType: 1
   isSelected: 0
@@ -3944,6 +3961,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 986940784}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 6d3390df777fe124187e16137ff27154, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6d3390df777fe124187e16137ff27154, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6d3390df777fe124187e16137ff27154, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6d3390df777fe124187e16137ff27154, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3984,16 +4013,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6d3390df777fe124187e16137ff27154, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 6d3390df777fe124187e16137ff27154, type: 3}
       propertyPath: m_Name
       value: base_veicolo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6d3390df777fe124187e16137ff27154, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 867977514}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d3390df777fe124187e16137ff27154, type: 3}
 --- !u!4 &772050864 stripped
@@ -4372,11 +4402,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 772050864}
+  m_Father: {fileID: 986940784}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.267213}
+  m_AnchoredPosition: {x: 0, y: 0.188}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &867977515
@@ -4459,6 +4489,10 @@ MonoBehaviour:
   hiddenPosition: {x: -3300, y: -1621}
   shownPosition: {x: -1118, y: -912}
   noHide: 1
+  bounceIn: 0
+  bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!225 &878513373
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4678,6 +4712,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 470b017be2aaa044b8a24c0c5a3235e8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 422589144}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 470b017be2aaa044b8a24c0c5a3235e8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 867977514}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 470b017be2aaa044b8a24c0c5a3235e8, type: 3}
 --- !u!4 &986940784 stripped
@@ -7308,7 +7345,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60.000004
+  field of view: 67.8
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -7334,8 +7371,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2045336351}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.011095622, y: 0.9932016, z: 0.0043945694, w: 0.11579364}
-  m_LocalPosition: {x: -1.62, y: 1.84, z: 6.28}
+  m_LocalRotation: {x: 0.0022391004, y: 0.9895298, z: -0.015436705, w: 0.14348364}
+  m_LocalPosition: {x: -1.295, y: 0.948, z: 4.084}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7639,6 +7676,10 @@ MonoBehaviour:
   hiddenPosition: {x: 506, y: -539.9003}
   shownPosition: {x: 3, y: -539.9003}
   noHide: 1
+  bounceIn: 0
+  bounceOut: 0
+  easeInShow: 0
+  easeInHide: 0
 --- !u!1 &2139671589
 GameObject:
   m_ObjectHideFlags: 0
