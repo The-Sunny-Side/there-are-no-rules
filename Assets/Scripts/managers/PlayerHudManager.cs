@@ -69,7 +69,7 @@ public class PlayerHudManager : MonoBehaviour
     {
         weaponSelectors.Clear();
         savedVehicle = VehicleManager.Instance.LoadVehicleConfig();
-        GameObject parent = GameObject.Find("Hud").FindChildWithName("RightStick");
+        GameObject parent = GameObject.Find("Hud").FindChildWithName("Dpad");
         VehiclePrefabRegistry registry = GameConfig.VehiclePrefabRegistry;
 
         foreach (string key in weaponSliceMap.Keys)
