@@ -3470,7 +3470,7 @@ MonoBehaviour:
   - {fileID: 536188688}
   - {fileID: 536188687}
   - {fileID: 536188686}
-  targetRacerCount: 8
+  targetRacerCount: 4
 --- !u!114 &803792344
 MonoBehaviour:
   m_ObjectHideFlags: 0
