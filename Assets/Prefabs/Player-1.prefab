@@ -37,8 +37,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7187076952809658435}
   m_Father: {fileID: 0}
@@ -58,7 +58,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1536615153988124585}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -118,7 +118,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.35
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &9201475319759048605
 Rigidbody:
@@ -210,6 +210,7 @@ MonoBehaviour:
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3
   driftReleaseThreshold: 0.2
+  driftMinSpeed: 5
   sideGripFactor: 17
   raysCount: 8
   raySpread: 1
@@ -237,6 +238,8 @@ MonoBehaviour:
   _rigidbody: {fileID: 9201475319759048605}
   _predictedRigidbody: {fileID: 4360163942621179187}
   _predictedTransform: {fileID: 0}
+  _isBot: 0
+  _botRaceId: 0
 --- !u!114 &-4002540731971505960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,8 +311,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1303243913771836869}
   - {fileID: 3911716446545404058}
@@ -556,9 +559,9 @@ Transform:
   m_GameObject: {fileID: 7079017173305837497}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: -0.3, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5075604911419445120}
   m_Father: {fileID: 7187076952809658435}
