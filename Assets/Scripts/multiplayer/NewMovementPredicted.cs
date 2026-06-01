@@ -57,8 +57,11 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     private float _airTime;
 
     private VFXGroup _driftVFX;
-
     private IVehicleInputProvider _input;
+
+    // Boost dalla trail: applicato nel prossimo tick di Simulate, poi azzerato.
+    // Non fa parte dello State perché è owner-only e non va predetto.
+    private float _pendingTrailBoost;
 
     public struct State : IPredictedData<State>
     {
@@ -86,7 +89,6 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         _rigidbody = GetComponent<PredictedRigidbody>();
         TryAssignLocalCamera();
         var loader = GetComponentInChildren<VehicleLoader>();
-
         if (loader != null)
             loader.OnVehicleBuilt += CacheVehicleVFX;
     }
@@ -94,6 +96,13 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     private void CacheVehicleVFX()
     {
         _driftVFX = VFXGroup.FromChildren(gameObject, VFXType.Drift);
+    }
+
+    // Chiamato da SpeedTrail.OnTriggerEnter — solo owner arriva qui.
+    public void OnSpeedTrailEnter(SpeedTrail trail)
+    {
+        if (!isOwner) return;
+        _pendingTrailBoost = trail.boostForce;
     }
 
     protected override void Simulate(Input input, ref State state, float delta)
@@ -145,8 +154,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             if (input.throttle > 0.1f)
             {
                 float targetSpeed = maxSpeed * input.throttle;
-                float newSpeed = Mathf.MoveTowards(forwardSpeed, targetSpeed, acceleration * delta);
-                forwardSpeed = newSpeed;
+                forwardSpeed = Mathf.MoveTowards(forwardSpeed, targetSpeed, acceleration * delta);
             }
             else if (input.throttle < -0.1f)
             {
@@ -158,7 +166,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
                 forwardSpeed = Mathf.MoveTowards(forwardSpeed, 0f, naturalDeceleration * delta);
             }
 
-            // --- GRIP LATERALE (riduce scivolamento) ---
+            // --- GRIP LATERALE ---
             sideSpeed = Mathf.MoveTowards(sideSpeed, 0f, sideGripFactor * delta);
 
             // --- DRIFT / BOOST ---
@@ -173,10 +181,10 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             {
                 float dirDot = Vector3.Dot(groundVel.normalized, forward);
                 float misalignment = 1f - Mathf.Clamp01(dirDot);
+
                 if (misalignment > driftAngleThreshold)
                 {
                     _driftVFX.Play();
-
                     state.driftTimer += delta;
                     if (state.driftTimer > 0.2f)
                         state.boostCharge = Mathf.Min(1f, state.boostCharge + driftChargeRate * delta);
@@ -184,7 +192,6 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
                 else if (misalignment < driftReleaseThreshold && state.boostCharge > 0.1f)
                 {
                     _driftVFX.Stop();
-
                     forwardSpeed += boostImpulse * state.boostCharge;
                     state.boostCharge = 0f;
                     state.driftTimer = 0f;
@@ -196,7 +203,16 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
                 }
             }
 
-            // --- SLOPE PUSH (accelerazione aggiuntiva lungo la pendenza in discesa) ---
+            // --- TRAIL BOOST ---
+            // Applicato nello stesso punto del drift boost, dopo MoveTowards,
+            // così supera maxSpeed e decade con naturalDeceleration nei tick successivi.
+            if (_pendingTrailBoost > 0f)
+            {
+                forwardSpeed += _pendingTrailBoost;
+                _pendingTrailBoost = 0f;
+            }
+
+            // --- SLOPE PUSH ---
             Vector3 slopeDir = Vector3.ProjectOnPlane(Vector3.down, slopeNormal);
             float slopePush = Vector3.Dot(slopeDir, forward) * slopeAcceleration;
             forwardSpeed += slopePush * delta;
@@ -220,13 +236,11 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             _driftVFX.Stop();
             rb.linearDamping = 0f;
 
-            // gravità custom (fast-fall se si scende)
             float gravMult = _rigidbody.linearVelocity.y < 0f ? fastFallGravityMult : 1f;
             Vector3 vel = _rigidbody.linearVelocity;
             vel.y -= gravity * gravMult * delta;
             _rigidbody.linearVelocity = vel;
 
-            // leggero controllo direzionale in aria
             if (Mathf.Abs(input.throttle) > 0.1f)
             {
                 Vector3 airForward = Vector3.ProjectOnPlane(_rigidbody.transform.forward, Vector3.up).normalized;
@@ -279,8 +293,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             }
         }
 
-        if (!hit || weightSum < 0.0001f)
-            return;
+        if (!hit || weightSum < 0.0001f) return;
 
         Vector3 avgNormal = (normalSum / weightSum).normalized;
 
@@ -307,6 +320,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     {
         return Physics.Raycast(_rigidbody.position, -_rigidbody.transform.up, out _, groundCheckLength, groundLayer);
     }
+
     void LateUpdate()
     {
         if (!isOwner) return;
@@ -314,7 +328,6 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         TryAssignLocalCamera();
 
         bool grounded = IsGrounded();
-
         if (grounded)
         {
             _airTime = 0f;
@@ -337,11 +350,8 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
     private void TryAssignLocalCamera()
     {
-        if (_cameraAssigned || !isOwner)
-            return;
-
-        if (PlayerCamera.instance == null)
-            return;
+        if (_cameraAssigned || !isOwner) return;
+        if (PlayerCamera.instance == null) return;
 
         var pivotGo = new GameObject("CameraPivot");
         pivotGo.transform.SetParent(transform, worldPositionStays: false);
