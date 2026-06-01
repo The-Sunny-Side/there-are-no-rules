@@ -113,7 +113,7 @@ Material:
     - _EdgeWidth: 0
     - _EnvironmentReflections: 1
     - _FillAmount: 1
-    - _FillDirection: 3
+    - _FillDirection: 2
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0

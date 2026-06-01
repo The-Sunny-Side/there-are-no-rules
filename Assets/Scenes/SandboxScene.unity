@@ -2019,7 +2019,6 @@ GameObject:
   - component: {fileID: 452993856}
   - component: {fileID: 452993858}
   - component: {fileID: 452993857}
-  - component: {fileID: 452993859}
   - component: {fileID: 452993860}
   m_Layer: 5
   m_Name: RightStick
@@ -2060,7 +2059,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6150943, g: 0.43520823, b: 0.43520823, a: 0.19215687}
+  m_Color: {r: 0.6150943, g: 0.43520823, b: 0.43520823, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2085,19 +2084,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 452993855}
   m_CullTransparentMesh: 1
---- !u!114 &452993859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 452993855}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9d38be5a4727f941bdefd6d35733b25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraDragInput
-  sensitivity: 0.1
 --- !u!114 &452993860
 MonoBehaviour:
   m_ObjectHideFlags: 0

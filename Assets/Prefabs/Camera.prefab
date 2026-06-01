@@ -331,24 +331,24 @@ MonoBehaviour:
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: 104.82752
+    Value: -93.72118
     Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
     Recentering:
       Enabled: 1
-      Wait: 1
-      Time: 2
+      Wait: 0.5
+      Time: 1
     Restrictions: 0
   VerticalAxis:
-    Value: 34.633
+    Value: 34.4583
     Center: 17.5
     Range: {x: -10, y: 45}
     Wrap: 0
     Recentering:
       Enabled: 1
-      Wait: 1
-      Time: 2
+      Wait: 0.5
+      Time: 1
     Restrictions: 0
   RadialAxis:
     Value: 1
