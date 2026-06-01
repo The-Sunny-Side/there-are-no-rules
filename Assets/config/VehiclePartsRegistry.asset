@@ -50,5 +50,5 @@ MonoBehaviour:
   - element: {fileID: 2432605695985223210, guid: 5e1b9a1cc773c8e4eb1ad5003b0a1a2b, type: 3}
     icon: {fileID: 21300000, guid: 9a4797ef99f6d384a8bf7a4c7ac61c97, type: 3}
     key: punch_sized
-    cooldown: 0
+    cooldown: 4
 
