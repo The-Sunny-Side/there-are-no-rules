@@ -197,15 +197,15 @@ MonoBehaviour:
   _rigidbody: {fileID: 4360163942621179187}
   visuals: {fileID: 2315482730086823503}
   maxSpeed: 100
-  acceleration: 50
-  brakeDeceleration: 80
+  acceleration: 15
+  brakeDeceleration: 40
   naturalDeceleration: 15
   groundRotationSpeed: 60
   airRotationSpeed: 180
-  jumpForce: 20
-  gravity: 50
+  jumpForce: 10
+  gravity: 100
   fastFallGravityMult: 2
-  slopeAcceleration: 50
+  slopeAcceleration: 15
   boostImpulse: 30
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3
@@ -217,8 +217,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  groundRayLength: 4
-  groundCheckLength: 3
+  groundRayLength: 1
+  groundCheckLength: 1
   alignSpeed: 10
   normalSmoothSpeed: 6
   airCameraDelay: 0
