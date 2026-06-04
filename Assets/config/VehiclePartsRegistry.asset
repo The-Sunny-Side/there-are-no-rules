@@ -19,22 +19,25 @@ MonoBehaviour:
   - element: {fileID: 2450203625896656481, guid: 55106b1f9d8a910418186c22810dd5d3, type: 3}
     icon: {fileID: 21300000, guid: ea27d14f941557945b735d6d981e90b1, type: 3}
     key: plane
-  - element: {fileID: 5647684242856359959, guid: 08bec28cca7afe24db3d0e6e59de0617, type: 3}
-    icon: {fileID: 21300000, guid: bb344af776d149a419ea719add676789, type: 3}
+  - element: {fileID: 7644218882551473680, guid: 08bec28cca7afe24db3d0e6e59de0617, type: 3}
+    icon: {fileID: 21300000, guid: 128e9e3439ae9c741b7c502fd6f0c771, type: 3}
     key: boat
-  - element: {fileID: 7977349255659494426, guid: f718d4612419597478b355d53d8c23ff, type: 3}
-    icon: {fileID: 21300000, guid: 886b121bf32d8414b91e5e1e0f9bc9e7, type: 3}
+  - element: {fileID: 1261791473038677019, guid: ef8ce6f08fcd575428f69a563e46bffd, type: 3}
+    icon: {fileID: 21300000, guid: 0b1cca49fe4e8af469630bb488148d03, type: 3}
     key: sled
+  - element: {fileID: 8200553017534227558, guid: b5370e06b524d64409cb6d68b3e91170, type: 3}
+    icon: {fileID: 21300000, guid: 763e4ff4da48eb3438128777cd8fc840, type: 3}
+    key: skyline
   bodyElements:
   - element: {fileID: 5577811924372296200, guid: 8b22e44df2c4b454b8609a8f9759cdd4, type: 3}
     icon: {fileID: 21300000, guid: 04791d26c71f4864a8d3701047e52a95, type: 3}
     key: cube
-  - element: {fileID: 4007014680358456326, guid: daf1dade928ac22448da554809be96a6, type: 3}
-    icon: {fileID: 21300000, guid: a2ddb7cc56fab8b4288b9f36ad1ddef8, type: 3}
+  - element: {fileID: 585243397375712758, guid: daf1dade928ac22448da554809be96a6, type: 3}
+    icon: {fileID: 21300000, guid: e5ae4a189146bf8489027845ae9f9077, type: 3}
     key: piano
-  - element: {fileID: 7968280193111092051, guid: f595d3a7b0cffe34aa952d8c0eef2f69, type: 3}
-    icon: {fileID: 21300000, guid: 2bf1eeaec3a837449b1b5451da6afa76, type: 3}
-    key: wc
+  - element: {fileID: 2672907120137023651, guid: 5e602965b3d323d4ab28394caf4192f1, type: 3}
+    icon: {fileID: 21300000, guid: 19c7939cde6544949afef355921d8185, type: 3}
+    key: dj
   weapons:
   - element: {fileID: 3925080907645985337, guid: 965d393dd41f0244bb7dfd4d5840a65a, type: 3}
     icon: {fileID: 21300000, guid: 7511ba900fd4f5d46a134ccc53f72909, type: 3}
@@ -43,4 +46,8 @@ MonoBehaviour:
   - element: {fileID: 4827364910283746, guid: b3c4d5e6f7a8b3c4d5e6f7a8b3c4d5e6, type: 3}
     icon: {fileID: 21300000, guid: 5c31a61b2f19d48ef93f60cad7bdc6c6, type: 3}
     key: punch
+    cooldown: 4
+  - element: {fileID: 1375412003077825670, guid: 5e1b9a1cc773c8e4eb1ad5003b0a1a2b, type: 3}
+    icon: {fileID: 21300000, guid: bb247bade1dbd8d45b193be04819c160, type: 3}
+    key: punch_sized
     cooldown: 4
