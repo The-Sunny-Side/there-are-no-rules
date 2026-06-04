@@ -28,13 +28,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 418609382624467785}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.02170813, y: 0.82667035, z: -0.031967934, w: 0.5613583}
-  m_LocalPosition: {x: 148.92969, y: -1933.7898, z: -1058.6556}
-  m_LocalScale: {x: 1, y: 0.55922, z: 1.3432407}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8375309162212380181}
-  m_LocalEulerAnglesHint: {x: 27.83, y: 0.827, z: 0.009}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &5897696080507087479
 Camera:
   m_ObjectHideFlags: 0
@@ -247,13 +247,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1676691190672107623}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.02170813, y: 0.82667035, z: -0.031967934, w: 0.5613583}
-  m_LocalPosition: {x: 148.92969, y: -1939.9465, z: -1058.6556}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8375309162212380181}
-  m_LocalEulerAnglesHint: {x: 15.035, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &849511440119220649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -278,7 +278,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 70
+    FieldOfView: 65
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -312,12 +312,12 @@ MonoBehaviour:
   TargetOffset: {x: 0, y: 0, z: 0}
   TrackerSettings:
     BindingMode: 1
-    PositionDamping: {x: 1, y: 1, z: 1}
+    PositionDamping: {x: 0, y: 0, z: 0}
     AngularDampingMode: 0
-    RotationDamping: {x: 1, y: 1, z: 1}
+    RotationDamping: {x: 0, y: 0, z: 0}
     QuaternionDamping: 1
   OrbitStyle: 0
-  Radius: 20
+  Radius: 5
   Orbits:
     Top:
       Radius: 2
@@ -331,7 +331,7 @@ MonoBehaviour:
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: -93.72118
+    Value: 0
     Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
@@ -341,9 +341,9 @@ MonoBehaviour:
       Time: 1
     Restrictions: 0
   VerticalAxis:
-    Value: 34.4583
+    Value: 17.5
     Center: 17.5
-    Range: {x: -10, y: 45}
+    Range: {x: -10, y: 30}
     Wrap: 0
     Recentering:
       Enabled: 1
@@ -383,11 +383,11 @@ MonoBehaviour:
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
   TargetOffset: {x: 0, y: 0, z: 0}
-  Damping: {x: 0.5, y: 0.5}
+  Damping: {x: 0, y: 0}
   Lookahead:
     Enabled: 1
-    Time: 0.25
-    Smoothing: 30
+    Time: 0.03
+    Smoothing: 5
     IgnoreY: 1
 --- !u!114 &7271879961736937692
 MonoBehaviour:
@@ -401,7 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDecollider
-  CameraRadius: 5
+  CameraRadius: 1
   Decollision:
     Enabled: 1
     ObstacleLayers:

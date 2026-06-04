@@ -37,8 +37,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7187076952809658435}
   m_Father: {fileID: 0}
@@ -118,7 +118,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.35
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &9201475319759048605
 Rigidbody:
@@ -197,15 +197,15 @@ MonoBehaviour:
   _rigidbody: {fileID: 4360163942621179187}
   visuals: {fileID: 2315482730086823503}
   maxSpeed: 100
-  acceleration: 50
-  brakeDeceleration: 80
+  acceleration: 15
+  brakeDeceleration: 40
   naturalDeceleration: 15
   groundRotationSpeed: 60
   airRotationSpeed: 180
-  jumpForce: 20
-  gravity: 50
+  jumpForce: 10
+  gravity: 100
   fastFallGravityMult: 2
-  slopeAcceleration: 50
+  slopeAcceleration: 15
   boostImpulse: 30
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3
@@ -217,8 +217,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  groundRayLength: 4
-  groundCheckLength: 3
+  groundRayLength: 1
+  groundCheckLength: 1
   alignSpeed: 10
   normalSmoothSpeed: 6
   airCameraDelay: 0
@@ -311,8 +311,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1303243913771836869}
   - {fileID: 3911716446545404058}
@@ -559,9 +559,9 @@ Transform:
   m_GameObject: {fileID: 7079017173305837497}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2, z: 0}
+  m_LocalPosition: {x: 0, y: -0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5075604911419445120}
   m_Father: {fileID: 7187076952809658435}
