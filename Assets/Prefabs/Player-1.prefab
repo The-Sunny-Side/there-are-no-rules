@@ -210,6 +210,7 @@ MonoBehaviour:
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3
   driftReleaseThreshold: 0.2
+  driftMinSpeed: 5
   sideGripFactor: 17
   raysCount: 8
   raySpread: 1
@@ -237,6 +238,8 @@ MonoBehaviour:
   _rigidbody: {fileID: 9201475319759048605}
   _predictedRigidbody: {fileID: 4360163942621179187}
   _predictedTransform: {fileID: 0}
+  _isBot: 0
+  _botRaceId: 0
 --- !u!114 &-4002540731971505960
 MonoBehaviour:
   m_ObjectHideFlags: 0
