@@ -152,6 +152,19 @@ MonoBehaviour:
     m_Localized: Grafica alta
     m_Metadata:
       m_Items: []
+  - m_Id: 35219705808728064
+    m_Localized: "Fai un po' di pratica, quando sei pronto raggiungi l'indicatore
+      pi\xF9 avanti"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35267220243394560
+    m_Localized: Prossimo tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36477271725486080
+    m_Localized: Tutorial
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

@@ -147,6 +147,18 @@ MonoBehaviour:
     m_Key: settings_highfps
     m_Metadata:
       m_Items: []
+  - m_Id: 35219705808728064
+    m_Key: tutorial_movement_step2_info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35267220243394560
+    m_Key: next_tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36477271725486080
+    m_Key: tutorial_button_label
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

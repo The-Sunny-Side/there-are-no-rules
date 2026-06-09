@@ -155,7 +155,7 @@ public class MainSceneManager : MonoBehaviour
         LoaderManager.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.GoToSandboxScreen();
+            GameManager.Instance?.GoToTutorialScreen();
         }), 0.6f));
     }
 

@@ -22,6 +22,7 @@ public class MobileInputManager : MonoBehaviour
 
     public float rotateHorizontal => rotateAxis.x;
     public float rotateVertical => rotateAxis.y;
+    public bool leftStickRotate => rotateAction.WasPressedThisFrame();
     public bool leftHeld => leftRotateAction.IsPressed();
     public bool rightHeld => rightRotateAction.IsPressed();
     public bool slideUpHeld => slideUpAction.IsPressed();

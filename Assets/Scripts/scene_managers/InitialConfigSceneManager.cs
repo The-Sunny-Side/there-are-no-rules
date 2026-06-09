@@ -37,7 +37,7 @@ public class InitialConfigSceneManager : MonoBehaviour
         LoaderManager.Instance?.Show();
         StartCoroutine(Utilities.DelayedEvent((() =>
         {
-            GameManager.Instance?.GoToSandboxScreen();
+            GameManager.Instance?.GoToTutorialScreen();
         }), 0.6f));
     }
 
@@ -64,8 +64,6 @@ public class InitialConfigSceneManager : MonoBehaviour
         {
             animator.Show();
         }
-
-
     }
     public void onTutorialSkipButtonClick()
     {

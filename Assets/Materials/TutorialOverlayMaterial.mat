@@ -115,7 +115,7 @@ Material:
     - _GlossyReflections: 0
     - _GlowIntensity: 1.5
     - _GlowWidth: 0.03
-    - _HoleRadius: 0.07
+    - _HoleRadius: -0.03
     - _HoleSoftness: 0.001
     - _Metallic: 0
     - _OcclusionStrength: 1

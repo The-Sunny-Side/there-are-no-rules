@@ -152,6 +152,18 @@ MonoBehaviour:
     m_Localized: High graphic
     m_Metadata:
       m_Items: []
+  - m_Id: 35219705808728064
+    m_Localized: Practice a bit, when you're ready reach the marker further ahead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35267220243394560
+    m_Localized: Next tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36477271725486080
+    m_Localized: Tutorial
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
