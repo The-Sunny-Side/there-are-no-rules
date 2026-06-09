@@ -29,6 +29,9 @@ jobs:
         with:
           lfs: true
 
+      - name: Pull LFS assets
+        run: git lfs pull
+
       - name: Cache Library
         uses: actions/cache@v4
         with:
