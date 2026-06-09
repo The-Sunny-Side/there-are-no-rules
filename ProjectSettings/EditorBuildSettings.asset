@@ -44,6 +44,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/InitialConfigScene.unity
     guid: f85a330cffdd36349a8fa88ba53babf9
+  - enabled: 1
+    path: Assets/Scenes/Tutorial/TutorialMovementScene.unity
+    guid: 143dfccc3dbac39449c2669dbae22dc1
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 50461614b32180f48bc63082686d83bf, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

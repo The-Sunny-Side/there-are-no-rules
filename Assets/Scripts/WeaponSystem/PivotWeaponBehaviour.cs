@@ -79,6 +79,12 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void ApplyHighlight(Collider col, bool highlighted)
     {
+        col.gameObject.FindChildWithTag("EnemyTarget")?.SetActive(highlighted);
+
+        LegacyHighlight(col, highlighted);
+    }
+
+    private void LegacyHighlight(Collider col, bool highlighted) {
         if (highlighted)
         {
             _outlineMeshes.Clear();

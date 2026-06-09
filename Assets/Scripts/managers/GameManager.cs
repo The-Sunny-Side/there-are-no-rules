@@ -70,6 +70,11 @@ public class GameManager : MonoBehaviour
         LoadSceneAsync("SandboxScene");
     }
 
+    public void GoToTutorialScreen()
+    {
+        LoadSceneAsync("TutorialMovementScene");
+    }
+
     public void ExitGame()
     {
         Application.Quit();

@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(CanvasGroup))]
@@ -58,10 +59,10 @@ public class SlideAnimator : UiTransition
     private void StartAnim(Vector2 targetPos, bool interactable, bool hide)
     {
         if (anim != null) StopCoroutine(anim);
-        anim = StartCoroutine(Slide(targetPos, interactable, hide));
+        anim = StartCoroutine(Slide(targetPos, interactable, hide, hide ? onHide : onShow));
     }
 
-    private IEnumerator Slide(Vector2 targetPos, bool interactable, bool hide)
+    private IEnumerator Slide(Vector2 targetPos, bool interactable, bool hide, UnityEvent onEnd)
     {
         yield return new WaitForSeconds(hide ? onHideDelay : onShowDelay);
         canvasGroup.interactable = interactableOnAnimation;
@@ -123,6 +124,7 @@ public class SlideAnimator : UiTransition
 
         canvasGroup.interactable = interactable;
         canvasGroup.blocksRaycasts = interactable;
+        onEnd?.Invoke();
     }
 
     // --- Easing functions (invariate) ---
