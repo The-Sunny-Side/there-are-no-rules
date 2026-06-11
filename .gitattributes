@@ -56,4 +56,4 @@
 ###################################
 # Unity binary assets (override)
 ###################################
-Assets/Terrains/*.asset binary
+Assets/Terrains/**/*.asset binary
