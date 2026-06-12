@@ -1,7 +1,6 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-[ExecuteAlways]
 public class FlagMeshGenerator : MonoBehaviour
 {
     [Header("Mesh")]

@@ -159,6 +159,10 @@ MonoBehaviour:
     m_Key: tutorial_button_label
     m_Metadata:
       m_Items: []
+  - m_Id: 37208516352716800
+    m_Key: tutorial_movement_step3_info
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

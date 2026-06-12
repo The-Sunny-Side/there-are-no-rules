@@ -164,6 +164,11 @@ MonoBehaviour:
     m_Localized: Tutorial
     m_Metadata:
       m_Items: []
+  - m_Id: 37208516352716800
+    m_Localized: Great! Feel free to keep practicing if you'd like. When you're ready,
+      reach the finish line!
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

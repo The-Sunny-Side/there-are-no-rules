@@ -9,6 +9,7 @@ using UnityEngine;
 public class VehicleLoader : MonoBehaviour
 {
     [SerializeField] private Composer composer;
+    [SerializeField] private Vehicle customVehicle;
     private string _currentJson;
 
     public event Action OnVehicleBuilt;
@@ -36,6 +37,8 @@ public class VehicleLoader : MonoBehaviour
         }
 
         Vehicle data = JsonUtility.FromJson<Vehicle>(json);
+
+
         if (data == null)
         {
             Debug.LogWarning("VehicleLoader: ApplyConfigJson json non valido");
@@ -44,24 +47,51 @@ public class VehicleLoader : MonoBehaviour
 
         var list = new Dictionary<string, GameObject>();
 
-        // base / body
-        if (!string.IsNullOrEmpty(data.baseElement))
+        // base
+        if(!string.IsNullOrEmpty(customVehicle.baseElement))
+        {
+            Debug.Log("VehicleLoader: applicazione configurazione custom (non da json)");
+            list[VehicleElementsKeys.Base] = GameConfig.VehiclePrefabRegistry.GetBase(customVehicle.baseElement).element;
+        }
+        else if (!string.IsNullOrEmpty(data.baseElement))
             list[VehicleElementsKeys.Base] = GameConfig.VehiclePrefabRegistry.GetBase(data.baseElement).element;
 
-        if (!string.IsNullOrEmpty(data.bodyElement))
+        // body
+        if (!string.IsNullOrEmpty(customVehicle.bodyElement))
+        {
+            Debug.Log("VehicleLoader: applicazione configurazione custom (non da json)");
+            list[VehicleElementsKeys.Body] = GameConfig.VehiclePrefabRegistry.GetBody(customVehicle.bodyElement).element;
+        }
+        else if (!string.IsNullOrEmpty(data.bodyElement))
             list[VehicleElementsKeys.Body] = GameConfig.VehiclePrefabRegistry.GetBody(data.bodyElement).element;
 
         // weapons (opzionali)
-        if (!string.IsNullOrEmpty(data.weaponBack))
+        if(!string.IsNullOrEmpty(customVehicle.weaponBack))
+        {
+            Debug.Log("VehicleLoader: applicazione configurazione custom (non da json)");
+            list[VehicleElementsKeys.WeaponBack] = GameConfig.VehiclePrefabRegistry.GetWeapon(customVehicle.weaponBack).element;
+        } else if (!string.IsNullOrEmpty(data.weaponBack))
             list[VehicleElementsKeys.WeaponBack] = GameConfig.VehiclePrefabRegistry.GetWeapon(data.weaponBack).element;
 
-        if (!string.IsNullOrEmpty(data.weaponFront))
+        if(!string.IsNullOrEmpty(customVehicle.weaponFront))
+        {
+            Debug.Log("VehicleLoader: applicazione configurazione custom (non da json)");
+            list[VehicleElementsKeys.WeaponFront] = GameConfig.VehiclePrefabRegistry.GetWeapon(customVehicle.weaponFront).element;
+        } else if (!string.IsNullOrEmpty(data.weaponFront))
             list[VehicleElementsKeys.WeaponFront] = GameConfig.VehiclePrefabRegistry.GetWeapon(data.weaponFront).element;
 
-        if (!string.IsNullOrEmpty(data.weaponLeft))
+        if(!string.IsNullOrEmpty(customVehicle.weaponLeft))
+        {
+            Debug.Log("VehicleLoader: applicazione configurazione custom (non da json)");
+            list[VehicleElementsKeys.WeaponLeft] = GameConfig.VehiclePrefabRegistry.GetWeapon(customVehicle.weaponLeft).element;
+        } else if (!string.IsNullOrEmpty(data.weaponLeft))
             list[VehicleElementsKeys.WeaponLeft] = GameConfig.VehiclePrefabRegistry.GetWeapon(data.weaponLeft).element;
 
-        if (!string.IsNullOrEmpty(data.weaponRight))
+        if(!string.IsNullOrEmpty(customVehicle.weaponRight))
+        {
+            Debug.Log("VehicleLoader: applicazione configurazione custom (non da json)");
+            list[VehicleElementsKeys.WeaponRight] = GameConfig.VehiclePrefabRegistry.GetWeapon(customVehicle.weaponRight).element;
+        } else if (!string.IsNullOrEmpty(data.weaponRight))
             list[VehicleElementsKeys.WeaponRight] = GameConfig.VehiclePrefabRegistry.GetWeapon(data.weaponRight).element;
 
 
