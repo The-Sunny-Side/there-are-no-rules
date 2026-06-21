@@ -42,9 +42,6 @@ public class VehicleManager : MonoBehaviour
     private string defaultBody = "cube";
     private string defaultBase = "plane";
 
-    private GameObject defaultBaseElement;
-    private GameObject defaultBodyElement;
-
     public static VehicleManager Instance { get; private set; }
 
     [SerializeField]
@@ -60,8 +57,18 @@ public class VehicleManager : MonoBehaviour
         {
             configPath = Application.persistentDataPath + "/vehicle_config.json";
             Instance = this;
-            defaultBaseElement = vehiclePrefabRegistry.GetBase(defaultBase).element;
-            defaultBodyElement = vehiclePrefabRegistry.GetBody(defaultBody).element;
+
+            // Resolve defaults from the registry so we never depend on a specific
+            // key existing (parts can be removed/renamed). Falls back to the first
+            // available base/body.
+            VehicleEntry defaultBaseEntry = vehiclePrefabRegistry.GetBase(defaultBase) ?? FirstOrNull(vehiclePrefabRegistry.GetAllBases());
+            VehicleEntry defaultBodyEntry = vehiclePrefabRegistry.GetBody(defaultBody) ?? FirstOrNull(vehiclePrefabRegistry.GetAllBodies());
+
+            if (defaultBaseEntry != null) defaultBase = defaultBaseEntry.key;
+            if (defaultBodyEntry != null) defaultBody = defaultBodyEntry.key;
+
+            if (defaultBaseEntry == null || defaultBodyEntry == null)
+                Debug.LogWarning("VehicleManager: registry has no base and/or body to use as default.");
 
             if(!File.Exists(configPath))
             {
@@ -112,6 +119,11 @@ public class VehicleManager : MonoBehaviour
         savedVehicle = GetVehicleElements(dataToSave);
         resyncVehicle = false;
         Debug.Log("Veicolo salvato: " + json);
+    }
+
+    private static VehicleEntry FirstOrNull(List<VehicleEntry> entries)
+    {
+        return (entries != null && entries.Count > 0) ? entries[0] : null;
     }
 
     private Dictionary<string, VehicleEntry> GetVehicleElements(Vehicle data)
