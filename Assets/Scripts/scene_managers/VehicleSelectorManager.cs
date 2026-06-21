@@ -286,6 +286,14 @@ public class VehicleSelectorManager : MonoBehaviour
         }), 0.6f));
     }
 
+    private GameObject InstantiateWeapon(VehicleEntry weapon)
+    {
+        if (weapon == null || weapon.element == null)
+            return null;
+
+        return Instantiate(weapon.element, transform);
+    }
+
     private void HighlightSelectedPart(GameObject part, bool active = true)
     {
         PulsingHighlight mr = part.GetComponent<PulsingHighlight>();
@@ -312,10 +320,10 @@ public class VehicleSelectorManager : MonoBehaviour
         composerComponent.baseElement = baseInstance;
         composerComponent.bodyElement = bodyInstance;
 
-        composerComponent.weaponFrontElement = Instantiate(selectedWeapons[0].element, transform);
-        composerComponent.weaponLeftElement = Instantiate(selectedWeapons[1].element, transform);
-        composerComponent.weaponBackElement = Instantiate(selectedWeapons[2].element, transform);
-        composerComponent.weaponRightElement = Instantiate(selectedWeapons[3].element, transform);
+        composerComponent.weaponFrontElement = InstantiateWeapon(selectedWeapons[0]);
+        composerComponent.weaponLeftElement = InstantiateWeapon(selectedWeapons[1]);
+        composerComponent.weaponBackElement = InstantiateWeapon(selectedWeapons[2]);
+        composerComponent.weaponRightElement = InstantiateWeapon(selectedWeapons[3]);
 
         composerComponent.AlignComponents();
         vehicle.GetComponent<ObjectRotator>()?.SetupCollider();
@@ -336,8 +344,11 @@ public class VehicleSelectorManager : MonoBehaviour
                     composerComponent.weaponRightElement
                 };
                 GameObject selectedWeaponPart = weaponsObjects[selectedWeaponType];
-                HighlightSelectedPart(selectedWeaponPart);
-                selectedWeaponPart.GetComponent<VehicleWeapon>()?.ActivateWeapon();
+                if (selectedWeaponPart != null)
+                {
+                    HighlightSelectedPart(selectedWeaponPart);
+                    selectedWeaponPart.GetComponent<VehicleWeapon>()?.ActivateWeapon();
+                }
                 break;
 
         }
