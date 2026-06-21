@@ -31,6 +31,18 @@ public class FinishPoint : NetworkBehaviour
     protected override void OnSpawned()
     {
         base.OnSpawned();
+
+        // FinishPoint vive dentro il prefab della mappa: i riferimenti a oggetti di
+        // scena (NetworkManager, MenuManager) non possono essere serializzati nel prefab,
+        // quindi li risolviamo a runtime se non assegnati.
+        if (netManager == null) netManager = networkManager;
+        if (menuManager == null) menuManager = FindFirstObjectByType<MenuManager>();
+
+        if (netManager == null)
+            Debug.LogWarning("[FinishPoint] NetworkManager non trovato: join/leave non verranno tracciati.", this);
+        if (menuManager == null)
+            Debug.LogWarning("[FinishPoint] MenuManager non trovato in scena: la dashboard di fine gara NON verrà mostrata al traguardo.", this);
+
         if (netManager != null)
         {
             netManager.onPlayerJoined += OnPlayerJoined;

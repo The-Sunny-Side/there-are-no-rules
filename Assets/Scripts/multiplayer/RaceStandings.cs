@@ -71,6 +71,8 @@ public class RaceStandings : NetworkBehaviour
     protected override void OnSpawned()
     {
         base.OnSpawned();
+        if (localRankText == null)
+            Debug.LogWarning("[RaceStandings] 'localRankText' non collegato: il contatore posizione non verrà aggiornato. Collegalo nell'Inspector (PlayScene).", this);
         if (!isServer) return;
         BuildFlatSpline();
         _tickCo = StartCoroutine(TickRoutine());
@@ -80,13 +82,24 @@ public class RaceStandings : NetworkBehaviour
     // di confine (se l'ultimo punto del road r coincide col primo del road r+1).
     private void BuildFlatSpline()
     {
+        if (roadSequence == null || roadSequence.Count == 0)
+        {
+            Debug.LogWarning("[RaceStandings] 'roadSequence' è vuota: collega i RoadMeshGenerator della mappa nell'Inspector (PlayScene) → senza road il contatore resterà 0/0.", this);
+        }
+
+        int validRoads = 0;
+        int nullRoads = 0;
+        int notGeneratedRoads = 0;
+
         var points = new List<Vector3>();
         for (int r = 0; r < roadSequence.Count; r++)
         {
             var road = roadSequence[r];
-            if (road == null || !road.IsGenerated) continue;
+            if (road == null) { nullRoads++; continue; }
+            if (!road.IsGenerated) { notGeneratedRoads++; continue; }
             var pts = road.SplinePoints;
             if (pts == null || pts.Count == 0) continue;
+            validRoads++;
 
             int from = 0;
             if (points.Count > 0 && (points[points.Count - 1] - pts[0]).sqrMagnitude < 0.0001f)
@@ -97,7 +110,12 @@ public class RaceStandings : NetworkBehaviour
 
         _allPoints = points.ToArray();
         _cumLen = new float[_allPoints.Length];
-        if (_allPoints.Length == 0) return;
+        if (_allPoints.Length == 0)
+        {
+            Debug.LogWarning($"[RaceStandings] Spline finale vuota → il contatore resterà 0/0. roadSequence={roadSequence.Count} (validi={validRoads}, null/non collegati={nullRoads}, non generati={notGeneratedRoads}). Collega i RoadMeshGenerator della mappa in PlayScene.", this);
+            return;
+        }
+        Debug.Log($"[RaceStandings] Spline costruita: {_allPoints.Length} punti da {validRoads} road.", this);
         _cumLen[0] = 0;
         for (int i = 1; i < _allPoints.Length; i++)
             _cumLen[i] = _cumLen[i - 1] + Vector3.Distance(_allPoints[i - 1], _allPoints[i]);

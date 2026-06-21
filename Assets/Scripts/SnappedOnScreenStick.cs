@@ -21,11 +21,20 @@ public class SnappedOnScreenStick : OnScreenControl, IPointerDownHandler, IDragH
 
         if(data != null)
         {
-            weaponIcons[0].sprite = data[VehicleElementsKeys.WeaponFront].icon;
-            weaponIcons[1].sprite = data[VehicleElementsKeys.WeaponLeft].icon;
-            weaponIcons[2].sprite = data[VehicleElementsKeys.WeaponBack].icon;
-            weaponIcons[3].sprite = data[VehicleElementsKeys.WeaponRight].icon;
+            weaponIcons[0].sprite = GetWeaponIcon(data, VehicleElementsKeys.WeaponFront);
+            weaponIcons[1].sprite = GetWeaponIcon(data, VehicleElementsKeys.WeaponLeft);
+            weaponIcons[2].sprite = GetWeaponIcon(data, VehicleElementsKeys.WeaponBack);
+            weaponIcons[3].sprite = GetWeaponIcon(data, VehicleElementsKeys.WeaponRight);
         }
+    }
+
+    // Una slot senza arma non è presente nel dizionario: mostra l'icona "vuota".
+    private static Sprite GetWeaponIcon(Dictionary<string, VehicleEntry> data, string weaponKey)
+    {
+        if (data.TryGetValue(weaponKey, out VehicleEntry entry) && entry != null && entry.icon != null)
+            return entry.icon;
+
+        return GameConfig.VehiclePrefabRegistry != null ? GameConfig.VehiclePrefabRegistry.EmptyPart.icon : null;
     }
 
     protected override string controlPathInternal

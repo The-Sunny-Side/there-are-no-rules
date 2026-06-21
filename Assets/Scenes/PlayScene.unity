@@ -3352,9 +3352,7 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   localRankText: {fileID: 67558451}
   roadSequence:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1073042909}
   updateRate: 0.1
 --- !u!114 &803792346
 MonoBehaviour:

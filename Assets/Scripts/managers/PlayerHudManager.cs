@@ -76,8 +76,16 @@ public class PlayerHudManager : MonoBehaviour
         {
             WeaponSliceItem weaponSlice = weaponSliceMap[key];
             SliceFillController sliceFill = parent.FindChildWithName(weaponSlice.sliceContainer)?.GetComponent<SliceFillController>();
+            if (sliceFill == null) continue;
+
             sliceFill.FlashColor = GameConfig.UiConfig.weaponSelectorFlashColor;
-            weaponSelectors.Add(key, new WeaponHud(weaponSlice.anchorName, sliceFill, registry.GetWeapon(savedVehicle.GetValueOrDefault(weaponSlice.weaponKey).key).cooldown));
+
+            // Una slot senza arma non è presente nel dizionario: cooldown 0, nessuna arma.
+            VehicleEntry equipped = savedVehicle.GetValueOrDefault(weaponSlice.weaponKey);
+            VehicleWeaponEntry weapon = equipped != null ? registry.GetWeapon(equipped.key) : null;
+            float cooldown = weapon != null ? weapon.cooldown : 0f;
+
+            weaponSelectors.Add(key, new WeaponHud(weaponSlice.anchorName, sliceFill, cooldown));
         }
     }
 
