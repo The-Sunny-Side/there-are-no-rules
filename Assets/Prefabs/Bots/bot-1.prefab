@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1143383579061851270}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -2, z: 0}
+  m_LocalPosition: {x: 0, y: -0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -70,8 +70,8 @@ Transform:
   m_GameObject: {fileID: 2820164963572008167}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 669.37463, y: 14.4, z: 824.12}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8116595903299054477}
@@ -231,15 +231,15 @@ MonoBehaviour:
   _rigidbody: {fileID: 2323636566835742312}
   visuals: {fileID: 5584804461420377640}
   maxSpeed: 100
-  acceleration: 50
-  brakeDeceleration: 80
+  acceleration: 15
+  brakeDeceleration: 40
   naturalDeceleration: 15
   groundRotationSpeed: 60
   airRotationSpeed: 180
-  jumpForce: 20
-  gravity: 50
+  jumpForce: 10
+  gravity: 100
   fastFallGravityMult: 2
-  slopeAcceleration: 50
+  slopeAcceleration: 15
   boostImpulse: 30
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3
@@ -251,8 +251,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  groundRayLength: 4
-  groundCheckLength: 3
+  groundRayLength: 1
+  groundCheckLength: 1
   alignSpeed: 10
   normalSmoothSpeed: 6
   airCameraDelay: 0
@@ -440,8 +440,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4074676599162259955}
   - {fileID: 621650834782247882}
@@ -460,6 +460,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleLoader
   composer: {fileID: 2238736768552132347}
+  customVehicle:
+    baseElement: 
+    bodyElement: 
+    weaponLeft: 
+    weaponRight: 
+    weaponFront: 
+    weaponBack: 
 --- !u!114 &7444191226134941853
 MonoBehaviour:
   m_ObjectHideFlags: 0
