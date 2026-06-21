@@ -18,17 +18,34 @@ public class RoadPrefabSaver : MonoBehaviour
     {
         var generators = GetComponentsInChildren<RoadMeshGenerator>();
 
+        if (generators.Length == 0)
+        {
+            UnityEditor.EditorUtility.DisplayDialog("Road Prefab Saver",
+                "Nessun RoadMeshGenerator trovato sotto questo oggetto.", "OK");
+            return;
+        }
+
         string mapFolder = $"Assets/Prefabs/Maps/{gameObject.name.Replace(" ", "_")}";
 
         EnsureFolder("Assets/Prefabs/Maps");
         EnsureFolder(mapFolder);
 
         string baseName = gameObject.name.Replace(" ", "_");
-        int saved = 0;
+        int savedMeshes = 0;
+        int splineOnly = 0;
 
         for (int i = 0; i < generators.Length; i++)
         {
             var gen = generators[i];
+
+            // Strade spline-only (generateMesh = false): nessuna mesh da salvare,
+            // è intenzionale. Fanno comunque parte del prefab della mappa.
+            if (!gen.GeneratesMesh)
+            {
+                splineOnly++;
+                continue;
+            }
+
             Mesh sourceMesh = gen._mesh;
             if (sourceMesh == null)
                 sourceMesh = gen.GetComponent<MeshFilter>()?.sharedMesh;
@@ -50,14 +67,7 @@ public class RoadPrefabSaver : MonoBehaviour
             gen._meshCollider ??= gen.GetComponent<MeshCollider>();
             gen._meshFilter.sharedMesh = meshCopy;
             gen._meshCollider.sharedMesh = meshCopy;
-            saved++;
-        }
-
-        if (saved == 0)
-        {
-            UnityEditor.EditorUtility.DisplayDialog("Road Prefab Saver",
-                "Nessuna mesh trovata.\nEsegui prima 'Generate All Roads'.", "OK");
-            return;
+            savedMeshes++;
         }
 
         string prefabPath = $"{mapFolder}/{baseName}.prefab";
@@ -69,7 +79,7 @@ public class RoadPrefabSaver : MonoBehaviour
 
         if (success)
             UnityEditor.EditorUtility.DisplayDialog("Road Prefab Saver",
-                $"{saved} mesh salvate.\nPrefab: {prefabPath}", "OK");
+                $"Prefab salvato: {prefabPath}\nMesh salvate: {savedMeshes} — strade spline-only: {splineOnly}", "OK");
         else
             UnityEditor.EditorUtility.DisplayDialog("Road Prefab Saver",
                 "Errore durante il salvataggio del prefab.", "OK");

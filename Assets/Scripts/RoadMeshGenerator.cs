@@ -5,6 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
 public class RoadMeshGenerator : MonoBehaviour
 {
+    [Header("Generation")]
+    [Tooltip("Se false viene calcolata SOLO la spline (per i bot AI): niente mesh della strada né kill zone. Usalo quando la superficie è gestita da Unity Terrain ma servono comunque i waypoint da seguire. Vale anche per il ContextMenu 'Generate Road'.")]
+    [SerializeField] private bool generateMesh = true;
+
     [Header("Road Settings")]
     [SerializeField] private float roadWidth = 4f;
     [SerializeField] private int resolution = 20;
@@ -28,6 +32,8 @@ public class RoadMeshGenerator : MonoBehaviour
     [Tooltip("Se false, in Start() viene calcolata SOLO la spline (per il bot AI) ma la mesh non viene rigenerata. Disattivalo dopo il primo bake per saltare il rebuild ad ogni avvio. Il ContextMenu 'Generate Road' ignora sempre questo flag.")]
     [SerializeField] private bool bakeMeshOnStart = true;
 
+    private const string KillZoneNetName = "KillZoneNet";
+
     [NonSerialized] public Mesh _mesh;
     [NonSerialized] public MeshFilter _meshFilter;
     [NonSerialized] public MeshCollider _meshCollider;
@@ -35,6 +41,7 @@ public class RoadMeshGenerator : MonoBehaviour
     private Vector3[] _splinePoints;
     public IReadOnlyList<Vector3> SplinePoints => _splinePoints;
     public bool IsGenerated => _splinePoints != null && _splinePoints.Length > 1;
+    public bool GeneratesMesh => generateMesh;
 
     private void Awake()
     {
@@ -87,11 +94,27 @@ public class RoadMeshGenerator : MonoBehaviour
         var splineData = GenerateSplinePoints(waypoints, nodeTypes, waypointBankAngles, stopNodes, waypointTensions);
         _splinePoints = splineData.points.ToArray();
 
+        // Interruttore generale: se disattivato si tiene solo la spline (per i bot)
+        // e si rimuove qualsiasi mesh/kill zone generata in precedenza.
+        if (!generateMesh)
+        {
+            ClearGeneratedMesh();
+            return;
+        }
+
         if (!buildMesh) return;
 
         EnsureWritableMesh();
         BuildMesh(splineData.points, splineData.flatWeights, splineData.bankAngles, splineData.meshActive);
         BuildKillZoneNet(splineData.points, splineData.meshActive);
+    }
+
+    private void ClearGeneratedMesh()
+    {
+        if (_mesh != null) _mesh.Clear();
+
+        var existingNet = transform.Find(KillZoneNetName);
+        if (existingNet != null) DestroyImmediate(existingNet.gameObject);
     }
 
     private void EnsureComponents()
@@ -371,11 +394,10 @@ public class RoadMeshGenerator : MonoBehaviour
 
     private void BuildKillZoneNet(List<Vector3> splinePoints, List<bool> meshActive)
     {
-        const string netName = "KillZoneNet";
-        var existing = transform.Find(netName);
+        var existing = transform.Find(KillZoneNetName);
         if (existing != null) DestroyImmediate(existing.gameObject);
 
-        var netGO = new GameObject(netName);
+        var netGO = new GameObject(KillZoneNetName);
         netGO.transform.SetParent(transform);
         netGO.transform.localPosition = Vector3.zero;
         netGO.transform.localRotation = Quaternion.identity;
