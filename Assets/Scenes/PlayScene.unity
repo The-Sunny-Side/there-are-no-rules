@@ -7742,6 +7742,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BetaMap
       objectReference: {fileID: 0}
+    - target: {fileID: 4815473961808993854, guid: e93adaae4dd5271439cd2fb9a439b9a8, type: 3}
+      propertyPath: m_MaterialTemplate
+      value: 
+      objectReference: {fileID: 2100000, guid: 10cbf6115029d9d4b8a80187f3a2d6b6, type: 2}
     - target: {fileID: 8158754512336481467, guid: e93adaae4dd5271439cd2fb9a439b9a8, type: 3}
       propertyPath: m_LocalPosition.x
       value: -85.22583
