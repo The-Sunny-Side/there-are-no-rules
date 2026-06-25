@@ -5,6 +5,8 @@ using PurrNet;
 using PurrNet.Packing;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 // Server-auth. Concatena tutti i RoadMeshGenerator in UNA SOLA spline (array flat di Vector3).
 // Per ogni PlayerIdentity nella scena, ogni updateRate secondi, scan globale dei punti spline ->
@@ -46,6 +48,19 @@ public class RaceStandings : NetworkBehaviour
 
     private int _lastLoggedRank = -1;
     private int _lastLoggedTotal = -1;
+
+    private void OnEnable()
+    {
+        LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+    }
+
+    private void OnLocaleChanged(Locale locale)
+    {
+        // Forza il refresh del testo al prossimo Update anche se rank/total non sono cambiati,
+        // così il suffisso ordinale si aggiorna subito se la lingua cambia a metà gara.
+        _lastLoggedRank = -1;
+    }
+
     void Update()
     {
         if (!isSpawned) return;
@@ -54,7 +69,34 @@ public class RaceStandings : NetworkBehaviour
         if (rank == _lastLoggedRank && total == _lastLoggedTotal) return;
         _lastLoggedRank = rank;
         _lastLoggedTotal = total;
-        localRankText.text = $"{rank}/{total}";
+
+        if (rank <= 0)
+        {
+            localRankText.text = $"-/{total}";
+            return;
+        }
+
+        string suffix = GetOrdinalSuffix(rank);
+        localRankText.text = $"{rank}<size=60%>{suffix}</size> / {total}";
+    }
+
+    private static string GetOrdinalSuffix(int n)
+    {
+        string localeCode = LocalizationSettings.SelectedLocale?.Identifier.Code ?? "en";
+
+        if (localeCode.StartsWith("it", StringComparison.OrdinalIgnoreCase))
+            return "°"; // Italiano: stesso indicatore ordinale per ogni numero
+
+        // Fallback inglese (copre anche "en" e qualsiasi locale non gestita)
+        int rem100 = n % 100;
+        if (rem100 >= 11 && rem100 <= 13) return "th";
+        return (n % 10) switch
+        {
+            1 => "st",
+            2 => "nd",
+            3 => "rd",
+            _ => "th"
+        };
     }
 
     void Awake()
@@ -64,6 +106,7 @@ public class RaceStandings : NetworkBehaviour
 
     private new void OnDestroy()
     {
+        LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
         if (_tickCo != null) StopCoroutine(_tickCo);
         if (Instance == this) Instance = null;
     }
