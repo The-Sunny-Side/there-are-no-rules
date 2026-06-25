@@ -16,7 +16,7 @@ public class ObjectRotator : MonoBehaviour
     void Awake()
     {
         mainCamera = Camera.main;
-        SetupCollider();
+
     }
 
     void Update()

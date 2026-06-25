@@ -50,11 +50,11 @@ MonoBehaviour:
   availableRotation: 1
   rotationLerpSpeed: 8
   detectionRadius: 20
-  coneAngle: 25
+  coneAngle: 50
   PlayerMask:
     serializedVersion: 2
     m_Bits: 128
-  outlineMaterial: {fileID: 2100000, guid: fc5cc4aa573236b4ba505e3cfcdbdcb0, type: 2}
+  outlineMaterial: {fileID: 2100000, guid: 00348bb01b33b484b9a00259721d59d3, type: 2}
 --- !u!114 &2299327804709630386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,6 +211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VeichleWeapon
   isHitting: 0
+  isEmpty: 0
 --- !u!1 &7558426234441369815 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1449689828313570946, guid: 2a496bbd3e7707e40a1e7f8791e991d9, type: 3}

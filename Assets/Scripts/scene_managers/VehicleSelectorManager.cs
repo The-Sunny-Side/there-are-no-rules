@@ -326,7 +326,7 @@ public class VehicleSelectorManager : MonoBehaviour
         composerComponent.weaponRightElement = InstantiateWeapon(selectedWeapons[3]);
 
         composerComponent.AlignComponents();
-        vehicle.GetComponent<ObjectRotator>()?.SetupCollider();
+        
 
         switch (stepIndex)
         {
