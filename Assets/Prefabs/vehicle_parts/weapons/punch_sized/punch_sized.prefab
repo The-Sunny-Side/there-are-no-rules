@@ -49,12 +49,12 @@ MonoBehaviour:
   rotationPivot: {fileID: 4384310972800669421}
   availableRotation: 1
   rotationLerpSpeed: 8
-  detectionRadius: 20
+  detectionRadius: 10
   coneAngle: 50
   PlayerMask:
     serializedVersion: 2
     m_Bits: 128
-  outlineMaterial: {fileID: 2100000, guid: 00348bb01b33b484b9a00259721d59d3, type: 2}
+  outlineMaterial: {fileID: 2100000, guid: b0ef43f20703de34e92e294ae857aa29, type: 2}
 --- !u!114 &2299327804709630386
 MonoBehaviour:
   m_ObjectHideFlags: 0
