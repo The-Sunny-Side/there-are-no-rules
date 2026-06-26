@@ -196,16 +196,16 @@ MonoBehaviour:
   _extrapolateInput: 1
   _rigidbody: {fileID: 4360163942621179187}
   visuals: {fileID: 2315482730086823503}
-  maxSpeed: 100
-  acceleration: 15
+  maxSpeed: 65
+  acceleration: 40
   brakeDeceleration: 40
   naturalDeceleration: 15
-  groundRotationSpeed: 60
+  groundRotationSpeed: 100
   airRotationSpeed: 180
   jumpForce: 10
   gravity: 100
   fastFallGravityMult: 2
-  slopeAcceleration: 15
+  slopeAcceleration: 40
   boostImpulse: 30
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3
@@ -331,6 +331,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleLoader
   composer: {fileID: 8969655199185641680}
+  customVehicle:
+    baseElement: 
+    bodyElement: 
+    weaponLeft: 
+    weaponRight: 
+    weaponFront: 
+    weaponBack: 
 --- !u!114 &2236589948941971393
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11546,7 +11546,7 @@ MonoBehaviour:
   _networkRules: {fileID: 11400000, guid: ff5a11973fb33cb488524e4ae0247f93, type: 2}
   _visibilityRules: {fileID: 11400000, guid: 8f014a5bd8dc68646a2a3c0b18c5bbd8, type: 2}
   _authenticator: {fileID: 860054867}
-  _tickRate: 20
+  _tickRate: 40
   _patchLingeringProcessBug: 0
 --- !u!114 &1779854407
 MonoBehaviour:

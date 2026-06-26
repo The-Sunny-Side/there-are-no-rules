@@ -230,16 +230,16 @@ MonoBehaviour:
   _extrapolateInput: 1
   _rigidbody: {fileID: 2323636566835742312}
   visuals: {fileID: 5584804461420377640}
-  maxSpeed: 100
-  acceleration: 15
+  maxSpeed: 65
+  acceleration: 40
   brakeDeceleration: 40
   naturalDeceleration: 15
-  groundRotationSpeed: 60
+  groundRotationSpeed: 100
   airRotationSpeed: 180
   jumpForce: 10
   gravity: 100
   fastFallGravityMult: 2
-  slopeAcceleration: 15
+  slopeAcceleration: 40
   boostImpulse: 30
   driftChargeRate: 1.5
   driftAngleThreshold: 0.3
