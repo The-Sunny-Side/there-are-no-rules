@@ -37,7 +37,7 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 7511ba900fd4f5d46a134ccc53f72909, type: 3}
     key: empty
     cooldown: 0
-  - element: {fileID: 1375412003077825670, guid: 5e1b9a1cc773c8e4eb1ad5003b0a1a2b, type: 3}
-    icon: {fileID: 21300000, guid: bb247bade1dbd8d45b193be04819c160, type: 3}
-    key: punch
+  - element: {fileID: 5192018973535076853, guid: eb52d56b99515664eae0936bb1a554a0, type: 3}
+    icon: {fileID: 21300000, guid: f71804d90676975438790620d64f3cc1, type: 3}
+    key: punch_long
     cooldown: 4
