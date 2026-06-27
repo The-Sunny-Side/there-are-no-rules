@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PivotWeaponBehaviour : MonoBehaviour
@@ -12,13 +11,10 @@ public class PivotWeaponBehaviour : MonoBehaviour
     [Range(1f, 180f)]
     [SerializeField] private float coneAngle = 25f;
     [SerializeField] private LayerMask PlayerMask;
-    [SerializeField] private Material outlineMaterial;
 
     private Quaternion defaultLocalRotation;
     private PlayerIdentity _player;
     private Collider _currentHighlightTarget;
-
-    private readonly List<MeshFilter> _outlineMeshes = new();
 
     private void Awake()
     {
@@ -79,42 +75,15 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void ApplyHighlight(Collider col, bool highlighted)
     {
+        // Attiva/disattiva un GameObject (es. Particle System "aura") taggato "EnemyTarget"
+        // sotto la Visuals del nemico: essendo figlio della grafica interpolata di PurrNet,
+        // segue il veicolo senza restare indietro.
         col.gameObject.FindChildWithTag("EnemyTarget")?.SetActive(highlighted);
-
-        LegacyHighlight(col, highlighted);
-    }
-
-    private void LegacyHighlight(Collider col, bool highlighted) {
-        if (highlighted)
-        {
-            _outlineMeshes.Clear();
-            col.GetComponentsInChildren(_outlineMeshes);
-        }
-        else
-        {
-            _outlineMeshes.Clear();
-        }
     }
 
     private void OnDisable()
     {
-        _outlineMeshes.Clear();
         _currentHighlightTarget = null;
-    }
-
-    private void LateUpdate()
-    {
-        if (outlineMaterial == null) return;
-
-        var rparams = new RenderParams(outlineMaterial);
-        foreach (var mf in _outlineMeshes)
-        {
-            if (mf == null || mf.sharedMesh == null) continue;
-            var mesh = mf.sharedMesh;
-            var matrix = mf.transform.localToWorldMatrix;
-            for (int sub = 0; sub < mesh.subMeshCount; sub++)
-                Graphics.RenderMesh(rparams, mesh, sub, matrix);
-        }
     }
 
     private bool DetectTarget(out Vector3 targetPoint, out Collider targetCollider)

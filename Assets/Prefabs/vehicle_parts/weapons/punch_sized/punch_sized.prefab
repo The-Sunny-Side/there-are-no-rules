@@ -54,7 +54,7 @@ MonoBehaviour:
   PlayerMask:
     serializedVersion: 2
     m_Bits: 128
-  outlineMaterial: {fileID: 2100000, guid: b0ef43f20703de34e92e294ae857aa29, type: 2}
+  highlightMaterial: {fileID: 2100000, guid: acf2ad50b9cbb314f883b69efca88618, type: 2}
 --- !u!114 &2299327804709630386
 MonoBehaviour:
   m_ObjectHideFlags: 0

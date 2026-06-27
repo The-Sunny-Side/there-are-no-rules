@@ -137,7 +137,6 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
             Vector3 vel = _rigidbody.linearVelocity;
             Vector3 groundVel = Vector3.ProjectOnPlane(vel, slopeNormal);
             float verticalVel = Vector3.Dot(vel, slopeNormal);
-            //verticalVel = Mathf.Max(verticalVel, 0f); // non reiniettare velocità "dentro" il terreno (atterraggi morbidi)
 
             float forwardSpeed = Vector3.Dot(groundVel, forward);
             float sideSpeed = Vector3.Dot(groundVel, right);
