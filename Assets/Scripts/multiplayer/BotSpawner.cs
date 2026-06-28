@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using PurrNet;
 using PurrNet.Prediction;
 using UnityEngine;
@@ -20,6 +21,8 @@ public class BotSpawner : NetworkBehaviour
 
     [Header("Settings")]
     [SerializeField] private int targetRacerCount = 8;
+    [Tooltip("Se attivo, ogni bot riceve una config casuale (base + corpo + 1-4 armi). Altrimenti usa defaultBotConfig/host.")]
+    [SerializeField] private bool randomizeBotConfig = true;
 
     public int TargetRacerCount => targetRacerCount;
 
@@ -51,8 +54,8 @@ public class BotSpawner : NetworkBehaviour
         int botsToSpawn = Mathf.Min(targetRacerCount, totalSpawns) - humanCount;
         if (botsToSpawn <= 0) return;
 
-        string botConfigJson = ResolveBotConfigJson();
-        if (string.IsNullOrWhiteSpace(botConfigJson))
+        string fixedConfigJson = randomizeBotConfig ? null : ResolveBotConfigJson();
+        if (!randomizeBotConfig && string.IsNullOrWhiteSpace(fixedConfigJson))
             Debug.LogWarning("[BotSpawner] Nessuna config veicolo disponibile per i bot: verranno spawnati ma resteranno vuoti.");
 
         for (int i = 0; i < botsToSpawn; i++)
@@ -74,6 +77,8 @@ public class BotSpawner : NetworkBehaviour
             if (identity != null)
                 identity.SetBotIdentity(i + 1);
 
+            string botConfigJson = randomizeBotConfig ? BuildRandomBotConfigJson() : fixedConfigJson;
+
             var vehicleConfig = bot.GetComponentInChildren<VehicleNetConfig>(true);
             if (vehicleConfig != null && !string.IsNullOrWhiteSpace(botConfigJson))
                 vehicleConfig.SetServerConfigJson(botConfigJson);
@@ -94,6 +99,66 @@ public class BotSpawner : NetworkBehaviour
             return VehicleManager.Instance.GetVehicleJson();
 
         return null;
+    }
+
+    // Crea una config veicolo casuale valida: 1 base, 1 corpo e 1-4 armi in slot casuali.
+    private string BuildRandomBotConfigJson()
+    {
+        var reg = GameConfig.VehiclePrefabRegistry;
+        if (reg == null)
+        {
+            Debug.LogWarning("[BotSpawner] VehiclePrefabRegistry non disponibile: config bot casuale saltata.");
+            return null;
+        }
+
+        var bases = reg.GetAllBases();
+        var bodies = reg.GetAllBodies();
+        if (bases == null || bases.Count == 0 || bodies == null || bodies.Count == 0)
+        {
+            Debug.LogWarning("[BotSpawner] Registry senza basi o corpi: config bot casuale saltata.");
+            return null;
+        }
+
+        var vehicle = new Vehicle
+        {
+            baseElement = bases[Random.Range(0, bases.Count)].key,
+            bodyElement = bodies[Random.Range(0, bodies.Count)].key,
+            weaponFront = "empty",
+            weaponLeft = "empty",
+            weaponBack = "empty",
+            weaponRight = "empty",
+        };
+
+        // Armi reali disponibili (escludo il segnaposto "empty").
+        var realWeapons = reg.GetAllWeapons()?
+            .Where(w => w != null && !string.IsNullOrEmpty(w.key) && w.key != "empty")
+            .ToList();
+
+        if (realWeapons != null && realWeapons.Count > 0)
+        {
+            // Slot mescolati: ne riempiamo da 1 a 4.
+            var slots = new List<string> { "front", "left", "back", "right" };
+            for (int i = slots.Count - 1; i > 0; i--)
+            {
+                int j = Random.Range(0, i + 1);
+                (slots[i], slots[j]) = (slots[j], slots[i]);
+            }
+
+            int weaponCount = Random.Range(1, slots.Count + 1); // 1..4
+            for (int i = 0; i < weaponCount; i++)
+            {
+                string weaponKey = realWeapons[Random.Range(0, realWeapons.Count)].key;
+                switch (slots[i])
+                {
+                    case "front": vehicle.weaponFront = weaponKey; break;
+                    case "left": vehicle.weaponLeft = weaponKey; break;
+                    case "back": vehicle.weaponBack = weaponKey; break;
+                    case "right": vehicle.weaponRight = weaponKey; break;
+                }
+            }
+        }
+
+        return JsonUtility.ToJson(vehicle);
     }
 
     private bool EnsurePredictionManager()
