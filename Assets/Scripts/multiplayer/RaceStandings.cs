@@ -77,7 +77,7 @@ public class RaceStandings : NetworkBehaviour
         }
 
         string suffix = GetOrdinalSuffix(rank);
-        localRankText.text = $"{rank}<size=60%>{suffix}</size> / {total}";
+        localRankText.text = $"{rank}{suffix}/{total}";
     }
 
     private static string GetOrdinalSuffix(int n)
@@ -89,13 +89,13 @@ public class RaceStandings : NetworkBehaviour
 
         // Fallback inglese (copre anche "en" e qualsiasi locale non gestita)
         int rem100 = n % 100;
-        if (rem100 >= 11 && rem100 <= 13) return "th";
+        if (rem100 >= 11 && rem100 <= 13) return "<size=60%>th</size>";
         return (n % 10) switch
         {
-            1 => "st",
-            2 => "nd",
-            3 => "rd",
-            _ => "th"
+            1 => "<size=60%>st</size>",
+            2 => "<size=60%>nd</size>",
+            3 => "<size=60%>rd</size>",
+            _ => "<size=60%>th</size>"
         };
     }
 
