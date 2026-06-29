@@ -27,6 +27,8 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [Header("BOOST / DRIFT")]
     [Tooltip("Impulso in avanti applicato quando un drift caricato viene rilasciato. Viene moltiplicato per la carica accumulata.")]
     [SerializeField] private float boostImpulse = 15f;
+    [Tooltip("Durata (secondi) per cui il VFX di boost resta acceso dopo il rilascio del drift.")]
+    [SerializeField] private float boostDuration = 0.6f;
     [Tooltip("Velocità con cui si carica il boost mentre la sfera sta driftando dopo il breve ritardo iniziale.")]
     [SerializeField] private float driftChargeRate = 1.5f;
     [Tooltip("Soglia di disallineamento tra velocità e direzione frontale oltre la quale inizia il drift. Valori più bassi lo attivano prima.")]
@@ -57,6 +59,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     private float _airTime;
 
     private VFXGroup _driftVFX;
+    private VFXGroup _boostVFX;
 
     private IVehicleInputProvider _input;
 
@@ -67,6 +70,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
         public bool hasNormal;
         public float boostCharge;
         public float driftTimer;
+        public float boostTimer;
 
         public void Dispose() { }
     }
@@ -94,6 +98,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     private void CacheVehicleVFX()
     {
         _driftVFX = VFXGroup.FromChildren(gameObject, VFXType.Drift);
+        _boostVFX = VFXGroup.FromChildren(gameObject, VFXType.Boost);
     }
 
     protected override void Simulate(Input input, ref State state, float delta)
@@ -103,6 +108,18 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
 
         // --- ALLINEAMENTO VISUALS AL TERRENO ---
         AlignToGround(ref state, delta);
+
+        // --- BOOST VFX (acceso per tutta la durata del boost) ---
+        if (state.boostTimer > 0f)
+        {
+            state.boostTimer -= delta;
+            _boostVFX.Play();
+            if (state.boostTimer <= 0f)
+            {
+                state.boostTimer = 0f;
+                _boostVFX.Stop();
+            }
+        }
 
         // --- STERZATA ---
         if (state.grounded)
@@ -185,7 +202,13 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
                 {
                     _driftVFX.Stop();
 
+                    // NOTA: il boost di gameplay è un impulso istantaneo (la velocità extra
+                    // decade subito con l'attrito). boostTimer serve solo a tenere acceso il VFX
+                    // per boostDuration secondi. Se in futuro vuoi una SPINTA sostenuta e non solo
+                    // l'effetto visivo, usa lo stesso boostTimer nel blocco grounded, es:
+                    //   if (state.boostTimer > 0f) forwardSpeed = Mathf.Max(forwardSpeed, maxSpeed * 1.15f);
                     forwardSpeed += boostImpulse * state.boostCharge;
+                    state.boostTimer = boostDuration;
                     state.boostCharge = 0f;
                     state.driftTimer = 0f;
                 }
