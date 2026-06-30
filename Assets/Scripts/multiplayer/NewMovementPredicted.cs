@@ -27,7 +27,7 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
     [Header("BOOST / DRIFT")]
     [Tooltip("Impulso in avanti applicato quando un drift caricato viene rilasciato. Viene moltiplicato per la carica accumulata.")]
     [SerializeField] private float boostImpulse = 15f;
-    [Tooltip("Durata (secondi) per cui il VFX di boost resta acceso dopo il rilascio del drift.")]
+    [Tooltip("Durata MASSIMA (secondi, a carica piena) per cui il VFX di boost resta acceso dopo il rilascio del drift. Scalata in base alla carica accumulata.")]
     [SerializeField] private float boostDuration = 0.6f;
     [Tooltip("Velocità con cui si carica il boost mentre la sfera sta driftando dopo il breve ritardo iniziale.")]
     [SerializeField] private float driftChargeRate = 1.5f;
@@ -202,13 +202,8 @@ public class NewMovementPredicted : PredictedIdentity<NewMovementPredicted.Input
                 {
                     _driftVFX.Stop();
 
-                    // NOTA: il boost di gameplay è un impulso istantaneo (la velocità extra
-                    // decade subito con l'attrito). boostTimer serve solo a tenere acceso il VFX
-                    // per boostDuration secondi. Se in futuro vuoi una SPINTA sostenuta e non solo
-                    // l'effetto visivo, usa lo stesso boostTimer nel blocco grounded, es:
-                    //   if (state.boostTimer > 0f) forwardSpeed = Mathf.Max(forwardSpeed, maxSpeed * 1.15f);
                     forwardSpeed += boostImpulse * state.boostCharge;
-                    state.boostTimer = boostDuration;
+                    state.boostTimer = boostDuration * state.boostCharge;
                     state.boostCharge = 0f;
                     state.driftTimer = 0f;
                 }
