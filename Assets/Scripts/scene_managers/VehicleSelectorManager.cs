@@ -22,7 +22,7 @@ public class VehicleSelectorManager : MonoBehaviour
     [SerializeField] private bool isVisible = true;
 
 
-    private VehicleEntry[] weaponElements;
+    private VehicleWeaponEntry[] weaponElements;
     private VehicleEntry[] baseElements;
     private VehicleEntry[] bodyElements;
     private Sprite emptyPart;
@@ -151,9 +151,17 @@ public class VehicleSelectorManager : MonoBehaviour
         {
             HighlightButton(elementsBoxes[i], false);
 
+
             if (i < actualParts.Length)
             {
+                if (stepIndex == 2) {
+                    VehicleWeaponEntry weaponEntry = actualParts[i] as VehicleWeaponEntry;
+                    bool[] isInteractable = { weaponEntry.front, weaponEntry.left, weaponEntry.back, weaponEntry.right };
+                    elementsBoxes[i].GetComponent<Button>().interactable = isInteractable[selectedWeaponType];
+                }
+
                 elementsBoxes[i].transform.Find("Icon").GetComponent<Image>().sprite = actualParts[i].icon;
+                
             }
             else
                 elementsBoxes[i].transform.Find("Icon").GetComponent<Image>().sprite = emptyPart;
@@ -266,6 +274,7 @@ public class VehicleSelectorManager : MonoBehaviour
         HighlightButton(weaponButtons[selectedWeaponType], true);
         HighlightButton(elementsBoxes[selectedWeaponsIndexes[selectedWeaponType]], true);
         UpdateVehicle();
+        InitIcons();
     }
 
     public void FinalizeVehicle()

@@ -27,6 +27,10 @@ public class VehicleEntry : VehicleElement
 public class VehicleWeaponEntry : VehicleEntry
 {
     public int cooldown = 0;
+    public bool front = true;
+    public bool back = true;
+    public bool left = true;
+    public bool right = true;
 }
 
 [Serializable]
