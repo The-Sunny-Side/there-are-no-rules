@@ -4046,7 +4046,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CountdownOverlayRaycast
   m_Material: {fileID: 2100000, guid: f4fc4bd6e5e5ea34492bc3e934651f02, type: 2}
-  m_Color: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 0.043137256}
+  m_Color: {r: 0.37254903, g: 0.42352942, b: 0.47058824, a: 0.19607843}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
