@@ -10,7 +10,21 @@
       "Bash(echo \"=== $guid ===\")",
       "Bash(grep -r \"$guid\" Assets --include=\"*.prefab\" --include=\"*.unity\" -l)",
       "Bash(done)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(xargs basename -a)",
+      "Bash(xargs grep -l \"BiomeManager\\\\|SurfaceType\\\\|GroundType\\\\|terrain.*type\")",
+      "Bash(xargs grep -l \"1057893691ec80844a7b18d144f234fa\")",
+      "Bash(xargs grep -l \"snow\\\\|desert\\\\|sand\")",
+      "mcp__UnityMCP__generate_image",
+      "mcp__UnityMCP__manage_scene",
+      "mcp__UnityMCP__manage_prefabs",
+      "mcp__UnityMCP__manage_asset",
+      "mcp__UnityMCP__create_script",
+      "mcp__UnityMCP__read_console",
+      "mcp__UnityMCP__manage_texture",
+      "mcp__UnityMCP__manage_material",
+      "mcp__UnityMCP__execute_code",
+      "mcp__UnityMCP__manage_camera"
     ]
   }
 }
