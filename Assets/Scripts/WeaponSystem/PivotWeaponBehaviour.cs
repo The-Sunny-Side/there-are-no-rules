@@ -59,8 +59,10 @@ public class PivotWeaponBehaviour : MonoBehaviour
     {
         _player ??= GetComponentInParent<PlayerIdentity>();
 
+        // Force-clear if we lose local ownership, instead of returning early and leaving a
+        // stale highlight stuck on (the old target would never get its "off" call otherwise).
         if (_player == null || !_player.IsLocalOwner)
-            return;
+            newTarget = null;
 
         if (newTarget == _currentHighlightTarget) return;
 
@@ -75,14 +77,14 @@ public class PivotWeaponBehaviour : MonoBehaviour
 
     private void ApplyHighlight(Collider col, bool highlighted)
     {
-        // Attiva/disattiva un GameObject (es. Particle System "aura") taggato "EnemyTarget"
-        // sotto la Visuals del nemico: essendo figlio della grafica interpolata di PurrNet,
-        // segue il veicolo senza restare indietro.
-        col.gameObject.FindChildWithTag("EnemyTarget")?.SetActive(highlighted);
+        col.GetComponentInParent<TargetHighlight>()?.SetHighlighted(highlighted);
     }
 
     private void OnDisable()
     {
+        if (_currentHighlightTarget != null)
+            ApplyHighlight(_currentHighlightTarget, false);
+
         _currentHighlightTarget = null;
     }
 
