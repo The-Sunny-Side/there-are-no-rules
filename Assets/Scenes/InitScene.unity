@@ -1038,6 +1038,10 @@ MonoBehaviour:
   bounceOut: 0
   easeInShow: 0
   easeInHide: 0
+  bounceOnDepart: 0
+  bounceOnDepartAmount: 0.08
+  tiltOnDepart: 0
+  tiltMaxAngle: 8
 --- !u!225 &2113236734
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1195,6 +1199,10 @@ MonoBehaviour:
   bounceOut: 0
   easeInShow: 0
   easeInHide: 0
+  bounceOnDepart: 0
+  bounceOnDepartAmount: 0.08
+  tiltOnDepart: 0
+  tiltMaxAngle: 8
 --- !u!114 &1862448267267637400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1862,6 +1870,10 @@ MonoBehaviour:
   bounceOut: 0
   easeInShow: 0
   easeInHide: 0
+  bounceOnDepart: 0
+  bounceOnDepartAmount: 0.08
+  tiltOnDepart: 0
+  tiltMaxAngle: 8
 --- !u!222 &8824481734918087550
 CanvasRenderer:
   m_ObjectHideFlags: 0
