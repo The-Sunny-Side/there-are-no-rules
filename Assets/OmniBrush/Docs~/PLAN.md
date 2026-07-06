@@ -34,15 +34,24 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       (or procedural round brush), world-height target, max blend (exact +
       idempotent, E2E-verified) or additive, fixed/random rotation. Click-only.
       Shader params: x=strength, z=kScale*h01 packed, w=0 max/1 add.
-- [ ] S6 Texture paint — terrain splat; vertex color on meshes.
+- [x] S6 Texture paint (terrain half) — Texture tab: paint TerrainLayer
+      weights via PaintTexture pass, auto-adds missing layers, alphamap
+      dirty-rect undo (SculptUndo StrokeKind). E2E-verified (weight 1 center /
+      0 edge, auto-add 2→3 layers). Mesh vertex color still open (→ S4/S6b).
 - [ ] S7 Grass/detail paint (terrain details + instanced grass on meshes).
 - [ ] S8 Procedural brush filters — noise, curvature, texture-under-brush.
 - [ ] S9 Splines (roads/rivers: carve + texture + scatter along).
 - [ ] S10 Physics drop, erosion brush, node-driven brushes, biome presets.
 
 ## Status (2026-07-06)
-S1 + S3 + S5 implemented, compile- and E2E-checked via Unity MCP.
-Next: S2 (scatter perf), S6 (texture paint) or S4 (mesh sculpt).
+S1 + S3 + S5 + S6(terrain) implemented, compile- and E2E-checked via Unity
+MCP. Terrain pillar complete: sculpt + stamps + splat. Next: S2 (scatter
+perf), S4 (mesh sculpt + vertex color) or S7 (grass).
+
+## S6 known limits (accepted)
+- Undo restores alphamap weights but keeps auto-added TerrainLayers.
+- Painting a layer not yet on the terrain while capture is off (no stroke)
+  never happens from the window; API callers must BeginStroke first.
 
 ## S3 known limits (accepted)
 - Sculpt undo history is in-memory: lost on domain reload / play mode (proxy
