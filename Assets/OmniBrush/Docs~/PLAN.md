@@ -43,15 +43,22 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       weights via PaintTexture pass, auto-adds missing layers, alphamap
       dirty-rect undo (SculptUndo StrokeKind). E2E-verified (weight 1 center /
       0 edge, auto-add 2→3 layers). Mesh vertex color still open (→ S4/S6b).
-- [ ] S7 Grass/detail paint (terrain details + instanced grass on meshes).
+- [x] S7 Grass/detail paint (terrain half) — Grass tab paints terrain detail
+      density (texture billboard or mesh prefab, prototype auto-added +
+      deduped), Ctrl fades to zero, dirty-rect undo records. E2E-verified
+      (density 8 center / 0 corner / 0 after erase). Grass-on-mesh = Scatter
+      tab for now; dedicated instanced mesh-grass is S7b.
 - [ ] S8 Procedural brush filters — noise, curvature, texture-under-brush.
 - [ ] S9 Splines (roads/rivers: carve + texture + scatter along).
 - [ ] S10 Physics drop, erosion brush, node-driven brushes, biome presets.
 
 ## Status (2026-07-06)
-S1 + S3 + S4 + S5 + S6(terrain) implemented, compile- and E2E-checked via
-Unity MCP. Sculpt/stamp work on terrain AND meshes. Next: S2 (scatter perf +
-per-entry footprint radius), S7 (grass) or S6b (mesh vertex color).
+S1 + S3 + S4 + S5 + S6(terrain) + S7(terrain) done, all E2E-checked via Unity
+MCP. Tabs: Scatter | Sculpt | Texture | Grass; sculpt/stamp on terrain AND
+meshes. Remaining, suggested order: S2 (scatter perf + per-entry footprint
+radius — user deferred), S8 (procedural filters), S9 (splines), S6b/S7b
+(mesh vertex color / instanced mesh grass), S10 (physics drop, erosion,
+nodes, biome presets, non-destructive layers).
 
 ## S4 known limits (accepted)
 - Primitive colliders (Sphere/Box) don't follow deformation — raycasts drift

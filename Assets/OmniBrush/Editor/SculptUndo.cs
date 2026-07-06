@@ -31,7 +31,10 @@ namespace OmniBrush.Editor
             public Mesh mesh;                    // mesh vertex records
             public int[] indices;
             public Vector3[] beforeV, afterV;
+            public int detailLayer = -1;         // terrain detail (grass) records
+            public int[,] beforeD, afterD;
             public bool HasAfter => mesh != null ? afterV != null
+                : detailLayer >= 0 ? afterD != null
                 : kind == StrokeKind.Heights ? after != null : afterA != null;
         }
 
@@ -71,13 +74,24 @@ namespace OmniBrush.Editor
             }
             TerrainPaintableSurface.captureHook = Capture;
             MeshPaintableSurface.recordHook = RecordMesh;
+            TerrainDetailPainter.recordHook = RecordDetails;
         }
 
         public static void EndStroke()
         {
             TerrainPaintableSurface.captureHook = null;
             MeshPaintableSurface.recordHook = null;
+            TerrainDetailPainter.recordHook = null;
             currentStroke = null;
+        }
+
+        private static void RecordDetails(TerrainData data, int layer, int x, int y, int[,] before, int[,] after)
+        {
+            if (currentStroke == null) return;
+            currentStroke.Add(new StampRecord
+            {
+                data = data, detailLayer = layer, x = x, y = y, beforeD = before, afterD = after,
+            });
         }
 
         private static void RecordMesh(Mesh mesh, int[] indices, Vector3[] before, Vector3[] after)
@@ -156,6 +170,12 @@ namespace OmniBrush.Editor
                 return;
             }
             if (rec.data == null) return;
+            if (rec.detailLayer >= 0)
+            {
+                int[,] target = useBefore ? rec.beforeD : rec.afterD;
+                if (target != null) rec.data.SetDetailLayer(rec.x, rec.y, rec.detailLayer, target);
+                return;
+            }
             if (rec.kind == StrokeKind.Heights)
             {
                 float[,] h = useBefore ? rec.before : rec.after;
