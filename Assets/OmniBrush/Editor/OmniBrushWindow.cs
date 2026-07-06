@@ -205,7 +205,15 @@ namespace OmniBrush.Editor
 
             EditorGUILayout.Space();
             GUILayout.Label("Filters", EditorStyles.boldLabel);
-            EditorGUILayout.MinMaxSlider(new GUIContent($"Slope {slopeMin:0}–{slopeMax:0}°"), ref slopeMin, ref slopeMax, 0f, 90f);
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                EditorGUILayout.PrefixLabel("Slope (°)");
+                slopeMin = EditorGUILayout.FloatField(Mathf.Round(slopeMin), GUILayout.Width(34));
+                EditorGUILayout.MinMaxSlider(ref slopeMin, ref slopeMax, 0f, 90f);
+                slopeMax = EditorGUILayout.FloatField(Mathf.Round(slopeMax), GUILayout.Width(34));
+            }
+            slopeMin = Mathf.Clamp(slopeMin, 0f, 90f);
+            slopeMax = Mathf.Clamp(slopeMax, slopeMin, 90f);
             filterHeight = EditorGUILayout.Toggle("Filter Height", filterHeight);
             if (filterHeight)
             {
