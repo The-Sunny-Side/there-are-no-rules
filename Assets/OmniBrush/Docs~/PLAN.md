@@ -25,8 +25,10 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
 - [ ] S2 Scatter v2 — incremental batch update (no full rebuild per stamp),
       lighter undo (delta, not full snapshot), EditorPrefs persistence,
       precision single-place mode, binary instance storage (scene bloat).
-- [ ] S3 Terrain sculpt — raise/lower/smooth/flatten via PaintContext,
-      dirty-rect undo, introduce IPaintableSurface.
+- [x] S3 Terrain sculpt — raise/lower/smooth/flatten via PaintContext (GPU,
+      multi-tile), dirty-rect undo (SculptUndo proxy versioning), window got
+      Scatter/Sculpt tabs, IPaintableSurface introduced. E2E-verified via MCP
+      (raise 10m exact, flatten converges, smooth lowers peaks).
 - [ ] S4 Mesh sculpt — per-instance clone + delta map, same brush set as S3.
 - [ ] S5 Heightmap stamps (rotation, blend modes add/max/min).
 - [ ] S6 Texture paint — terrain splat; vertex color on meshes.
@@ -36,7 +38,15 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
 - [ ] S10 Physics drop, erosion brush, node-driven brushes, biome presets.
 
 ## Status (2026-07-06)
-S1 implemented and compile-checked via Unity MCP. Next: S2 or S3.
+S1 + S3 implemented, compile- and E2E-checked via Unity MCP. Next: S2, S4 or S5.
+
+## S3 known limits (accepted)
+- Sculpt undo history is in-memory: lost on domain reload / play mode (proxy
+  survives Unity's stack but records don't; undo then no-ops safely).
+- Overlapping stamps in one stroke store redundant region copies.
+- Flatten uses Unity's 0.01-strength shader semantics (NaN at 1.0 — the
+  `w=(1-p)/p` smoothing math); converges over repeated stamps by design.
+- Scatter instances do not follow terrain height edits.
 
 ## S1 known limits (accepted, revisit in S2)
 - Paint target needs a collider (mesh BVH raycast comes with S3/S4).
@@ -54,7 +64,16 @@ S1 implemented and compile-checked via Unity MCP. Next: S2 or S3.
   (≤1023/batch), render hooks (SRP `beginCameraRendering` + built-in
   `onPreCull`), frustum cull, public data API (`AddInstance`,
   `RemoveInRadius`, `HasInstanceWithin`, `MarkDirty`, `MarkPaletteDirty`).
-- `Editor/OmniBrushWindow.cs` — Tools > OmniBrush > Brush; all brush logic
-  (raycast, stamp sampling, filters, undo registration).
+- `Runtime/Sculpt/IPaintableSurface.cs` — SculptOp enum, SculptStampArgs,
+  surface interface (runtime-capable by design).
+- `Runtime/Sculpt/TerrainPaintableSurface.cs` — PaintContext pipeline (brush
+  transform → BeginPaintHeightmap → builtin material pass blit → End +
+  ApplyDelayedActions), `captureHook` for editor undo, `TryFrom(Collider)`.
+- `Runtime/Sculpt/SculptBrushTexture.cs` — procedural radial falloff brushes,
+  cached per hardness step.
+- `Editor/SculptUndo.cs` — dirty-rect undo: per-stamp before/after height
+  regions via PaintContext tile rects, proxy-version replay on undo/redo.
+- `Editor/OmniBrushWindow.cs` — Tools > OmniBrush > Brush; Scatter/Sculpt
+  tabs, all brush logic (raycast, stamp sampling, filters, undo routing).
 - `Editor/ScatterLayerEditor.cs` — count, open-brush, refresh cache,
   enable-GPU-instancing fix, bake to GameObjects.

@@ -1,0 +1,87 @@
+using UnityEngine;
+using UnityEngine.TerrainTools;
+
+namespace OmniBrush
+{
+    /// <summary>
+    /// Terrain implementation of IPaintableSurface. All ops run on the GPU via
+    /// PaintContext, which also stitches strokes across neighbor terrain tiles.
+    /// </summary>
+    public class TerrainPaintableSurface : IPaintableSurface
+    {
+        public delegate void PaintContextCapture(PaintContext context, bool before);
+
+        /// <summary>Editor hook: invoked before/after each stamp for undo capture.</summary>
+        public static PaintContextCapture captureHook;
+
+        private readonly Terrain terrain;
+
+        public TerrainPaintableSurface(Terrain terrain) => this.terrain = terrain;
+
+        public Object Target => terrain;
+
+        public static TerrainPaintableSurface TryFrom(Collider collider)
+        {
+            if (collider is TerrainCollider)
+            {
+                Terrain t = collider.GetComponent<Terrain>();
+                if (t != null && t.terrainData != null) return new TerrainPaintableSurface(t);
+            }
+            return null;
+        }
+
+        public bool ApplyStamp(SculptStampArgs args)
+        {
+            TerrainData data = terrain.terrainData;
+            Vector3 local = args.center - terrain.transform.position;
+            var uv = new Vector2(local.x / data.size.x, local.z / data.size.z);
+
+            BrushTransform xf = TerrainPaintUtility.CalculateBrushTransform(terrain, uv, args.radius * 2f, 0f);
+            PaintContext ctx = TerrainPaintUtility.BeginPaintHeightmap(terrain, xf.GetBrushXYBounds(), 0, true);
+            if (ctx == null) return false;
+
+            captureHook?.Invoke(ctx, true);
+
+            Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
+            mat.SetTexture("_BrushTex", SculptBrushTexture.Get(args.hardness));
+
+            TerrainBuiltinPaintMaterialPasses pass;
+            switch (args.op)
+            {
+                case SculptOp.Smooth:
+                    pass = TerrainBuiltinPaintMaterialPasses.SmoothHeights;
+                    mat.SetVector("_BrushParams", new Vector4(Mathf.Clamp01(args.strength), 0f, 0f, 0f));
+                    mat.SetVector("_SmoothWeights", new Vector4(1f, 0f, 0f, 0f)); // centered blur
+                    break;
+
+                case SculptOp.Flatten:
+                {
+                    pass = TerrainBuiltinPaintMaterialPasses.SetHeights;
+                    float target01 = Mathf.Clamp01((args.flattenHeight - terrain.transform.position.y) / data.size.y);
+                    // 0.01 factor matches Unity's SetHeightTool; the shader's
+                    // smoothing math divides by (1 - strength) and NaNs at 1.0.
+                    float s = Mathf.Clamp01(args.strength) * 0.01f;
+                    mat.SetVector("_BrushParams",
+                        new Vector4(s, PaintContext.kNormalizedHeightScale * target01, 0f, 0f));
+                    break;
+                }
+
+                default: // Raise / Lower — same speed scaling as Unity's built-in tool
+                {
+                    pass = TerrainBuiltinPaintMaterialPasses.RaiseLowerHeight;
+                    float s = Mathf.Clamp01(args.strength) * 0.01f * (args.op == SculptOp.Lower ? -1f : 1f);
+                    mat.SetVector("_BrushParams", new Vector4(s, 0f, 0f, 0f));
+                    break;
+                }
+            }
+
+            TerrainPaintUtility.SetupTerrainToolMaterialProperties(ctx, xf, mat);
+            Graphics.Blit(ctx.sourceRenderTexture, ctx.destinationRenderTexture, mat, (int)pass);
+            TerrainPaintUtility.EndPaintHeightmap(ctx, null);
+            PaintContext.ApplyDelayedActions(); // sync GPU edits back to CPU heights now
+
+            captureHook?.Invoke(ctx, false);
+            return true;
+        }
+    }
+}
