@@ -66,6 +66,7 @@ namespace OmniBrush.Editor
         private bool strokeActive;
         private bool hasLastStamp;
         private Vector3 lastStampPos;
+        private string lastStampWarning;
         private bool sculptStrokeStarted;
         private Vector3 flattenPoint;
         private Vector3 flattenNormal;
@@ -242,6 +243,9 @@ namespace OmniBrush.Editor
                 }
                 if (nullPrefabs > 0)
                     EditorGUILayout.HelpBox($"{nullPrefabs} entr{(nullPrefabs == 1 ? "y is" : "ies are")} missing a prefab.", MessageType.Warning);
+
+                if (!string.IsNullOrEmpty(lastStampWarning))
+                    EditorGUILayout.HelpBox(lastStampWarning, MessageType.Warning);
 
                 int missing = ScatterMaterialUtility.CountMissingInstancing(layer.palette);
                 if (missing > 0)
@@ -610,24 +614,28 @@ namespace OmniBrush.Editor
             Vector3 bitangent = Vector3.Cross(n, tangent);
 
             bool changed = false;
+            int placed = 0, rejFalloff = 0, rejRay = 0, rejSlope = 0, rejHeight = 0, rejDistance = 0, rejWeight = 0;
             for (int i = 0; i < instancesPerStamp; i++)
             {
                 Vector2 disc = Random.insideUnitCircle;
-                if (falloff > 0f && Random.value < falloff * disc.magnitude) continue; // edge falloff
+                if (falloff > 0f && Random.value < falloff * disc.magnitude) { rejFalloff++; continue; } // edge falloff
                 Vector3 candidate = hit.point + (tangent * disc.x + bitangent * disc.y) * radius;
 
                 // Re-project each candidate onto the surface.
                 Vector3 origin = candidate + n * radius;
                 if (!Physics.Raycast(origin, -n, out RaycastHit surface, radius * 2f, surfaceMask, QueryTriggerInteraction.Ignore))
+                {
+                    rejRay++;
                     continue;
+                }
 
                 float slope = Vector3.Angle(surface.normal, Vector3.up);
-                if (slope < slopeMin || slope > slopeMax) continue;
-                if (filterHeight && (surface.point.y < heightMin || surface.point.y > heightMax)) continue;
-                if (minDistance > 0f && layer.HasInstanceWithin(surface.point, minDistance)) continue;
+                if (slope < slopeMin || slope > slopeMax) { rejSlope++; continue; }
+                if (filterHeight && (surface.point.y < heightMin || surface.point.y > heightMax)) { rejHeight++; continue; }
+                if (minDistance > 0f && layer.HasInstanceWithin(surface.point, minDistance)) { rejDistance++; continue; }
 
                 int entryIndex = palette.PickWeightedIndex(Random.value);
-                if (entryIndex < 0) continue;
+                if (entryIndex < 0) { rejWeight++; continue; }
                 ScatterPalette.Entry entry = palette.entries[entryIndex];
 
                 Quaternion align = Quaternion.Slerp(Quaternion.identity,
@@ -645,8 +653,26 @@ namespace OmniBrush.Editor
                     scale = new Vector3(scale, scale, scale),
                 });
                 changed = true;
+                placed++;
             }
             if (changed) EditorUtility.SetDirty(layer);
+
+            if (placed == 0)
+            {
+                var reasons = new System.Collections.Generic.List<string>();
+                if (rejHeight > 0) reasons.Add($"{rejHeight} outside height filter ({heightMin:0}–{heightMax:0})");
+                if (rejSlope > 0) reasons.Add($"{rejSlope} outside slope filter ({slopeMin:0}–{slopeMax:0}°)");
+                if (rejDistance > 0) reasons.Add($"{rejDistance} too close to existing (Min Distance {minDistance:0.#})");
+                if (rejFalloff > 0) reasons.Add($"{rejFalloff} rejected by Edge Falloff ({falloff:0.##})");
+                if (rejRay > 0) reasons.Add($"{rejRay} missed the surface (Surface Layers mask?)");
+                if (rejWeight > 0) reasons.Add($"{rejWeight} found no palette entry with weight > 0");
+                lastStampWarning = $"Last stamp placed 0/{instancesPerStamp} instances: " + string.Join(", ", reasons) + ".";
+            }
+            else
+            {
+                lastStampWarning = null;
+            }
+            Repaint();
         }
     }
 }
