@@ -45,6 +45,14 @@ namespace OmniBrush.Editor
         [SerializeField] private float sculptStrength = 0.5f;
         [SerializeField] private float sculptHardness = 0.5f;
 
+        // stamp
+        [SerializeField] private Texture2D stampTexture;
+        [SerializeField] private float stampHeight = 20f;
+        [SerializeField] private bool stampAdditive;
+        [SerializeField] private float stampRotation;
+        [SerializeField] private bool stampRandomRotation = true;
+        private float currentStampRotation;
+
         private bool strokeActive;
         private bool hasLastStamp;
         private Vector3 lastStampPos;
@@ -160,12 +168,27 @@ namespace OmniBrush.Editor
 
         private bool DrawSculptGUI()
         {
-            sculptOp = (SculptOp)GUILayout.Toolbar((int)sculptOp, new[] { "Raise", "Lower", "Smooth", "Flatten" });
+            sculptOp = (SculptOp)GUILayout.Toolbar((int)sculptOp, new[] { "Raise", "Lower", "Smooth", "Flatten", "Stamp" });
             sculptStrength = EditorGUILayout.Slider("Strength", sculptStrength, 0f, 1f);
-            sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
-            EditorGUILayout.HelpBox(
-                "Terrain only (mesh sculpt comes later). Ctrl inverts Raise/Lower. Flatten targets the height first clicked.",
-                MessageType.None);
+            if (sculptOp == SculptOp.Stamp)
+            {
+                stampTexture = (Texture2D)EditorGUILayout.ObjectField("Stamp Heightmap", stampTexture, typeof(Texture2D), false);
+                if (stampTexture == null)
+                    sculptHardness = EditorGUILayout.Slider("Hardness (round stamp)", sculptHardness, 0f, 1f);
+                stampHeight = EditorGUILayout.FloatField("Stamp Height (m)", stampHeight);
+                stampAdditive = EditorGUILayout.Toggle("Additive Blend", stampAdditive);
+                stampRandomRotation = EditorGUILayout.Toggle("Random Rotation", stampRandomRotation);
+                if (!stampRandomRotation)
+                    stampRotation = EditorGUILayout.Slider("Rotation", stampRotation, 0f, 360f);
+                EditorGUILayout.HelpBox("Click to stamp (no drag). Default blend raises terrain up to the stamp shape.", MessageType.None);
+            }
+            else
+            {
+                sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+                EditorGUILayout.HelpBox(
+                    "Terrain only (mesh sculpt comes later). Ctrl inverts Raise/Lower. Flatten targets the height first clicked.",
+                    MessageType.None);
+            }
             return true;
         }
 
@@ -229,6 +252,7 @@ namespace OmniBrush.Editor
                         {
                             sculptStrokeStarted = false;
                             flattenTargetY = hit.point.y;
+                            currentStampRotation = stampRandomRotation ? Random.Range(0f, 360f) : stampRotation;
                             SculptStamp(hit, modifier);
                         }
                         e.Use();
@@ -243,7 +267,7 @@ namespace OmniBrush.Editor
                             if (!hasLastStamp || Vector3.Distance(hit.point, lastStampPos) >= Mathf.Max(0.05f, radius * strokeSpacing))
                                 ScatterStamp(hit, modifier);
                         }
-                        else
+                        else if (sculptOp != SculptOp.Stamp) // stamps are click-only
                         {
                             SculptStamp(hit, modifier);
                         }
@@ -291,7 +315,11 @@ namespace OmniBrush.Editor
                 radius = radius,
                 strength = sculptStrength,
                 hardness = sculptHardness,
+                rotation = op == SculptOp.Stamp ? currentStampRotation : 0f,
                 flattenHeight = flattenTargetY,
+                stampTexture = op == SculptOp.Stamp ? stampTexture : null,
+                stampHeight = stampHeight,
+                stampAdditive = stampAdditive,
             });
         }
 

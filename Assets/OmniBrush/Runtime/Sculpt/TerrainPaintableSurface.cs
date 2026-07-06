@@ -36,14 +36,15 @@ namespace OmniBrush
             Vector3 local = args.center - terrain.transform.position;
             var uv = new Vector2(local.x / data.size.x, local.z / data.size.z);
 
-            BrushTransform xf = TerrainPaintUtility.CalculateBrushTransform(terrain, uv, args.radius * 2f, 0f);
+            BrushTransform xf = TerrainPaintUtility.CalculateBrushTransform(terrain, uv, args.radius * 2f, args.rotation);
             PaintContext ctx = TerrainPaintUtility.BeginPaintHeightmap(terrain, xf.GetBrushXYBounds(), 0, true);
             if (ctx == null) return false;
 
             captureHook?.Invoke(ctx, true);
 
             Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
-            mat.SetTexture("_BrushTex", SculptBrushTexture.Get(args.hardness));
+            Texture brush = args.stampTexture != null ? (Texture)args.stampTexture : SculptBrushTexture.Get(args.hardness);
+            mat.SetTexture("_BrushTex", brush);
 
             TerrainBuiltinPaintMaterialPasses pass;
             switch (args.op)
@@ -63,6 +64,18 @@ namespace OmniBrush
                     float s = Mathf.Clamp01(args.strength) * 0.01f;
                     mat.SetVector("_BrushParams",
                         new Vector4(s, PaintContext.kNormalizedHeightScale * target01, 0f, 0f));
+                    break;
+                }
+
+                case SculptOp.Stamp:
+                {
+                    // z = packed target height, x = strength, w = 0 max / 1 add
+                    pass = TerrainBuiltinPaintMaterialPasses.StampHeight;
+                    float h01 = Mathf.Clamp01(args.stampHeight / data.size.y);
+                    mat.SetVector("_BrushParams", new Vector4(
+                        Mathf.Clamp01(args.strength), 0f,
+                        PaintContext.kNormalizedHeightScale * h01,
+                        args.stampAdditive ? 1f : 0f));
                     break;
                 }
 

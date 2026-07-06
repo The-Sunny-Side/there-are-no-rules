@@ -30,7 +30,10 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       Scatter/Sculpt tabs, IPaintableSurface introduced. E2E-verified via MCP
       (raise 10m exact, flatten converges, smooth lowers peaks).
 - [ ] S4 Mesh sculpt — per-instance clone + delta map, same brush set as S3.
-- [ ] S5 Heightmap stamps (rotation, blend modes add/max/min).
+- [x] S5 Heightmap stamps — Stamp op in sculpt tab: custom heightmap texture
+      (or procedural round brush), world-height target, max blend (exact +
+      idempotent, E2E-verified) or additive, fixed/random rotation. Click-only.
+      Shader params: x=strength, z=kScale*h01 packed, w=0 max/1 add.
 - [ ] S6 Texture paint — terrain splat; vertex color on meshes.
 - [ ] S7 Grass/detail paint (terrain details + instanced grass on meshes).
 - [ ] S8 Procedural brush filters — noise, curvature, texture-under-brush.
@@ -38,7 +41,8 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
 - [ ] S10 Physics drop, erosion brush, node-driven brushes, biome presets.
 
 ## Status (2026-07-06)
-S1 + S3 implemented, compile- and E2E-checked via Unity MCP. Next: S2, S4 or S5.
+S1 + S3 + S5 implemented, compile- and E2E-checked via Unity MCP.
+Next: S2 (scatter perf), S6 (texture paint) or S4 (mesh sculpt).
 
 ## S3 known limits (accepted)
 - Sculpt undo history is in-memory: lost on domain reload / play mode (proxy
