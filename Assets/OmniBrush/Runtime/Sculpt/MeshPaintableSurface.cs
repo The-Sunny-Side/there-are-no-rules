@@ -16,7 +16,7 @@ namespace OmniBrush
         /// <summary>Editor hook: receives per-stamp vertex diffs for undo.</summary>
         public static MeshRecordHook recordHook;
 
-        private const float RaiseStepFraction = 0.05f; // of radius, per full-strength stamp
+        private const float RaiseStepFraction = 0.02f; // of radius, per full-strength stamp
 
         private readonly MeshFilter filter;
 
@@ -45,11 +45,12 @@ namespace OmniBrush
 
         public bool ApplyStamp(SculptStampArgs args)
         {
-            Mesh mesh = EnsureDeformableMesh();
+            Mesh mesh = EnsureDeformableMesh(out MeshDeformation marker);
             if (mesh == null) return false;
 
             Vector3[] verts = mesh.vertices;
             Vector3[] normals = mesh.normals;
+            int[] weld = EnsureWeldClusters(marker, verts);
             Matrix4x4 l2w = filter.transform.localToWorldMatrix;
             Matrix4x4 w2l = filter.transform.worldToLocalMatrix;
 
@@ -83,6 +84,20 @@ namespace OmniBrush
             var after = new Vector3[indices.Count];
             for (int k = 0; k < indices.Count; k++) before[k] = verts[indices[k]];
 
+            // Weld-averaged normals: co-located duplicates (UV seams, hard
+            // edges) must displace identically or the surface tears open.
+            Dictionary<int, Vector3> clusterNormals = null;
+            if (args.op == SculptOp.Raise || args.op == SculptOp.Lower)
+            {
+                clusterNormals = new Dictionary<int, Vector3>();
+                for (int k = 0; k < indices.Count; k++)
+                {
+                    int cluster = weld[indices[k]];
+                    Vector3 wNormal = l2w.MultiplyVector(normals[indices[k]]);
+                    clusterNormals[cluster] = clusterNormals.TryGetValue(cluster, out Vector3 acc) ? acc + wNormal : wNormal;
+                }
+            }
+
             // smooth relaxes toward the weighted local plane (adjacency-free)
             Vector3 centroid = Vector3.zero, avgNormal = Vector3.zero;
             if (args.op == SculptOp.Smooth)
@@ -114,7 +129,7 @@ namespace OmniBrush
                     case SculptOp.Raise:
                     case SculptOp.Lower:
                     {
-                        Vector3 wNormal = l2w.MultiplyVector(normals[i]).normalized;
+                        Vector3 wNormal = clusterNormals[weld[i]].normalized;
                         float step = args.radius * RaiseStepFraction * (args.op == SculptOp.Lower ? -1f : 1f);
                         wPos += wNormal * (step * weight);
                         break;
@@ -167,12 +182,28 @@ namespace OmniBrush
             return Falloff(Mathf.Sqrt(u * u + v * v), args.hardness);
         }
 
-        private Mesh EnsureDeformableMesh()
+        private static int[] EnsureWeldClusters(MeshDeformation marker, Vector3[] verts)
         {
+            if (marker.weldClusters != null && marker.weldClusters.Length == verts.Length)
+                return marker.weldClusters;
+            var firstAt = new Dictionary<Vector3, int>(verts.Length);
+            var clusters = new int[verts.Length];
+            for (int i = 0; i < verts.Length; i++)
+            {
+                if (firstAt.TryGetValue(verts[i], out int id)) clusters[i] = id;
+                else { firstAt[verts[i]] = i; clusters[i] = i; }
+            }
+            marker.weldClusters = clusters;
+            return clusters;
+        }
+
+        private Mesh EnsureDeformableMesh(out MeshDeformation marker)
+        {
+            marker = null;
             Mesh shared = filter.sharedMesh;
             if (shared == null) return null;
 
-            MeshDeformation marker = filter.GetComponent<MeshDeformation>();
+            marker = filter.GetComponent<MeshDeformation>();
             if (marker != null && marker.deformedMesh != null && shared == marker.deformedMesh)
                 return shared;
 
