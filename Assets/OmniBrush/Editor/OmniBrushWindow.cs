@@ -387,6 +387,8 @@ namespace OmniBrush.Editor
                     "This prefab won't render as a terrain detail: details need a simple mesh (MeshFilter on the root, no LODGroup). Trees and props belong in the Scatter tab.",
                     MessageType.Error);
             }
+            if (!string.IsNullOrEmpty(lastStampWarning))
+                EditorGUILayout.HelpBox(lastStampWarning, MessageType.Warning);
             EditorGUILayout.HelpBox(
                 "Paints on UNITY TERRAINS only (native details: millions of blades). The cursor disc turns gray on invalid surfaces. Prefab wins over texture. Ctrl erases. For grass on regular meshes use the Scatter tab with a grass prefab.",
                 MessageType.None);
@@ -658,8 +660,12 @@ namespace OmniBrush.Editor
             }
             int detailLayer = TerrainDetailPainter.EnsurePrototype(terrain, grassTexture, grassPrefab);
             if (detailLayer < 0) return;
-            TerrainDetailPainter.PaintDensity(terrain, detailLayer, hit.point, radius,
+            bool changed = TerrainDetailPainter.PaintDensity(terrain, detailLayer, hit.point, radius,
                 sculptStrength, sculptHardness, grassDensity, erase);
+            lastStampWarning = changed ? null
+                : erase ? "Last stamp: nothing to erase here."
+                : "Last stamp changed 0 cells (already at target density here).";
+            Repaint();
         }
 
         // -------------------------------------------------------------- scatter
