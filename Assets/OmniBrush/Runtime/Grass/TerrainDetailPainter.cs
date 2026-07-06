@@ -76,6 +76,12 @@ namespace OmniBrush
             int w = x1 - x0 + 1, h = y1 - y0 + 1;
             if (w <= 0 || h <= 0) return false;
 
+            // InstanceCountMode expects instances-per-cell (~0-15); CoverageMode
+            // (Unity 6 default) expects coverage 0-255 — 1-15 there is invisible.
+            int effectiveTarget = data.detailScatterMode == DetailScatterMode.CoverageMode
+                ? Mathf.RoundToInt(Mathf.Clamp(targetDensity, 0, 15) / 15f * 255f)
+                : targetDensity;
+
             int[,] map = data.GetDetailLayer(x0, y0, w, h, layer);
             var before = (int[,])map.Clone();
             bool changed = false;
@@ -90,7 +96,7 @@ namespace OmniBrush
                 int v = map[y, x];
                 int nv = erase
                     ? Mathf.Min(v, Mathf.RoundToInt(v * (1f - weight)))
-                    : Mathf.Max(v, Mathf.RoundToInt(targetDensity * weight));
+                    : Mathf.Max(v, Mathf.RoundToInt(effectiveTarget * weight));
                 if (nv != v) { map[y, x] = nv; changed = true; }
             }
             if (!changed) return false;
