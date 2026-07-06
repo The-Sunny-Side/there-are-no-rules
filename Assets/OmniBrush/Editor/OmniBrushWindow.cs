@@ -214,11 +214,29 @@ namespace OmniBrush.Editor
 
             bool canPaint = layer.palette != null && layer.palette.entries.Count > 0;
             if (!canPaint)
+            {
                 EditorGUILayout.HelpBox(
                     "The palette is the asset listing what to paint (prefabs with weights, scale ranges, alignment). Add at least one prefab — use Quick Add above or edit the palette asset.",
                     MessageType.Warning);
+            }
             else
+            {
                 EditorGUILayout.LabelField("Palette Entries", layer.palette.entries.Count.ToString());
+                int missing = ScatterMaterialUtility.CountMissingInstancing(layer.palette);
+                if (missing > 0)
+                {
+                    EditorGUILayout.HelpBox(
+                        $"{missing} material(s) on palette prefabs have GPU Instancing DISABLED — their instances are invisible until fixed.",
+                        MessageType.Error);
+                    if (GUILayout.Button($"Enable GPU Instancing on {missing} material(s)"))
+                    {
+                        ScatterMaterialUtility.EnableInstancing(layer.palette);
+                        layer.MarkPaletteDirty();
+                        layer.MarkDirty();
+                        SceneView.RepaintAll();
+                    }
+                }
+            }
             return canPaint;
         }
 
@@ -329,6 +347,16 @@ namespace OmniBrush.Editor
             EditorUtility.SetDirty(layer.palette);
             layer.MarkPaletteDirty();
             quickAddCandidate = null;
+
+            int missing = ScatterMaterialUtility.CountMissingInstancing(prefabAsset);
+            if (missing > 0 && EditorUtility.DisplayDialog("OmniBrush",
+                    $"{missing} material(s) on '{prefabAsset.name}' have GPU Instancing disabled — painted instances would be invisible. Enable it now?",
+                    "Enable", "Skip"))
+            {
+                ScatterMaterialUtility.EnableInstancing(prefabAsset);
+                layer.MarkPaletteDirty();
+                SceneView.RepaintAll();
+            }
         }
 
         // ------------------------------------------------------------ scene GUI
