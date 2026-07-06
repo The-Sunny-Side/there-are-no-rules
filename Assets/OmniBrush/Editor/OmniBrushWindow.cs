@@ -60,7 +60,9 @@ namespace OmniBrush.Editor
         private bool hasLastStamp;
         private Vector3 lastStampPos;
         private bool sculptStrokeStarted;
-        private float flattenTargetY;
+        private Vector3 flattenPoint;
+        private Vector3 flattenNormal;
+        private readonly System.Collections.Generic.HashSet<MeshFilter> touchedMeshes = new System.Collections.Generic.HashSet<MeshFilter>();
 
         private void OnEnable()
         {
@@ -185,13 +187,15 @@ namespace OmniBrush.Editor
                 stampRandomRotation = EditorGUILayout.Toggle("Random Rotation", stampRandomRotation);
                 if (!stampRandomRotation)
                     stampRotation = EditorGUILayout.Slider("Rotation", stampRotation, 0f, 360f);
-                EditorGUILayout.HelpBox("Click to stamp (no drag). Default blend raises terrain up to the stamp shape.", MessageType.None);
+                EditorGUILayout.HelpBox(
+                    "Click to stamp (no drag). Works on terrains and meshes. On meshes the stamp displaces along the click normal; custom stamp textures need Read/Write enabled there.",
+                    MessageType.None);
             }
             else
             {
                 sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
                 EditorGUILayout.HelpBox(
-                    "Terrain only (mesh sculpt comes later). Ctrl inverts Raise/Lower. Flatten targets the height first clicked.",
+                    "Works on terrains and meshes (a collider is required to paint; MeshCollider re-cooks at stroke end). Ctrl inverts Raise/Lower. Flatten targets the point first clicked.",
                     MessageType.None);
             }
             return true;
@@ -276,7 +280,8 @@ namespace OmniBrush.Editor
                         else
                         {
                             sculptStrokeStarted = false;
-                            flattenTargetY = hit.point.y;
+                            flattenPoint = hit.point;
+                            flattenNormal = hit.normal;
                             currentStampRotation = stampRandomRotation ? Random.Range(0f, 360f) : stampRotation;
                             SculptStamp(hit, modifier);
                         }
@@ -313,6 +318,12 @@ namespace OmniBrush.Editor
                             SculptUndo.EndStroke();
                             sculptStrokeStarted = false;
                         }
+                        if (touchedMeshes.Count > 0)
+                        {
+                            foreach (MeshFilter mf in touchedMeshes)
+                                MeshPaintableSurface.RefreshCollider(mf);
+                            touchedMeshes.Clear();
+                        }
                         if (GUIUtility.hotControl == controlId) GUIUtility.hotControl = 0;
                         e.Use();
                     }
@@ -325,7 +336,13 @@ namespace OmniBrush.Editor
         private void SculptStamp(RaycastHit hit, bool invert)
         {
             IPaintableSurface surface = TerrainPaintableSurface.TryFrom(hit.collider);
-            if (surface == null) return; // mesh sculpt arrives in S4
+            if (surface == null)
+            {
+                MeshPaintableSurface meshSurface = MeshPaintableSurface.TryFrom(hit.collider);
+                if (meshSurface == null) return;
+                touchedMeshes.Add(meshSurface.Filter);
+                surface = meshSurface;
+            }
 
             if (!sculptStrokeStarted)
             {
@@ -341,11 +358,14 @@ namespace OmniBrush.Editor
             {
                 op = op,
                 center = hit.point,
+                brushNormal = hit.normal,
                 radius = radius,
                 strength = sculptStrength,
                 hardness = sculptHardness,
                 rotation = op == SculptOp.Stamp ? currentStampRotation : 0f,
-                flattenHeight = flattenTargetY,
+                flattenHeight = flattenPoint.y,
+                flattenPoint = flattenPoint,
+                flattenNormal = flattenNormal,
                 stampTexture = op == SculptOp.Stamp ? stampTexture : null,
                 stampHeight = stampHeight,
                 stampAdditive = stampAdditive,
