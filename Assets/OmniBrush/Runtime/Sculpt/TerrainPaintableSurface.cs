@@ -96,5 +96,44 @@ namespace OmniBrush
             captureHook?.Invoke(ctx, false);
             return true;
         }
+
+        /// <summary>Paints a TerrainLayer's weight (splat). The layer is added to the terrain if missing.</summary>
+        public bool ApplyTexturePaint(Vector3 center, float radius, float strength, float hardness, TerrainLayer layer)
+        {
+            if (layer == null) return false;
+            TerrainData data = terrain.terrainData;
+
+            // auto-add the layer; undo restores weights but keeps the added layer (harmless)
+            TerrainLayer[] layers = data.terrainLayers;
+            bool found = false;
+            for (int i = 0; i < layers.Length; i++)
+                if (layers[i] == layer) { found = true; break; }
+            if (!found)
+            {
+                System.Array.Resize(ref layers, layers.Length + 1);
+                layers[layers.Length - 1] = layer;
+                data.terrainLayers = layers;
+            }
+
+            Vector3 local = center - terrain.transform.position;
+            var uv = new Vector2(local.x / data.size.x, local.z / data.size.z);
+            BrushTransform xf = TerrainPaintUtility.CalculateBrushTransform(terrain, uv, radius * 2f, 0f);
+            PaintContext ctx = TerrainPaintUtility.BeginPaintTexture(terrain, xf.GetBrushXYBounds(), layer);
+            if (ctx == null) return false;
+
+            captureHook?.Invoke(ctx, true);
+
+            Material mat = TerrainPaintUtility.GetBuiltinPaintMaterial();
+            mat.SetTexture("_BrushTex", SculptBrushTexture.Get(hardness));
+            mat.SetVector("_BrushParams", new Vector4(Mathf.Clamp01(strength), 1f, 0f, 0f)); // y = target alpha
+            TerrainPaintUtility.SetupTerrainToolMaterialProperties(ctx, xf, mat);
+            Graphics.Blit(ctx.sourceRenderTexture, ctx.destinationRenderTexture, mat,
+                (int)TerrainBuiltinPaintMaterialPasses.PaintTexture);
+            TerrainPaintUtility.EndPaintTexture(ctx, null);
+            PaintContext.ApplyDelayedActions();
+
+            captureHook?.Invoke(ctx, false);
+            return true;
+        }
     }
 }
