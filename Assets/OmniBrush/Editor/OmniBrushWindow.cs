@@ -5,11 +5,14 @@ using UnityEngine;
 namespace OmniBrush.Editor
 {
     /// <summary>
-    /// Scatter brush: paints palette prefabs as ScatterLayer instances onto
-    /// any collider (Terrain, meshes, prefabs). Ctrl = erase, Esc = stop.
+    /// OmniBrush main window. Scatter mode paints palette prefabs as
+    /// ScatterLayer instances onto any collider; Sculpt mode deforms terrain
+    /// (raise/lower/smooth/flatten). Ctrl = erase / invert, Esc = stop.
     /// </summary>
     public class OmniBrushWindow : EditorWindow
     {
+        private enum Mode { Scatter, Sculpt }
+
         [MenuItem("Tools/OmniBrush/Brush")]
         public static void Open() => GetWindow<OmniBrushWindow>("OmniBrush");
 
@@ -17,11 +20,16 @@ namespace OmniBrush.Editor
         {
             var window = GetWindow<OmniBrushWindow>("OmniBrush");
             window.layer = target;
+            window.mode = Mode.Scatter;
         }
 
-        [SerializeField] private ScatterLayer layer;
+        [SerializeField] private Mode mode;
         [SerializeField] private bool paintMode;
         [SerializeField] private float radius = 5f;
+        [SerializeField] private LayerMask surfaceMask = ~0;
+
+        // scatter
+        [SerializeField] private ScatterLayer layer;
         [SerializeField] private int instancesPerStamp = 8;
         [SerializeField] private float strokeSpacing = 0.5f; // fraction of radius
         [SerializeField] private float minDistance = 1f;
@@ -31,11 +39,17 @@ namespace OmniBrush.Editor
         [SerializeField] private bool filterHeight;
         [SerializeField] private float heightMin;
         [SerializeField] private float heightMax = 1000f;
-        [SerializeField] private LayerMask surfaceMask = ~0;
+
+        // sculpt
+        [SerializeField] private SculptOp sculptOp = SculptOp.Raise;
+        [SerializeField] private float sculptStrength = 0.5f;
+        [SerializeField] private float sculptHardness = 0.5f;
 
         private bool strokeActive;
         private bool hasLastStamp;
         private Vector3 lastStampPos;
+        private bool sculptStrokeStarted;
+        private float flattenTargetY;
 
         private void OnEnable()
         {
@@ -47,6 +61,7 @@ namespace OmniBrush.Editor
         {
             SceneView.duringSceneGui -= OnSceneGUI;
             Undo.undoRedoPerformed -= OnUndoRedo;
+            if (sculptStrokeStarted) SculptUndo.EndStroke();
         }
 
         private void OnUndoRedo()
@@ -58,6 +73,40 @@ namespace OmniBrush.Editor
         // ------------------------------------------------------------- window UI
 
         private void OnGUI()
+        {
+            var newMode = (Mode)GUILayout.Toolbar((int)mode, new[] { "Scatter", "Sculpt" }, GUILayout.Height(24));
+            if (newMode != mode)
+            {
+                mode = newMode;
+                SceneView.RepaintAll();
+            }
+            EditorGUILayout.Space();
+
+            radius = EditorGUILayout.Slider("Radius", radius, 0.1f, 50f);
+            int concatenated = InternalEditorUtility.LayerMaskToConcatenatedLayersMask(surfaceMask);
+            concatenated = EditorGUILayout.MaskField("Surface Layers", concatenated, InternalEditorUtility.layers);
+            surfaceMask = InternalEditorUtility.ConcatenatedLayersMaskToLayerMask(concatenated);
+            EditorGUILayout.Space();
+
+            bool canPaint = mode == Mode.Sculpt ? DrawSculptGUI() : DrawScatterGUI();
+
+            EditorGUILayout.Space();
+            using (new EditorGUI.DisabledScope(!canPaint))
+            {
+                string activeLabel = mode == Mode.Sculpt
+                    ? "PAINTING — Esc stops, Ctrl inverts"
+                    : "PAINTING — Esc stops, Ctrl erases";
+                bool pressed = GUILayout.Toggle(paintMode && canPaint,
+                    paintMode ? activeLabel : "Start Painting", "Button", GUILayout.Height(32));
+                if (pressed != paintMode)
+                {
+                    paintMode = pressed;
+                    SceneView.RepaintAll();
+                }
+            }
+        }
+
+        private bool DrawScatterGUI()
         {
             layer = (ScatterLayer)EditorGUILayout.ObjectField("Layer", layer, typeof(ScatterLayer), true);
             using (new EditorGUILayout.HorizontalScope())
@@ -73,7 +122,7 @@ namespace OmniBrush.Editor
             if (layer == null)
             {
                 EditorGUILayout.HelpBox("Assign or create a Scatter Layer.", MessageType.Info);
-                return;
+                return false;
             }
 
             EditorGUI.BeginChangeCheck();
@@ -88,7 +137,6 @@ namespace OmniBrush.Editor
 
             EditorGUILayout.Space();
             GUILayout.Label("Brush", EditorStyles.boldLabel);
-            radius = EditorGUILayout.Slider("Radius", radius, 0.1f, 50f);
             instancesPerStamp = EditorGUILayout.IntSlider("Instances / Stamp", instancesPerStamp, 1, 64);
             strokeSpacing = EditorGUILayout.Slider("Stroke Spacing", strokeSpacing, 0.05f, 2f);
             minDistance = EditorGUILayout.Slider("Min Distance", minDistance, 0f, 20f);
@@ -103,25 +151,22 @@ namespace OmniBrush.Editor
                 heightMin = EditorGUILayout.FloatField("Min Y", heightMin);
                 heightMax = EditorGUILayout.FloatField("Max Y", heightMax);
             }
-            int concatenated = InternalEditorUtility.LayerMaskToConcatenatedLayersMask(surfaceMask);
-            concatenated = EditorGUILayout.MaskField("Surface Layers", concatenated, InternalEditorUtility.layers);
-            surfaceMask = InternalEditorUtility.ConcatenatedLayersMaskToLayerMask(concatenated);
 
-            EditorGUILayout.Space();
             bool canPaint = layer.palette != null && layer.palette.entries.Count > 0;
             if (!canPaint)
                 EditorGUILayout.HelpBox("Assign a palette with at least one prefab entry.", MessageType.Warning);
-            using (new EditorGUI.DisabledScope(!canPaint))
-            {
-                bool pressed = GUILayout.Toggle(paintMode && canPaint,
-                    paintMode ? "PAINTING — Esc stops, Ctrl erases" : "Start Painting",
-                    "Button", GUILayout.Height(32));
-                if (pressed != paintMode)
-                {
-                    paintMode = pressed;
-                    SceneView.RepaintAll();
-                }
-            }
+            return canPaint;
+        }
+
+        private bool DrawSculptGUI()
+        {
+            sculptOp = (SculptOp)GUILayout.Toolbar((int)sculptOp, new[] { "Raise", "Lower", "Smooth", "Flatten" });
+            sculptStrength = EditorGUILayout.Slider("Strength", sculptStrength, 0f, 1f);
+            sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+            EditorGUILayout.HelpBox(
+                "Terrain only (mesh sculpt comes later). Ctrl inverts Raise/Lower. Flatten targets the height first clicked.",
+                MessageType.None);
+            return true;
         }
 
         private void CreateLayer()
@@ -135,7 +180,8 @@ namespace OmniBrush.Editor
 
         private void OnSceneGUI(SceneView sceneView)
         {
-            if (!paintMode || layer == null || layer.palette == null) return;
+            if (!paintMode) return;
+            if (mode == Mode.Scatter && (layer == null || layer.palette == null)) return;
 
             Event e = Event.current;
             if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape)
@@ -152,15 +198,17 @@ namespace OmniBrush.Editor
 
             Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
             bool hasHit = Physics.Raycast(ray, out RaycastHit hit, 100000f, surfaceMask, QueryTriggerInteraction.Ignore);
-            bool erase = e.control || e.command;
+            bool modifier = e.control || e.command;
 
             if (hasHit)
             {
-                Color color = erase ? new Color(1f, 0.25f, 0.2f) : new Color(1f, 0.55f, 0f);
+                bool destructive = mode == Mode.Scatter && modifier;
+                Color color = destructive ? new Color(1f, 0.25f, 0.2f) : new Color(1f, 0.55f, 0f);
                 Handles.color = color;
                 Handles.DrawWireDisc(hit.point, hit.normal, radius);
                 Handles.color = new Color(color.r, color.g, color.b, 0.4f);
-                Handles.DrawWireDisc(hit.point, hit.normal, radius * Mathf.Lerp(1f, 0.5f, falloff));
+                float inner = mode == Mode.Scatter ? Mathf.Lerp(1f, 0.5f, falloff) : Mathf.Lerp(0.5f, 1f, sculptHardness);
+                Handles.DrawWireDisc(hit.point, hit.normal, radius * inner);
                 sceneView.Repaint();
             }
 
@@ -172,8 +220,17 @@ namespace OmniBrush.Editor
                         GUIUtility.hotControl = controlId;
                         strokeActive = true;
                         hasLastStamp = false;
-                        Undo.RegisterCompleteObjectUndo(layer, "OmniBrush Stroke");
-                        Stamp(hit, erase);
+                        if (mode == Mode.Scatter)
+                        {
+                            Undo.RegisterCompleteObjectUndo(layer, "OmniBrush Stroke");
+                            ScatterStamp(hit, modifier);
+                        }
+                        else
+                        {
+                            sculptStrokeStarted = false;
+                            flattenTargetY = hit.point.y;
+                            SculptStamp(hit, modifier);
+                        }
                         e.Use();
                     }
                     break;
@@ -181,8 +238,15 @@ namespace OmniBrush.Editor
                 case EventType.MouseDrag:
                     if (e.button == 0 && strokeActive && hasHit)
                     {
-                        if (!hasLastStamp || Vector3.Distance(hit.point, lastStampPos) >= Mathf.Max(0.05f, radius * strokeSpacing))
-                            Stamp(hit, erase);
+                        if (mode == Mode.Scatter)
+                        {
+                            if (!hasLastStamp || Vector3.Distance(hit.point, lastStampPos) >= Mathf.Max(0.05f, radius * strokeSpacing))
+                                ScatterStamp(hit, modifier);
+                        }
+                        else
+                        {
+                            SculptStamp(hit, modifier);
+                        }
                         e.Use();
                     }
                     break;
@@ -191,6 +255,11 @@ namespace OmniBrush.Editor
                     if (e.button == 0 && strokeActive)
                     {
                         strokeActive = false;
+                        if (sculptStrokeStarted)
+                        {
+                            SculptUndo.EndStroke();
+                            sculptStrokeStarted = false;
+                        }
                         if (GUIUtility.hotControl == controlId) GUIUtility.hotControl = 0;
                         e.Use();
                     }
@@ -198,7 +267,37 @@ namespace OmniBrush.Editor
             }
         }
 
-        private void Stamp(RaycastHit hit, bool erase)
+        // --------------------------------------------------------------- sculpt
+
+        private void SculptStamp(RaycastHit hit, bool invert)
+        {
+            IPaintableSurface surface = TerrainPaintableSurface.TryFrom(hit.collider);
+            if (surface == null) return; // mesh sculpt arrives in S4
+
+            if (!sculptStrokeStarted)
+            {
+                SculptUndo.BeginStroke();
+                sculptStrokeStarted = true;
+            }
+
+            SculptOp op = sculptOp;
+            if (invert && op == SculptOp.Raise) op = SculptOp.Lower;
+            else if (invert && op == SculptOp.Lower) op = SculptOp.Raise;
+
+            surface.ApplyStamp(new SculptStampArgs
+            {
+                op = op,
+                center = hit.point,
+                radius = radius,
+                strength = sculptStrength,
+                hardness = sculptHardness,
+                flattenHeight = flattenTargetY,
+            });
+        }
+
+        // -------------------------------------------------------------- scatter
+
+        private void ScatterStamp(RaycastHit hit, bool erase)
         {
             hasLastStamp = true;
             lastStampPos = hit.point;
