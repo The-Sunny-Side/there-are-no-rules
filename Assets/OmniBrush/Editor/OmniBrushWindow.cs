@@ -11,7 +11,7 @@ namespace OmniBrush.Editor
     /// </summary>
     public class OmniBrushWindow : EditorWindow
     {
-        private enum Mode { Scatter, Sculpt, Texture }
+        private enum Mode { Scatter, Sculpt, Texture, Grass }
 
         [MenuItem("Tools/OmniBrush/Brush")]
         public static void Open() => GetWindow<OmniBrushWindow>("OmniBrush");
@@ -47,6 +47,11 @@ namespace OmniBrush.Editor
 
         // texture paint
         [SerializeField] private TerrainLayer terrainLayer;
+
+        // grass / detail paint
+        [SerializeField] private Texture2D grassTexture;
+        [SerializeField] private GameObject grassPrefab;
+        [SerializeField] private int grassDensity = 8;
 
         // stamp
         [SerializeField] private Texture2D stampTexture;
@@ -87,7 +92,7 @@ namespace OmniBrush.Editor
 
         private void OnGUI()
         {
-            var newMode = (Mode)GUILayout.Toolbar((int)mode, new[] { "Scatter", "Sculpt", "Texture" }, GUILayout.Height(24));
+            var newMode = (Mode)GUILayout.Toolbar((int)mode, new[] { "Scatter", "Sculpt", "Texture", "Grass" }, GUILayout.Height(24));
             if (newMode != mode)
             {
                 mode = newMode;
@@ -103,6 +108,7 @@ namespace OmniBrush.Editor
 
             bool canPaint = mode == Mode.Sculpt ? DrawSculptGUI()
                 : mode == Mode.Texture ? DrawTextureGUI()
+                : mode == Mode.Grass ? DrawGrassGUI()
                 : DrawScatterGUI();
 
             EditorGUILayout.Space();
@@ -110,7 +116,7 @@ namespace OmniBrush.Editor
             {
                 string activeLabel = mode == Mode.Sculpt ? "PAINTING — Esc stops, Ctrl inverts"
                     : mode == Mode.Texture ? "PAINTING — Esc stops"
-                    : "PAINTING — Esc stops, Ctrl erases";
+                    : "PAINTING — Esc stops, Ctrl erases"; // scatter & grass
                 bool pressed = GUILayout.Toggle(paintMode && canPaint,
                     paintMode ? activeLabel : "Start Painting", "Button", GUILayout.Height(32));
                 if (pressed != paintMode)
@@ -215,6 +221,24 @@ namespace OmniBrush.Editor
             return true;
         }
 
+        private bool DrawGrassGUI()
+        {
+            grassPrefab = (GameObject)EditorGUILayout.ObjectField("Grass Mesh Prefab", grassPrefab, typeof(GameObject), false);
+            grassTexture = (Texture2D)EditorGUILayout.ObjectField("Grass Texture", grassTexture, typeof(Texture2D), false);
+            grassDensity = EditorGUILayout.IntSlider("Density", grassDensity, 1, 15);
+            sculptStrength = EditorGUILayout.Slider("Strength", sculptStrength, 0f, 1f);
+            sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+            if (grassPrefab == null && grassTexture == null)
+            {
+                EditorGUILayout.HelpBox("Assign a grass mesh prefab or a billboard texture.", MessageType.Warning);
+                return false;
+            }
+            EditorGUILayout.HelpBox(
+                "Terrain details: millions of blades, GPU-rendered by Unity. The prototype is auto-added to painted terrains (prefab wins over texture). Ctrl erases. For grass on meshes use the Scatter tab.",
+                MessageType.None);
+            return true;
+        }
+
         private void CreateLayer()
         {
             var go = new GameObject("Scatter Layer", typeof(ScatterLayer));
@@ -229,6 +253,7 @@ namespace OmniBrush.Editor
             if (!paintMode) return;
             if (mode == Mode.Scatter && (layer == null || layer.palette == null)) return;
             if (mode == Mode.Texture && terrainLayer == null) return;
+            if (mode == Mode.Grass && grassPrefab == null && grassTexture == null) return;
 
             Event e = Event.current;
             if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape)
@@ -249,7 +274,7 @@ namespace OmniBrush.Editor
 
             if (hasHit)
             {
-                bool destructive = mode == Mode.Scatter && modifier;
+                bool destructive = (mode == Mode.Scatter || mode == Mode.Grass) && modifier;
                 Color color = destructive ? new Color(1f, 0.25f, 0.2f) : new Color(1f, 0.55f, 0f);
                 Handles.color = color;
                 Handles.DrawWireDisc(hit.point, hit.normal, radius);
@@ -277,6 +302,11 @@ namespace OmniBrush.Editor
                             sculptStrokeStarted = false;
                             TextureStamp(hit);
                         }
+                        else if (mode == Mode.Grass)
+                        {
+                            sculptStrokeStarted = false;
+                            GrassStamp(hit, modifier);
+                        }
                         else
                         {
                             sculptStrokeStarted = false;
@@ -300,6 +330,10 @@ namespace OmniBrush.Editor
                         else if (mode == Mode.Texture)
                         {
                             TextureStamp(hit);
+                        }
+                        else if (mode == Mode.Grass)
+                        {
+                            GrassStamp(hit, modifier);
                         }
                         else if (sculptOp != SculptOp.Stamp) // stamps are click-only
                         {
@@ -383,6 +417,24 @@ namespace OmniBrush.Editor
                 sculptStrokeStarted = true;
             }
             surface.ApplyTexturePaint(hit.point, radius, sculptStrength, sculptHardness, terrainLayer);
+        }
+
+        private void GrassStamp(RaycastHit hit, bool erase)
+        {
+            if (!(hit.collider is TerrainCollider)) return;
+            Terrain terrain = hit.collider.GetComponent<Terrain>();
+            if (terrain == null || terrain.terrainData == null) return;
+
+            if (!sculptStrokeStarted)
+            {
+                // kind only routes PaintContext captures; detail records are self-typed
+                SculptUndo.BeginStroke(SculptUndo.StrokeKind.Heights);
+                sculptStrokeStarted = true;
+            }
+            int detailLayer = TerrainDetailPainter.EnsurePrototype(terrain, grassTexture, grassPrefab);
+            if (detailLayer < 0) return;
+            TerrainDetailPainter.PaintDensity(terrain, detailLayer, hit.point, radius,
+                sculptStrength, sculptHardness, grassDensity, erase);
         }
 
         // -------------------------------------------------------------- scatter
