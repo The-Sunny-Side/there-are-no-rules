@@ -129,7 +129,9 @@ namespace OmniBrush.Editor
 
         private bool DrawScatterGUI()
         {
-            layer = (ScatterLayer)EditorGUILayout.ObjectField("Layer", layer, typeof(ScatterLayer), true);
+            if (layer == null) layer = FindFirstObjectByType<ScatterLayer>(); // recover from Missing/scene change
+
+            layer = (ScatterLayer)EditorGUILayout.ObjectField("Scatter Layer (scene)", layer, typeof(ScatterLayer), true);
             using (new EditorGUILayout.HorizontalScope())
             {
                 if (GUILayout.Button("Create Layer")) CreateLayer();
@@ -142,18 +144,47 @@ namespace OmniBrush.Editor
 
             if (layer == null)
             {
-                EditorGUILayout.HelpBox("Assign or create a Scatter Layer.", MessageType.Info);
+                EditorGUILayout.HelpBox(
+                    "Painted instances live in a Scatter Layer: one scene object holding pure data (no GameObject per instance, GPU-instanced rendering). Create one to start.",
+                    MessageType.Info);
                 return false;
             }
 
             EditorGUI.BeginChangeCheck();
-            var palette = (ScatterPalette)EditorGUILayout.ObjectField("Palette", layer.palette, typeof(ScatterPalette), false);
+            var palette = (ScatterPalette)EditorGUILayout.ObjectField("Palette (asset)", layer.palette, typeof(ScatterPalette), false);
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(layer, "OmniBrush Palette");
                 layer.palette = palette;
                 layer.MarkPaletteDirty();
                 EditorUtility.SetDirty(layer);
+            }
+            if (layer.palette == null)
+            {
+                if (GUILayout.Button("Create Palette Asset"))
+                {
+                    string path = EditorUtility.SaveFilePanelInProject("Create Scatter Palette", "ScatterPalette", "asset", "");
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        var newPalette = CreateInstance<ScatterPalette>();
+                        AssetDatabase.CreateAsset(newPalette, path);
+                        AssetDatabase.SaveAssets();
+                        Undo.RecordObject(layer, "OmniBrush Palette");
+                        layer.palette = newPalette;
+                        EditorUtility.SetDirty(layer);
+                    }
+                }
+            }
+            else
+            {
+                var quickAdd = (GameObject)EditorGUILayout.ObjectField("Quick Add Prefab", null, typeof(GameObject), false);
+                if (quickAdd != null)
+                {
+                    Undo.RecordObject(layer.palette, "Add Palette Entry");
+                    layer.palette.entries.Add(new ScatterPalette.Entry { prefab = quickAdd });
+                    EditorUtility.SetDirty(layer.palette);
+                    layer.MarkPaletteDirty();
+                }
             }
 
             EditorGUILayout.Space();
@@ -175,13 +206,24 @@ namespace OmniBrush.Editor
 
             bool canPaint = layer.palette != null && layer.palette.entries.Count > 0;
             if (!canPaint)
-                EditorGUILayout.HelpBox("Assign a palette with at least one prefab entry.", MessageType.Warning);
+                EditorGUILayout.HelpBox(
+                    "The palette is the asset listing what to paint (prefabs with weights, scale ranges, alignment). Add at least one prefab — use Quick Add above or edit the palette asset.",
+                    MessageType.Warning);
+            else
+                EditorGUILayout.LabelField("Palette Entries", layer.palette.entries.Count.ToString());
             return canPaint;
         }
 
         private bool DrawSculptGUI()
         {
-            sculptOp = (SculptOp)GUILayout.Toolbar((int)sculptOp, new[] { "Raise", "Lower", "Smooth", "Flatten", "Stamp" });
+            // Raise/Lower share one entry: Ctrl inverts while painting
+            int opIndex = sculptOp == SculptOp.Smooth ? 1
+                : sculptOp == SculptOp.Flatten ? 2
+                : sculptOp == SculptOp.Stamp ? 3 : 0;
+            opIndex = GUILayout.Toolbar(opIndex, new[] { "Raise/Lower", "Smooth", "Flatten", "Stamp" });
+            sculptOp = opIndex == 1 ? SculptOp.Smooth
+                : opIndex == 2 ? SculptOp.Flatten
+                : opIndex == 3 ? SculptOp.Stamp : SculptOp.Raise;
             sculptStrength = EditorGUILayout.Slider("Strength", sculptStrength, 0f, 1f);
             if (sculptOp == SculptOp.Stamp)
             {
@@ -233,8 +275,15 @@ namespace OmniBrush.Editor
                 EditorGUILayout.HelpBox("Assign a grass mesh prefab or a billboard texture.", MessageType.Warning);
                 return false;
             }
+            if (grassPrefab != null &&
+                (grassPrefab.GetComponent<MeshFilter>() == null || grassPrefab.GetComponentInChildren<LODGroup>() != null))
+            {
+                EditorGUILayout.HelpBox(
+                    "This prefab won't render as a terrain detail: details need a simple mesh (MeshFilter on the root, no LODGroup). Trees and props belong in the Scatter tab.",
+                    MessageType.Error);
+            }
             EditorGUILayout.HelpBox(
-                "Terrain details: millions of blades, GPU-rendered by Unity. The prototype is auto-added to painted terrains (prefab wins over texture). Ctrl erases. For grass on meshes use the Scatter tab.",
+                "Paints on UNITY TERRAINS only (native details: millions of blades). The cursor disc turns gray on invalid surfaces. Prefab wins over texture. Ctrl erases. For grass on regular meshes use the Scatter tab with a grass prefab.",
                 MessageType.None);
             return true;
         }
@@ -274,13 +323,30 @@ namespace OmniBrush.Editor
 
             if (hasHit)
             {
+                bool isTerrain = hit.collider is TerrainCollider;
+                bool surfaceValid = true;
+                string invalidMessage = null;
+                if (mode == Mode.Texture || mode == Mode.Grass)
+                {
+                    surfaceValid = isTerrain;
+                    invalidMessage = "Not a Unity Terrain";
+                }
+                else if (mode == Mode.Sculpt)
+                {
+                    surfaceValid = isTerrain || hit.collider.GetComponent<MeshFilter>() != null;
+                    invalidMessage = "No MeshFilter on this collider";
+                }
+
                 bool destructive = (mode == Mode.Scatter || mode == Mode.Grass) && modifier;
-                Color color = destructive ? new Color(1f, 0.25f, 0.2f) : new Color(1f, 0.55f, 0f);
+                Color color = !surfaceValid ? new Color(0.55f, 0.55f, 0.55f)
+                    : destructive ? new Color(1f, 0.25f, 0.2f) : new Color(1f, 0.55f, 0f);
                 Handles.color = color;
                 Handles.DrawWireDisc(hit.point, hit.normal, radius);
                 Handles.color = new Color(color.r, color.g, color.b, 0.4f);
                 float inner = mode == Mode.Scatter ? Mathf.Lerp(1f, 0.5f, falloff) : Mathf.Lerp(0.5f, 1f, sculptHardness);
                 Handles.DrawWireDisc(hit.point, hit.normal, radius * inner);
+                if (!surfaceValid)
+                    Handles.Label(hit.point + hit.normal * (radius * 0.3f), invalidMessage);
                 sceneView.Repaint();
             }
 
