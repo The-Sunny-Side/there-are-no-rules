@@ -45,6 +45,8 @@ namespace OmniBrush.Editor
         [SerializeField] private float sculptStrength = 0.5f;
         [SerializeField] private float sculptHardness = 0.5f;
 
+        [SerializeField] private GameObject quickAddCandidate;
+
         // texture paint
         [SerializeField] private TerrainLayer terrainLayer;
 
@@ -177,13 +179,19 @@ namespace OmniBrush.Editor
             }
             else
             {
-                var quickAdd = (GameObject)EditorGUILayout.ObjectField("Quick Add Prefab", null, typeof(GameObject), false);
-                if (quickAdd != null)
+                using (new EditorGUILayout.HorizontalScope())
                 {
-                    Undo.RecordObject(layer.palette, "Add Palette Entry");
-                    layer.palette.entries.Add(new ScatterPalette.Entry { prefab = quickAdd });
-                    EditorUtility.SetDirty(layer.palette);
-                    layer.MarkPaletteDirty();
+                    quickAddCandidate = (GameObject)EditorGUILayout.ObjectField("Quick Add Prefab", quickAddCandidate, typeof(GameObject), true);
+                    using (new EditorGUI.DisabledScope(quickAddCandidate == null))
+                    {
+                        if (GUILayout.Button("Add", GUILayout.Width(44)))
+                            QuickAddToPalette();
+                    }
+                }
+                if (GUILayout.Button("Edit Palette Asset (weights, scale, alignment)"))
+                {
+                    Selection.activeObject = layer.palette;
+                    EditorGUIUtility.PingObject(layer.palette);
                 }
             }
 
@@ -293,6 +301,34 @@ namespace OmniBrush.Editor
             var go = new GameObject("Scatter Layer", typeof(ScatterLayer));
             Undo.RegisterCreatedObjectUndo(go, "Create Scatter Layer");
             layer = go.GetComponent<ScatterLayer>();
+        }
+
+        private void QuickAddToPalette()
+        {
+            GameObject prefabAsset = quickAddCandidate;
+            if (prefabAsset != null && prefabAsset.scene.IsValid())
+                prefabAsset = PrefabUtility.GetCorrespondingObjectFromOriginalSource(quickAddCandidate);
+
+            if (prefabAsset == null)
+            {
+                EditorUtility.DisplayDialog("OmniBrush",
+                    $"'{quickAddCandidate.name}' is not a prefab or a prefab instance. The palette can only reference assets — drag the object into the Project window to make it a prefab first.",
+                    "OK");
+                return;
+            }
+            if (layer.palette.entries.Exists(e => e.prefab == prefabAsset))
+            {
+                EditorUtility.DisplayDialog("OmniBrush",
+                    $"'{prefabAsset.name}' is already in this palette.", "OK");
+                quickAddCandidate = null;
+                return;
+            }
+
+            Undo.RecordObject(layer.palette, "Add Palette Entry");
+            layer.palette.entries.Add(new ScatterPalette.Entry { prefab = prefabAsset });
+            EditorUtility.SetDirty(layer.palette);
+            layer.MarkPaletteDirty();
+            quickAddCandidate = null;
         }
 
         // ------------------------------------------------------------ scene GUI
