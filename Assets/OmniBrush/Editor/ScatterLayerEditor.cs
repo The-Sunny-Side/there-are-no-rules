@@ -33,21 +33,7 @@ namespace OmniBrush.Editor
 
         private static void EnableInstancing(ScatterLayer layer)
         {
-            if (layer.palette == null) return;
-            int fixedCount = 0;
-            foreach (ScatterPalette.Entry entry in layer.palette.entries)
-            {
-                if (entry.prefab == null) continue;
-                foreach (MeshRenderer renderer in entry.prefab.GetComponentsInChildren<MeshRenderer>())
-                foreach (Material material in renderer.sharedMaterials)
-                {
-                    if (material == null || material.enableInstancing) continue;
-                    Undo.RecordObject(material, "Enable GPU Instancing");
-                    material.enableInstancing = true;
-                    EditorUtility.SetDirty(material);
-                    fixedCount++;
-                }
-            }
+            int fixedCount = ScatterMaterialUtility.EnableInstancing(layer.palette);
             layer.MarkPaletteDirty();
             layer.MarkDirty();
             SceneView.RepaintAll();
