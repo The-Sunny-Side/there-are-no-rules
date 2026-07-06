@@ -29,7 +29,12 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       multi-tile), dirty-rect undo (SculptUndo proxy versioning), window got
       Scatter/Sculpt tabs, IPaintableSurface introduced. E2E-verified via MCP
       (raise 10m exact, flatten converges, smooth lowers peaks).
-- [ ] S4 Mesh sculpt — per-instance clone + delta map, same brush set as S3.
+- [x] S4 Mesh sculpt — all sculpt ops (raise/lower/smooth/flatten/stamp) on
+      any collider'd mesh. First stamp clones the shared mesh (MeshDeformation
+      marker + revert button); cylindrical brush (lateral-distance weights —
+      3D-distance version made flatten stall on displaced verts, E2E caught
+      it); vertex-diff undo records; MeshCollider re-cooked at stroke end.
+      CPU vertex ops for now — GPU delta-map path later for high-poly.
 - [x] S5 Heightmap stamps — Stamp op in sculpt tab: custom heightmap texture
       (or procedural round brush), world-height target, max blend (exact +
       idempotent, E2E-verified) or additive, fixed/random rotation. Click-only.
@@ -44,9 +49,18 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
 - [ ] S10 Physics drop, erosion brush, node-driven brushes, biome presets.
 
 ## Status (2026-07-06)
-S1 + S3 + S5 + S6(terrain) implemented, compile- and E2E-checked via Unity
-MCP. Terrain pillar complete: sculpt + stamps + splat. Next: S2 (scatter
-perf), S4 (mesh sculpt + vertex color) or S7 (grass).
+S1 + S3 + S4 + S5 + S6(terrain) implemented, compile- and E2E-checked via
+Unity MCP. Sculpt/stamp work on terrain AND meshes. Next: S2 (scatter perf +
+per-entry footprint radius), S7 (grass) or S6b (mesh vertex color).
+
+## S4 known limits (accepted)
+- Primitive colliders (Sphere/Box) don't follow deformation — raycasts drift
+  after big edits; use a MeshCollider (re-cooked at stroke end) for accuracy.
+- CPU per-stamp full vertex scan: fine to ~100k verts, GPU delta map later.
+- Smooth = relax-toward-local-plane (adjacency-free), not Laplacian.
+- Custom stamp textures need Read/Write enabled on meshes (analytic fallback).
+- The clone mesh is serialized into the scene; undo restores vertices but
+  doesn't swap back to the original asset (use the Revert inspector button).
 
 ## S6 known limits (accepted)
 - Undo restores alphamap weights but keeps auto-added TerrainLayers.
@@ -84,6 +98,11 @@ perf), S4 (mesh sculpt + vertex color) or S7 (grass).
   ApplyDelayedActions), `captureHook` for editor undo, `TryFrom(Collider)`.
 - `Runtime/Sculpt/SculptBrushTexture.cs` — procedural radial falloff brushes,
   cached per hardness step.
+- `Runtime/Sculpt/MeshPaintableSurface.cs` — mesh sculpting: clone-on-first-
+  stamp, cylindrical brush gather, per-op vertex displacement, recordHook for
+  undo, RefreshCollider.
+- `Runtime/Sculpt/MeshDeformation.cs` — marker: original + deformed mesh.
+- `Editor/MeshDeformationEditor.cs` — revert-to-original button.
 - `Editor/SculptUndo.cs` — dirty-rect undo: per-stamp before/after height
   regions via PaintContext tile rects, proxy-version replay on undo/redo.
 - `Editor/OmniBrushWindow.cs` — Tools > OmniBrush > Brush; Scatter/Sculpt

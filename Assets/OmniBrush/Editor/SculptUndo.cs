@@ -28,7 +28,11 @@ namespace OmniBrush.Editor
             public int x, y;
             public float[,] before, after;       // Heights
             public float[,,] beforeA, afterA;    // Alphamaps
-            public bool HasAfter => kind == StrokeKind.Heights ? after != null : afterA != null;
+            public Mesh mesh;                    // mesh vertex records
+            public int[] indices;
+            public Vector3[] beforeV, afterV;
+            public bool HasAfter => mesh != null ? afterV != null
+                : kind == StrokeKind.Heights ? after != null : afterA != null;
         }
 
         private const int MaxStrokes = 64;
@@ -66,12 +70,23 @@ namespace OmniBrush.Editor
                 baseVersion++;
             }
             TerrainPaintableSurface.captureHook = Capture;
+            MeshPaintableSurface.recordHook = RecordMesh;
         }
 
         public static void EndStroke()
         {
             TerrainPaintableSurface.captureHook = null;
+            MeshPaintableSurface.recordHook = null;
             currentStroke = null;
+        }
+
+        private static void RecordMesh(Mesh mesh, int[] indices, Vector3[] before, Vector3[] after)
+        {
+            if (currentStroke == null) return;
+            currentStroke.Add(new StampRecord
+            {
+                mesh = mesh, indices = indices, beforeV = before, afterV = after,
+            });
         }
 
         private static void Capture(PaintContext ctx, bool before)
@@ -128,6 +143,18 @@ namespace OmniBrush.Editor
 
         private static void Apply(StampRecord rec, bool useBefore)
         {
+            if (rec.mesh != null)
+            {
+                Vector3[] target = useBefore ? rec.beforeV : rec.afterV;
+                if (target == null) return;
+                Vector3[] verts = rec.mesh.vertices;
+                for (int i = 0; i < rec.indices.Length; i++)
+                    verts[rec.indices[i]] = target[i];
+                rec.mesh.vertices = verts;
+                rec.mesh.RecalculateNormals();
+                rec.mesh.RecalculateBounds();
+                return;
+            }
             if (rec.data == null) return;
             if (rec.kind == StrokeKind.Heights)
             {

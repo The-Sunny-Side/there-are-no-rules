@@ -8,11 +8,14 @@ namespace OmniBrush
     {
         public SculptOp op;
         public Vector3 center;       // world
+        public Vector3 brushNormal;  // current hit normal (brush axis on meshes)
         public float radius;         // world
         public float strength;       // 0..1
         public float hardness;       // 0..1 brush falloff hardness
         public float rotation;       // degrees, brush rotation
-        public float flattenHeight;  // world Y, Flatten only
+        public float flattenHeight;  // world Y, Flatten on terrain
+        public Vector3 flattenPoint; // stroke-start hit point (flatten plane / stamp frame on meshes)
+        public Vector3 flattenNormal;// stroke-start hit normal
         public Texture2D stampTexture; // optional heightmap shape; falloff brush if null
         public float stampHeight;    // world meters above terrain base, Stamp only
         public bool stampAdditive;   // false = max blend (idempotent), true = add
