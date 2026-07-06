@@ -47,20 +47,53 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       _BaseMap/_BaseColor). Proper splat-mask shader painting = later.
 - [x] S7 Grass/detail paint (terrain half) — Grass tab paints terrain detail
       density (texture billboard or mesh prefab, prototype auto-added +
-      deduped), Ctrl fades to zero, dirty-rect undo records. E2E-verified
-      (density 8 center / 0 corner / 0 after erase). Grass-on-mesh = Scatter
-      tab for now; dedicated instanced mesh-grass is S7b.
+      deduped), Ctrl fades to zero, dirty-rect undo records, density
+      auto-scaled for CoverageMode (Unity 6 default) vs InstanceCountMode.
+      E2E-verified on a real terrain (coverage 255 center / 0 after erase).
+      Grass-on-mesh = Scatter tab for now; instanced mesh-grass is S7b.
 - [ ] S8 Procedural brush filters — noise, curvature, texture-under-brush.
 - [ ] S9 Splines (roads/rivers: carve + texture + scatter along).
 - [ ] S10 Physics drop, erosion brush, node-driven brushes, biome presets.
 
-## Status (2026-07-06)
-S1 + S3 + S4 + S5 + S6(terrain) + S7(terrain) done, all E2E-checked via Unity
-MCP. Tabs: Scatter | Sculpt | Texture | Grass; sculpt/stamp on terrain AND
-meshes. Remaining, suggested order: S2 (scatter perf + per-entry footprint
-radius — user deferred), S8 (procedural filters), S9 (splines), S6b/S7b
-(mesh vertex color / instanced mesh grass), S10 (physics drop, erosion,
-nodes, biome presets, non-destructive layers).
+## Status (2026-07-06, end of day — field-tested by Simonpaolo on his map)
+Done & E2E-verified: S1, S3, S4, S5, S6 (terrain splat + mesh vertex color),
+S7 (terrain details, scatter-mode aware). All tabs work: Scatter | Sculpt |
+Texture | Grass. Every real-usage failure became a fix (see Hardening).
+
+Next session, suggested order:
+1. S8 procedural brush filters — noise, curvature, texture-under-brush.
+2. S2 scatter v2 — incremental batches (paint lags >50k), per-entry
+   footprint radius (user asked once, deferred), precision single-place
+   mode, lighter stroke undo, EditorPrefs persistence.
+3. S9 splines → then S10 / non-destructive layers / S7b instanced mesh grass.
+
+## Hardening from field testing (all fixed & committed 2026-07-06)
+- Instances invisible until bake → every palette material had GPU Instancing
+  OFF; renderer skips those batches. Red error + one-click fix in Scatter
+  tab, consent prompt on Quick Add. (2ed02f0)
+- Silent no-op stamps → live rejection feedback "placed 0/8: N height-
+  filtered, N falloff, ..." in Scatter and Grass tabs. (7e6b843)
+- Inspector "+" creates all-zero palette entries (weight 0 = never picked) →
+  OnValidate heals fresh zeroed entries; window warns per-entry and blocks
+  painting at zero total weight. (b508798)
+- Mesh sculpt "bomb" → UV-seam duplicate vertices displaced along diverging
+  normals tear the mesh; weld clusters cached on MeshDeformation, raise step
+  halved. E2E: maxTear 0 on sphere (129 duplicates). (ed9552f)
+- Grass invisible on Unity 6 terrains → CoverageMode expects 0–255, not
+  instance counts; Density auto-scales per detailScatterMode. (ce24baa)
+- Quick Add rejected hierarchy objects → resolves the prefab from a scene
+  instance, explicit Add button, dedupe dialog. (d8c17d9)
+- UX: Raise/Lower unified (Ctrl inverts), gray disc + label on invalid
+  surfaces, slope filter numeric fields, guided scatter setup (auto-find
+  layer, create palette, quick add). (ce84d26, 82d7756)
+
+## Field notes (Simonpaolo's project)
+- His map is MESH-based: grass there = Scatter tab until S7b; the Grass tab
+  needs a real Unity Terrain. His test terrain accumulated tree/SpawnPoint
+  detail prototypes — cleanup via Terrain inspector > Paint Details > Edit.
+- His GeneralToonShader (ShaderGraph) reads no vertex colors: to integrate
+  mesh texture painting properly, add a Vertex Color node × Base Color.
+  Meanwhile the "Make Selected ... Show Vertex Colors" button works.
 
 ## S4 known limits (accepted)
 - Primitive colliders (Sphere/Box) don't follow deformation — raycasts drift
