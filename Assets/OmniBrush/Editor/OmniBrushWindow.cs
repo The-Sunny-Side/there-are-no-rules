@@ -222,6 +222,27 @@ namespace OmniBrush.Editor
             else
             {
                 EditorGUILayout.LabelField("Palette Entries", layer.palette.entries.Count.ToString());
+
+                int zeroWeight = 0, nullPrefabs = 0;
+                float totalWeight = 0f;
+                foreach (ScatterPalette.Entry entry in layer.palette.entries)
+                {
+                    if (entry.prefab == null) { nullPrefabs++; continue; }
+                    totalWeight += Mathf.Max(0f, entry.weight);
+                    if (entry.weight <= 0f) zeroWeight++;
+                }
+                if (totalWeight <= 0f)
+                {
+                    EditorGUILayout.HelpBox("All entries have weight 0 — nothing can be painted. Weight is the relative pick probability; set it > 0 in the palette.", MessageType.Error);
+                    canPaint = false;
+                }
+                else if (zeroWeight > 0)
+                {
+                    EditorGUILayout.HelpBox($"{zeroWeight} entr{(zeroWeight == 1 ? "y has" : "ies have")} weight 0 and will never be painted.", MessageType.Warning);
+                }
+                if (nullPrefabs > 0)
+                    EditorGUILayout.HelpBox($"{nullPrefabs} entr{(nullPrefabs == 1 ? "y is" : "ies are")} missing a prefab.", MessageType.Warning);
+
                 int missing = ScatterMaterialUtility.CountMissingInstancing(layer.palette);
                 if (missing > 0)
                 {
