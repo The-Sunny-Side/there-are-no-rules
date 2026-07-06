@@ -33,7 +33,8 @@ namespace OmniBrush.Editor
             public Vector3[] beforeV, afterV;
             public int detailLayer = -1;         // terrain detail (grass) records
             public int[,] beforeD, afterD;
-            public bool HasAfter => mesh != null ? afterV != null
+            public Color[] beforeC, afterC;      // mesh vertex color records (uses mesh+indices)
+            public bool HasAfter => mesh != null ? (beforeC != null ? afterC != null : afterV != null)
                 : detailLayer >= 0 ? afterD != null
                 : kind == StrokeKind.Heights ? after != null : afterA != null;
         }
@@ -74,6 +75,7 @@ namespace OmniBrush.Editor
             }
             TerrainPaintableSurface.captureHook = Capture;
             MeshPaintableSurface.recordHook = RecordMesh;
+            MeshPaintableSurface.colorRecordHook = RecordMeshColors;
             TerrainDetailPainter.recordHook = RecordDetails;
         }
 
@@ -81,8 +83,18 @@ namespace OmniBrush.Editor
         {
             TerrainPaintableSurface.captureHook = null;
             MeshPaintableSurface.recordHook = null;
+            MeshPaintableSurface.colorRecordHook = null;
             TerrainDetailPainter.recordHook = null;
             currentStroke = null;
+        }
+
+        private static void RecordMeshColors(Mesh mesh, int[] indices, Color[] before, Color[] after)
+        {
+            if (currentStroke == null) return;
+            currentStroke.Add(new StampRecord
+            {
+                mesh = mesh, indices = indices, beforeC = before, afterC = after,
+            });
         }
 
         private static void RecordDetails(TerrainData data, int layer, int x, int y, int[,] before, int[,] after)
@@ -157,6 +169,17 @@ namespace OmniBrush.Editor
 
         private static void Apply(StampRecord rec, bool useBefore)
         {
+            if (rec.mesh != null && rec.beforeC != null)
+            {
+                Color[] targetC = useBefore ? rec.beforeC : rec.afterC;
+                if (targetC == null) return;
+                Color[] colors = rec.mesh.colors;
+                if (colors == null || colors.Length != rec.mesh.vertexCount) return;
+                for (int i = 0; i < rec.indices.Length; i++)
+                    colors[rec.indices[i]] = targetC[i];
+                rec.mesh.colors = colors;
+                return;
+            }
             if (rec.mesh != null)
             {
                 Vector3[] target = useBefore ? rec.beforeV : rec.afterV;
