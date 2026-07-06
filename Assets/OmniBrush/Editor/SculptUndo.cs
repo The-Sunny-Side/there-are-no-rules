@@ -14,6 +14,8 @@ namespace OmniBrush.Editor
     /// </summary>
     public static class SculptUndo
     {
+        public enum StrokeKind { Heights, Alphamaps }
+
         private class Proxy : ScriptableObject
         {
             public int version;
@@ -22,8 +24,11 @@ namespace OmniBrush.Editor
         private class StampRecord
         {
             public TerrainData data;
+            public StrokeKind kind;
             public int x, y;
-            public float[,] before, after;
+            public float[,] before, after;       // Heights
+            public float[,,] beforeA, afterA;    // Alphamaps
+            public bool HasAfter => kind == StrokeKind.Heights ? after != null : afterA != null;
         }
 
         private const int MaxStrokes = 64;
@@ -32,11 +37,13 @@ namespace OmniBrush.Editor
         private static int baseVersion;    // state before Strokes[0]
         private static int appliedVersion; // state the terrains currently reflect
         private static List<StampRecord> currentStroke;
+        private static StrokeKind currentKind;
 
         static SculptUndo() => Undo.undoRedoPerformed += OnUndoRedo;
 
-        public static void BeginStroke()
+        public static void BeginStroke(StrokeKind kind)
         {
+            currentKind = kind;
             if (proxy == null)
             {
                 proxy = ScriptableObject.CreateInstance<Proxy>();
@@ -77,21 +84,24 @@ namespace OmniBrush.Editor
                     RectInt r = ctx.GetClippedPixelRectInTerrainPixels(i);
                     if (r.width <= 0 || r.height <= 0) continue;
                     TerrainData data = ctx.GetTerrain(i).terrainData;
-                    currentStroke.Add(new StampRecord
-                    {
-                        data = data,
-                        x = r.x, y = r.y,
-                        before = data.GetHeights(r.x, r.y, r.width, r.height),
-                    });
+                    var rec = new StampRecord { data = data, kind = currentKind, x = r.x, y = r.y };
+                    if (currentKind == StrokeKind.Heights)
+                        rec.before = data.GetHeights(r.x, r.y, r.width, r.height);
+                    else
+                        rec.beforeA = data.GetAlphamaps(r.x, r.y, r.width, r.height);
+                    currentStroke.Add(rec);
                 }
             }
             else
             {
                 // fill "after" for this stamp's records (the trailing ones without it)
-                for (int i = currentStroke.Count - 1; i >= 0 && currentStroke[i].after == null; i--)
+                for (int i = currentStroke.Count - 1; i >= 0 && !currentStroke[i].HasAfter; i--)
                 {
                     StampRecord rec = currentStroke[i];
-                    rec.after = rec.data.GetHeights(rec.x, rec.y, rec.before.GetLength(1), rec.before.GetLength(0));
+                    if (rec.kind == StrokeKind.Heights)
+                        rec.after = rec.data.GetHeights(rec.x, rec.y, rec.before.GetLength(1), rec.before.GetLength(0));
+                    else
+                        rec.afterA = rec.data.GetAlphamaps(rec.x, rec.y, rec.beforeA.GetLength(1), rec.beforeA.GetLength(0));
                 }
             }
         }
@@ -104,17 +114,30 @@ namespace OmniBrush.Editor
             {
                 List<StampRecord> stroke = Strokes[appliedVersion - 1 - baseVersion];
                 for (int i = stroke.Count - 1; i >= 0; i--)
-                    if (stroke[i].data != null && stroke[i].before != null)
-                        stroke[i].data.SetHeights(stroke[i].x, stroke[i].y, stroke[i].before);
+                    Apply(stroke[i], true);
                 appliedVersion--;
             }
             while (appliedVersion < target)
             {
                 List<StampRecord> stroke = Strokes[appliedVersion - baseVersion];
                 for (int i = 0; i < stroke.Count; i++)
-                    if (stroke[i].data != null && stroke[i].after != null)
-                        stroke[i].data.SetHeights(stroke[i].x, stroke[i].y, stroke[i].after);
+                    Apply(stroke[i], false);
                 appliedVersion++;
+            }
+        }
+
+        private static void Apply(StampRecord rec, bool useBefore)
+        {
+            if (rec.data == null) return;
+            if (rec.kind == StrokeKind.Heights)
+            {
+                float[,] h = useBefore ? rec.before : rec.after;
+                if (h != null) rec.data.SetHeights(rec.x, rec.y, h);
+            }
+            else
+            {
+                float[,,] a = useBefore ? rec.beforeA : rec.afterA;
+                if (a != null) rec.data.SetAlphamaps(rec.x, rec.y, a);
             }
         }
     }

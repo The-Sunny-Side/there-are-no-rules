@@ -11,7 +11,7 @@ namespace OmniBrush.Editor
     /// </summary>
     public class OmniBrushWindow : EditorWindow
     {
-        private enum Mode { Scatter, Sculpt }
+        private enum Mode { Scatter, Sculpt, Texture }
 
         [MenuItem("Tools/OmniBrush/Brush")]
         public static void Open() => GetWindow<OmniBrushWindow>("OmniBrush");
@@ -44,6 +44,9 @@ namespace OmniBrush.Editor
         [SerializeField] private SculptOp sculptOp = SculptOp.Raise;
         [SerializeField] private float sculptStrength = 0.5f;
         [SerializeField] private float sculptHardness = 0.5f;
+
+        // texture paint
+        [SerializeField] private TerrainLayer terrainLayer;
 
         // stamp
         [SerializeField] private Texture2D stampTexture;
@@ -82,7 +85,7 @@ namespace OmniBrush.Editor
 
         private void OnGUI()
         {
-            var newMode = (Mode)GUILayout.Toolbar((int)mode, new[] { "Scatter", "Sculpt" }, GUILayout.Height(24));
+            var newMode = (Mode)GUILayout.Toolbar((int)mode, new[] { "Scatter", "Sculpt", "Texture" }, GUILayout.Height(24));
             if (newMode != mode)
             {
                 mode = newMode;
@@ -96,13 +99,15 @@ namespace OmniBrush.Editor
             surfaceMask = InternalEditorUtility.ConcatenatedLayersMaskToLayerMask(concatenated);
             EditorGUILayout.Space();
 
-            bool canPaint = mode == Mode.Sculpt ? DrawSculptGUI() : DrawScatterGUI();
+            bool canPaint = mode == Mode.Sculpt ? DrawSculptGUI()
+                : mode == Mode.Texture ? DrawTextureGUI()
+                : DrawScatterGUI();
 
             EditorGUILayout.Space();
             using (new EditorGUI.DisabledScope(!canPaint))
             {
-                string activeLabel = mode == Mode.Sculpt
-                    ? "PAINTING — Esc stops, Ctrl inverts"
+                string activeLabel = mode == Mode.Sculpt ? "PAINTING — Esc stops, Ctrl inverts"
+                    : mode == Mode.Texture ? "PAINTING — Esc stops"
                     : "PAINTING — Esc stops, Ctrl erases";
                 bool pressed = GUILayout.Toggle(paintMode && canPaint,
                     paintMode ? activeLabel : "Start Painting", "Button", GUILayout.Height(32));
@@ -192,6 +197,20 @@ namespace OmniBrush.Editor
             return true;
         }
 
+        private bool DrawTextureGUI()
+        {
+            terrainLayer = (TerrainLayer)EditorGUILayout.ObjectField("Terrain Layer", terrainLayer, typeof(TerrainLayer), false);
+            sculptStrength = EditorGUILayout.Slider("Opacity", sculptStrength, 0f, 1f);
+            sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+            if (terrainLayer == null)
+            {
+                EditorGUILayout.HelpBox("Assign a Terrain Layer asset to paint with.", MessageType.Warning);
+                return false;
+            }
+            EditorGUILayout.HelpBox("Terrain only. The layer is auto-added to painted terrains if missing.", MessageType.None);
+            return true;
+        }
+
         private void CreateLayer()
         {
             var go = new GameObject("Scatter Layer", typeof(ScatterLayer));
@@ -205,6 +224,7 @@ namespace OmniBrush.Editor
         {
             if (!paintMode) return;
             if (mode == Mode.Scatter && (layer == null || layer.palette == null)) return;
+            if (mode == Mode.Texture && terrainLayer == null) return;
 
             Event e = Event.current;
             if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape)
@@ -248,6 +268,11 @@ namespace OmniBrush.Editor
                             Undo.RegisterCompleteObjectUndo(layer, "OmniBrush Stroke");
                             ScatterStamp(hit, modifier);
                         }
+                        else if (mode == Mode.Texture)
+                        {
+                            sculptStrokeStarted = false;
+                            TextureStamp(hit);
+                        }
                         else
                         {
                             sculptStrokeStarted = false;
@@ -266,6 +291,10 @@ namespace OmniBrush.Editor
                         {
                             if (!hasLastStamp || Vector3.Distance(hit.point, lastStampPos) >= Mathf.Max(0.05f, radius * strokeSpacing))
                                 ScatterStamp(hit, modifier);
+                        }
+                        else if (mode == Mode.Texture)
+                        {
+                            TextureStamp(hit);
                         }
                         else if (sculptOp != SculptOp.Stamp) // stamps are click-only
                         {
@@ -300,7 +329,7 @@ namespace OmniBrush.Editor
 
             if (!sculptStrokeStarted)
             {
-                SculptUndo.BeginStroke();
+                SculptUndo.BeginStroke(SculptUndo.StrokeKind.Heights);
                 sculptStrokeStarted = true;
             }
 
@@ -321,6 +350,19 @@ namespace OmniBrush.Editor
                 stampHeight = stampHeight,
                 stampAdditive = stampAdditive,
             });
+        }
+
+        private void TextureStamp(RaycastHit hit)
+        {
+            TerrainPaintableSurface surface = TerrainPaintableSurface.TryFrom(hit.collider);
+            if (surface == null) return;
+
+            if (!sculptStrokeStarted)
+            {
+                SculptUndo.BeginStroke(SculptUndo.StrokeKind.Alphamaps);
+                sculptStrokeStarted = true;
+            }
+            surface.ApplyTexturePaint(hit.point, radius, sculptStrength, sculptHardness, terrainLayer);
         }
 
         // -------------------------------------------------------------- scatter
