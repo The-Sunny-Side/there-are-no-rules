@@ -49,6 +49,7 @@ namespace OmniBrush.Editor
 
         // texture paint
         [SerializeField] private TerrainLayer terrainLayer;
+        [SerializeField] private Color meshVertexColor = new Color(0.85f, 0.2f, 0.15f);
 
         // grass / detail paint
         [SerializeField] private Texture2D grassTexture;
@@ -310,16 +311,61 @@ namespace OmniBrush.Editor
 
         private bool DrawTextureGUI()
         {
+            GUILayout.Label("On Terrains — splat", EditorStyles.boldLabel);
             terrainLayer = (TerrainLayer)EditorGUILayout.ObjectField("Terrain Layer", terrainLayer, typeof(TerrainLayer), false);
+            GUILayout.Label("On Meshes — vertex color", EditorStyles.boldLabel);
+            meshVertexColor = EditorGUILayout.ColorField("Vertex Color", meshVertexColor);
+
             sculptStrength = EditorGUILayout.Slider("Opacity", sculptStrength, 0f, 1f);
             sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+
             if (terrainLayer == null)
+                EditorGUILayout.HelpBox("No Terrain Layer assigned — terrains will be skipped.", MessageType.Info);
+            EditorGUILayout.HelpBox(
+                "Meshes get vertex colors (non-destructive clone, undoable). The material must read vertex color to SHOW it — most don't. Select the painted object and use the button below to swap in a vertex-color-aware copy of its material.",
+                MessageType.None);
+            using (new EditorGUI.DisabledScope(Selection.activeGameObject == null))
             {
-                EditorGUILayout.HelpBox("Assign a Terrain Layer asset to paint with.", MessageType.Warning);
-                return false;
+                if (GUILayout.Button("Make Selected Object's Material Show Vertex Colors"))
+                    MakeSelectionVertexColorVisible();
             }
-            EditorGUILayout.HelpBox("Terrain only. The layer is auto-added to painted terrains if missing.", MessageType.None);
             return true;
+        }
+
+        private static void MakeSelectionVertexColorVisible()
+        {
+            GameObject go = Selection.activeGameObject;
+            if (go == null) return;
+            Shader shader = Shader.Find("Universal Render Pipeline/Particles/Lit");
+            if (shader == null) shader = Shader.Find("Particles/Standard Surface");
+            if (shader == null)
+            {
+                EditorUtility.DisplayDialog("OmniBrush", "No vertex-color-capable builtin shader found in this project.", "OK");
+                return;
+            }
+            int swapped = 0;
+            foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
+            {
+                Material[] materials = renderer.sharedMaterials;
+                for (int i = 0; i < materials.Length; i++)
+                {
+                    Material source = materials[i];
+                    if (source == null || source.shader == shader) continue;
+                    var replacement = new Material(shader) { name = source.name + " (VertexColor)" };
+                    if (source.HasProperty("_BaseMap") && replacement.HasProperty("_BaseMap"))
+                        replacement.SetTexture("_BaseMap", source.GetTexture("_BaseMap"));
+                    if (source.HasProperty("_BaseColor") && replacement.HasProperty("_BaseColor"))
+                        replacement.SetColor("_BaseColor", source.GetColor("_BaseColor"));
+                    materials[i] = replacement;
+                    swapped++;
+                }
+                if (swapped > 0)
+                {
+                    Undo.RecordObject(renderer, "Vertex Color Material");
+                    renderer.sharedMaterials = materials;
+                }
+            }
+            Debug.Log($"[OmniBrush] Swapped {swapped} material(s) on '{go.name}' to a vertex-color-aware shader (scene-local copies; originals untouched).");
         }
 
         private bool DrawGrassGUI()
@@ -398,7 +444,6 @@ namespace OmniBrush.Editor
         {
             if (!paintMode) return;
             if (mode == Mode.Scatter && (layer == null || layer.palette == null)) return;
-            if (mode == Mode.Texture && terrainLayer == null) return;
             if (mode == Mode.Grass && grassPrefab == null && grassTexture == null) return;
 
             Event e = Event.current;
@@ -423,15 +468,20 @@ namespace OmniBrush.Editor
                 bool isTerrain = hit.collider is TerrainCollider;
                 bool surfaceValid = true;
                 string invalidMessage = null;
-                if (mode == Mode.Texture || mode == Mode.Grass)
+                if (mode == Mode.Grass)
                 {
                     surfaceValid = isTerrain;
                     invalidMessage = "Not a Unity Terrain";
                 }
-                else if (mode == Mode.Sculpt)
+                else if (mode == Mode.Sculpt || mode == Mode.Texture)
                 {
                     surfaceValid = isTerrain || hit.collider.GetComponent<MeshFilter>() != null;
                     invalidMessage = "No MeshFilter on this collider";
+                }
+                if (mode == Mode.Texture && isTerrain && terrainLayer == null)
+                {
+                    surfaceValid = false;
+                    invalidMessage = "Assign a Terrain Layer to splat terrains";
                 }
 
                 bool destructive = (mode == Mode.Scatter || mode == Mode.Grass) && modifier;
@@ -572,14 +622,26 @@ namespace OmniBrush.Editor
         private void TextureStamp(RaycastHit hit)
         {
             TerrainPaintableSurface surface = TerrainPaintableSurface.TryFrom(hit.collider);
-            if (surface == null) return;
+            if (surface != null)
+            {
+                if (terrainLayer == null) return;
+                if (!sculptStrokeStarted)
+                {
+                    SculptUndo.BeginStroke(SculptUndo.StrokeKind.Alphamaps);
+                    sculptStrokeStarted = true;
+                }
+                surface.ApplyTexturePaint(hit.point, radius, sculptStrength, sculptHardness, terrainLayer);
+                return;
+            }
 
+            MeshPaintableSurface meshSurface = MeshPaintableSurface.TryFrom(hit.collider);
+            if (meshSurface == null) return;
             if (!sculptStrokeStarted)
             {
-                SculptUndo.BeginStroke(SculptUndo.StrokeKind.Alphamaps);
+                SculptUndo.BeginStroke(SculptUndo.StrokeKind.Alphamaps); // kind only routes terrain captures
                 sculptStrokeStarted = true;
             }
-            surface.ApplyTexturePaint(hit.point, radius, sculptStrength, sculptHardness, terrainLayer);
+            meshSurface.ApplyVertexColor(hit.point, hit.normal, radius, sculptStrength, sculptHardness, meshVertexColor);
         }
 
         private void GrassStamp(RaycastHit hit, bool erase)

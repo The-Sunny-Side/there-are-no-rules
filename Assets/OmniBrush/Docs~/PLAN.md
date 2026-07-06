@@ -39,10 +39,12 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       (or procedural round brush), world-height target, max blend (exact +
       idempotent, E2E-verified) or additive, fixed/random rotation. Click-only.
       Shader params: x=strength, z=kScale*h01 packed, w=0 max/1 add.
-- [x] S6 Texture paint (terrain half) — Texture tab: paint TerrainLayer
-      weights via PaintTexture pass, auto-adds missing layers, alphamap
-      dirty-rect undo (SculptUndo StrokeKind). E2E-verified (weight 1 center /
-      0 edge, auto-add 2→3 layers). Mesh vertex color still open (→ S4/S6b).
+- [x] S6 Texture paint — Texture tab is dual: terrains get TerrainLayer splat
+      (PaintTexture pass, auto-add, alphamap undo; E2E: weight 1 center/0
+      edge); meshes get VERTEX COLOR painting (clone-based, undoable, E2E:
+      red top/white bottom). Materials must read COLOR0 to show it — helper
+      button swaps a scene-local copy using URP Particles/Lit (keeps
+      _BaseMap/_BaseColor). Proper splat-mask shader painting = later.
 - [x] S7 Grass/detail paint (terrain half) — Grass tab paints terrain detail
       density (texture billboard or mesh prefab, prototype auto-added +
       deduped), Ctrl fades to zero, dirty-rect undo records. E2E-verified

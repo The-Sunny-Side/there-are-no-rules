@@ -12,9 +12,13 @@ namespace OmniBrush
     public class MeshPaintableSurface : IPaintableSurface
     {
         public delegate void MeshRecordHook(Mesh mesh, int[] indices, Vector3[] before, Vector3[] after);
+        public delegate void MeshColorRecordHook(Mesh mesh, int[] indices, Color[] before, Color[] after);
 
         /// <summary>Editor hook: receives per-stamp vertex diffs for undo.</summary>
         public static MeshRecordHook recordHook;
+
+        /// <summary>Editor hook: receives per-stamp vertex color diffs for undo.</summary>
+        public static MeshColorRecordHook colorRecordHook;
 
         private const float RaiseStepFraction = 0.02f; // of radius, per full-strength stamp
 
@@ -163,6 +167,58 @@ namespace OmniBrush
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
             recordHook?.Invoke(mesh, indices.ToArray(), before, after);
+            return true;
+        }
+
+        /// <summary>
+        /// Paint vertex colors (the mesh analog of terrain splat). The material
+        /// must read COLOR0 to show anything — see the editor's helper button.
+        /// </summary>
+        public bool ApplyVertexColor(Vector3 center, Vector3 brushNormal, float radius,
+            float strength, float hardness, Color color)
+        {
+            Mesh mesh = EnsureDeformableMesh(out MeshDeformation _);
+            if (mesh == null) return false;
+
+            Vector3[] verts = mesh.vertices;
+            Color[] colors = mesh.colors;
+            if (colors == null || colors.Length != verts.Length)
+            {
+                colors = new Color[verts.Length];
+                for (int i = 0; i < colors.Length; i++) colors[i] = Color.white;
+            }
+
+            Matrix4x4 l2w = filter.transform.localToWorldMatrix;
+            Vector3 n = brushNormal.sqrMagnitude > 0.001f ? brushNormal.normalized : Vector3.up;
+            float sqrRadius = radius * radius;
+            var indices = new List<int>();
+            var laterals = new List<float>();
+            for (int i = 0; i < verts.Length; i++)
+            {
+                Vector3 rel = l2w.MultiplyPoint3x4(verts[i]) - center;
+                float axial = Vector3.Dot(rel, n);
+                if (Mathf.Abs(axial) > radius) continue;
+                float lateralSqr = (rel - n * axial).sqrMagnitude;
+                if (lateralSqr > sqrRadius) continue;
+                indices.Add(i);
+                laterals.Add(Mathf.Sqrt(lateralSqr));
+            }
+            if (indices.Count == 0) return false;
+
+            var before = new Color[indices.Count];
+            var after = new Color[indices.Count];
+            float clampedStrength = Mathf.Clamp01(strength);
+            for (int k = 0; k < indices.Count; k++)
+            {
+                int i = indices[k];
+                before[k] = colors[i];
+                float weight = Falloff(laterals[k] / radius, hardness) * clampedStrength;
+                colors[i] = Color.Lerp(colors[i], color, weight);
+                after[k] = colors[i];
+            }
+
+            mesh.colors = colors;
+            colorRecordHook?.Invoke(mesh, indices.ToArray(), before, after);
             return true;
         }
 
