@@ -39,6 +39,16 @@ namespace OmniBrush.Editor
         [SerializeField] private bool filterHeight;
         [SerializeField] private float heightMin;
         [SerializeField] private float heightMax = 1000f;
+        [SerializeField] private bool noiseFilter;
+        [SerializeField] private float noiseScale = 20f;
+        [SerializeField] private float noiseThreshold = 0.5f;
+        [SerializeField] private bool layerFilter;
+        [SerializeField] private TerrainLayer layerFilterLayer;
+        [SerializeField] private float layerFilterMin = 0.5f;
+        [SerializeField] private bool curvatureFilter;
+        [SerializeField] private bool curvatureConcave = true;
+        [SerializeField] private float curvatureSampleDist = 2f;
+        [SerializeField] private float curvatureMinDepth = 0.2f;
 
         // sculpt
         [SerializeField] private SculptOp sculptOp = SculptOp.Raise;
@@ -220,6 +230,32 @@ namespace OmniBrush.Editor
             {
                 heightMin = EditorGUILayout.FloatField("Min Y", heightMin);
                 heightMax = EditorGUILayout.FloatField("Max Y", heightMax);
+            }
+            noiseFilter = EditorGUILayout.Toggle("Noise Mask", noiseFilter);
+            if (noiseFilter)
+            {
+                EditorGUI.indentLevel++;
+                noiseScale = EditorGUILayout.Slider("Patch Size (m)", noiseScale, 1f, 200f);
+                noiseThreshold = EditorGUILayout.Slider("Coverage", 1f - noiseThreshold, 0f, 1f);
+                noiseThreshold = 1f - noiseThreshold;
+                EditorGUI.indentLevel--;
+            }
+            layerFilter = EditorGUILayout.Toggle("Only On Terrain Layer", layerFilter);
+            if (layerFilter)
+            {
+                EditorGUI.indentLevel++;
+                layerFilterLayer = (TerrainLayer)EditorGUILayout.ObjectField("Layer", layerFilterLayer, typeof(TerrainLayer), false);
+                layerFilterMin = EditorGUILayout.Slider("Min Weight", layerFilterMin, 0f, 1f);
+                EditorGUI.indentLevel--;
+            }
+            curvatureFilter = EditorGUILayout.Toggle("Curvature", curvatureFilter);
+            if (curvatureFilter)
+            {
+                EditorGUI.indentLevel++;
+                curvatureConcave = GUILayout.Toolbar(curvatureConcave ? 0 : 1, new[] { "Hollows", "Bumps" }) == 0;
+                curvatureSampleDist = EditorGUILayout.Slider("Sample Distance", curvatureSampleDist, 0.2f, 10f);
+                curvatureMinDepth = EditorGUILayout.Slider("Min Depth", curvatureMinDepth, 0f, 5f);
+                EditorGUI.indentLevel--;
             }
 
             bool canPaint = layer.palette != null && layer.palette.entries.Count > 0;
@@ -691,6 +727,7 @@ namespace OmniBrush.Editor
 
             bool changed = false;
             int placed = 0, rejFalloff = 0, rejRay = 0, rejSlope = 0, rejHeight = 0, rejDistance = 0, rejWeight = 0;
+            int rejNoise = 0, rejLayer = 0, rejCurvature = 0;
             for (int i = 0; i < instancesPerStamp; i++)
             {
                 Vector2 disc = Random.insideUnitCircle;
@@ -708,6 +745,18 @@ namespace OmniBrush.Editor
                 float slope = Vector3.Angle(surface.normal, Vector3.up);
                 if (slope < slopeMin || slope > slopeMax) { rejSlope++; continue; }
                 if (filterHeight && (surface.point.y < heightMin || surface.point.y > heightMax)) { rejHeight++; continue; }
+                if (noiseFilter && !BrushFilters.PassesNoise(surface.point, noiseScale, noiseThreshold)) { rejNoise++; continue; }
+                if (layerFilter && layerFilterLayer != null)
+                {
+                    float weight = BrushFilters.SampleLayerWeight(surface, layerFilterLayer);
+                    if (weight >= 0f && weight < layerFilterMin) { rejLayer++; continue; } // non-terrain hits pass
+                }
+                if (curvatureFilter)
+                {
+                    float relative = BrushFilters.SampleRelativeHeight(surface.point, surface.normal, curvatureSampleDist, surfaceMask);
+                    bool ok = curvatureConcave ? relative >= curvatureMinDepth : relative <= -curvatureMinDepth;
+                    if (!ok) { rejCurvature++; continue; }
+                }
                 if (minDistance > 0f && layer.HasInstanceWithin(surface.point, minDistance)) { rejDistance++; continue; }
 
                 int entryIndex = palette.PickWeightedIndex(Random.value);
@@ -738,6 +787,9 @@ namespace OmniBrush.Editor
                 var reasons = new System.Collections.Generic.List<string>();
                 if (rejHeight > 0) reasons.Add($"{rejHeight} outside height filter ({heightMin:0}–{heightMax:0})");
                 if (rejSlope > 0) reasons.Add($"{rejSlope} outside slope filter ({slopeMin:0}–{slopeMax:0}°)");
+                if (rejNoise > 0) reasons.Add($"{rejNoise} masked by noise");
+                if (rejLayer > 0) reasons.Add($"{rejLayer} not on terrain layer '{(layerFilterLayer ? layerFilterLayer.name : "?")}'");
+                if (rejCurvature > 0) reasons.Add($"{rejCurvature} failed curvature ({(curvatureConcave ? "hollows" : "bumps")})");
                 if (rejDistance > 0) reasons.Add($"{rejDistance} too close to existing (Min Distance {minDistance:0.#})");
                 if (rejFalloff > 0) reasons.Add($"{rejFalloff} rejected by Edge Falloff ({falloff:0.##})");
                 if (rejRay > 0) reasons.Add($"{rejRay} missed the surface (Surface Layers mask?)");

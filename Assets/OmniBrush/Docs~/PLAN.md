@@ -51,7 +51,14 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       auto-scaled for CoverageMode (Unity 6 default) vs InstanceCountMode.
       E2E-verified on a real terrain (coverage 255 center / 0 after erase).
       Grass-on-mesh = Scatter tab for now; instanced mesh-grass is S7b.
-- [ ] S8 Procedural brush filters — noise, curvature, texture-under-brush.
+- [x] S8 Procedural brush filters (scatter) — Noise Mask (Perlin patches,
+      Patch Size + Coverage sliders), Only On Terrain Layer (splat weight
+      under candidate, non-terrain hits pass), Curvature (hollows/bumps via
+      4 neighbor probes along the normal). All feed the live rejection
+      feedback. E2E: noise 99/44/0 pass at threshold 0/.5/.99 deterministic;
+      layer weight 1.0 painted / 0.0 other; curvature −0.78 bump / +1.69 pit
+      / 0.0 flat. TODO later: same filters on Grass/Sculpt tabs.
+      Test gotcha: fresh colliders need Physics.SyncTransforms() in E2E.
 - [ ] S9 Splines (roads/rivers: carve + texture + scatter along).
 - [ ] S10 Physics drop, erosion brush, node-driven brushes, biome presets.
 
@@ -60,12 +67,11 @@ Done & E2E-verified: S1, S3, S4, S5, S6 (terrain splat + mesh vertex color),
 S7 (terrain details, scatter-mode aware). All tabs work: Scatter | Sculpt |
 Texture | Grass. Every real-usage failure became a fix (see Hardening).
 
-Next session, suggested order:
-1. S8 procedural brush filters — noise, curvature, texture-under-brush.
-2. S2 scatter v2 — incremental batches (paint lags >50k), per-entry
+Next, suggested order (S8 done 2026-07-07):
+1. S2 scatter v2 — incremental batches (paint lags >50k), per-entry
    footprint radius (user asked once, deferred), precision single-place
    mode, lighter stroke undo, EditorPrefs persistence.
-3. S9 splines → then S10 / non-destructive layers / S7b instanced mesh grass.
+2. S9 splines → then S10 / non-destructive layers / S7b instanced mesh grass.
 
 ## Hardening from field testing (all fixed & committed 2026-07-06)
 - Instances invisible until bake → every palette material had GPU Instancing
