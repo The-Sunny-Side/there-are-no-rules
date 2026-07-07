@@ -82,18 +82,23 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       E2E: constant +2m exact/additive/invertible, noise bounded+varied.
       Visual node-graph UI = later skin over this same data model.
       Terrain only for now (mesh via normal displacement later).
-- [ ] S10b Physics drop (editor Physics.Simulate settle for scattered props),
-      erosion brush, biome presets.
+- [x] S10b Physics drop (2026-07-07) — "Drop & Settle" in the Scatter tab:
+      temp rigidbodies (convex mesh collider from prefab, box fallback) fall,
+      roll and pile against scene colliders and each other via editor
+      Physics.Simulate (Script mode, sleep early-exit); settled transforms
+      written back as instance data, one undo step. >2000 bodies asks first.
+      E2E: two tilted cubes from 10m settle at y=0.50 exact.
+- [ ] S10c Erosion brush, biome presets.
 
 ## Status (2026-07-06, end of day — field-tested by Simonpaolo on his map)
 Done & E2E-verified: S1, S3, S4, S5, S6 (terrain splat + mesh vertex color),
 S7 (terrain details, scatter-mode aware). All tabs work: Scatter | Sculpt |
 Texture | Grass. Every real-usage failure became a fix (see Hardening).
 
-Next (S8 + S2 core + S9 + S10a node-brush done 2026-07-07):
-1. Physics drop (S10b) or non-destructive layers (the MicroVerse-style
-   differentiator, multi-session).
-2. S7b instanced mesh grass / S2b leftovers / erosion brush / biome presets.
+Next (S8 + S2 + S9 + S10a + S10b done 2026-07-07):
+1. Non-destructive layers (the MicroVerse-style differentiator, multi-session
+   arc — start with the terrain op-stack data model).
+2. S7b instanced mesh grass / S2b leftovers / S10c erosion + biome presets.
 Also pending: Asset Store packaging pass (samples, docs, demo scene, name).
 
 ## Hardening from field testing (all fixed & committed 2026-07-06)

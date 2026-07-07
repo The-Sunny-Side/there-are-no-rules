@@ -46,6 +46,17 @@ namespace OmniBrush
                 batchesDirty = true;
         }
 
+        /// <summary>Move an existing instance (e.g. after physics settling).</summary>
+        public void UpdateInstance(int index, Vector3 position, Quaternion rotation)
+        {
+            if (index < 0 || index >= instances.Count) return;
+            ScatterInstance instance = instances[index];
+            instance.position = position;
+            instance.rotation = rotation;
+            instances[index] = instance;
+            MarkDirty();
+        }
+
         public int RemoveInRadius(Vector3 center, float radius)
         {
             float sqr = radius * radius;
