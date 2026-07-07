@@ -86,6 +86,9 @@ namespace OmniBrush.Editor
         [SerializeField] private bool stampRandomRotation = true;
         private float currentStampRotation;
 
+        [SerializeField] private float dropHeight = 0.5f;
+        [SerializeField] private float settleSeconds = 4f;
+
         private bool strokeActive;
         private bool hasLastStamp;
         private Vector3 lastStampPos;
@@ -277,6 +280,23 @@ namespace OmniBrush.Editor
                 curvatureSampleDist = EditorGUILayout.Slider("Sample Distance", curvatureSampleDist, 0.2f, 10f);
                 curvatureMinDepth = EditorGUILayout.Slider("Min Depth", curvatureMinDepth, 0f, 5f);
                 EditorGUI.indentLevel--;
+            }
+
+            EditorGUILayout.Space();
+            GUILayout.Label("Physics Drop", EditorStyles.boldLabel);
+            dropHeight = EditorGUILayout.Slider("Drop Height", dropHeight, 0f, 5f);
+            settleSeconds = EditorGUILayout.Slider("Max Sim Time (s)", settleSeconds, 0.5f, 10f);
+            using (new EditorGUI.DisabledScope(layer.Count == 0))
+            {
+                if (GUILayout.Button($"Drop & Settle {layer.Count} Instances"))
+                {
+                    if (layer.Count <= 2000 || EditorUtility.DisplayDialog("OmniBrush",
+                            $"Simulate physics on {layer.Count} rigidbodies? This can take a while.", "Settle", "Cancel"))
+                    {
+                        int settled = PhysicsDrop.Settle(layer, dropHeight, settleSeconds);
+                        lastStampWarning = $"Physics drop settled {settled} instance(s). One undo step reverts it.";
+                    }
+                }
             }
 
             bool canPaint = layer.palette != null && layer.palette.entries.Count > 0;
