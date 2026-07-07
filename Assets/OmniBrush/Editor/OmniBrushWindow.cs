@@ -30,6 +30,7 @@ namespace OmniBrush.Editor
 
         // scatter
         [SerializeField] private ScatterLayer layer;
+        [SerializeField] private bool singlePlace;
         [SerializeField] private int instancesPerStamp = 8;
         [SerializeField] private float strokeSpacing = 0.5f; // fraction of radius
         [SerializeField] private float minDistance = 1f;
@@ -209,7 +210,10 @@ namespace OmniBrush.Editor
 
             EditorGUILayout.Space();
             GUILayout.Label("Brush", EditorStyles.boldLabel);
-            instancesPerStamp = EditorGUILayout.IntSlider("Instances / Stamp", instancesPerStamp, 1, 64);
+            singlePlace = EditorGUILayout.Toggle(new GUIContent("Single Place (click)",
+                "Place exactly one instance per click at the cursor. Filters are bypassed; footprints/Min Distance still apply. Ctrl-drag still erases."), singlePlace);
+            using (new EditorGUI.DisabledScope(singlePlace))
+                instancesPerStamp = EditorGUILayout.IntSlider("Instances / Stamp", instancesPerStamp, 1, 64);
             strokeSpacing = EditorGUILayout.Slider("Stroke Spacing", strokeSpacing, 0.05f, 2f);
             minDistance = EditorGUILayout.Slider("Min Distance", minDistance, 0f, 20f);
             falloff = EditorGUILayout.Slider("Edge Falloff", falloff, 0f, 1f);
@@ -575,7 +579,8 @@ namespace OmniBrush.Editor
                     {
                         if (mode == Mode.Scatter)
                         {
-                            if (!hasLastStamp || Vector3.Distance(hit.point, lastStampPos) >= Mathf.Max(0.05f, radius * strokeSpacing))
+                            bool dragAllowed = !singlePlace || modifier; // single place is click-only, erase-drag still works
+                            if (dragAllowed && (!hasLastStamp || Vector3.Distance(hit.point, lastStampPos) >= Mathf.Max(0.05f, radius * strokeSpacing)))
                                 ScatterStamp(hit, modifier);
                         }
                         else if (mode == Mode.Texture)
@@ -614,6 +619,38 @@ namespace OmniBrush.Editor
                     }
                     break;
             }
+        }
+
+        private void PlaceSingle(RaycastHit hit)
+        {
+            ScatterPalette palette = layer.palette;
+            int entryIndex = palette.PickWeightedIndex(Random.value);
+            if (entryIndex < 0) return;
+            ScatterPalette.Entry entry = palette.entries[entryIndex];
+            float scale = Random.Range(entry.uniformScale.x, entry.uniformScale.y);
+            float candidateFootprint = entry.footprintRadius * scale;
+            if ((minDistance > 0f || candidateFootprint > 0f) &&
+                layer.OverlapsExisting(hit.point, candidateFootprint, minDistance, palette))
+            {
+                lastStampWarning = "Single place blocked: too close to an existing instance (footprints / Min Distance).";
+                Repaint();
+                return;
+            }
+
+            Quaternion align = Quaternion.Slerp(Quaternion.identity,
+                Quaternion.FromToRotation(Vector3.up, hit.normal), entry.alignToNormal);
+            float yaw = entry.randomYaw ? Random.Range(0f, 360f) : 0f;
+            Quaternion rotation = align * Quaternion.Euler(0f, yaw, 0f);
+            layer.AddInstance(new ScatterInstance
+            {
+                entryIndex = entryIndex,
+                position = hit.point + rotation * Vector3.up * entry.verticalOffset,
+                rotation = rotation,
+                scale = new Vector3(scale, scale, scale),
+            });
+            EditorUtility.SetDirty(layer);
+            lastStampWarning = null;
+            Repaint();
         }
 
         // --------------------------------------------------------------- sculpt
@@ -717,6 +754,11 @@ namespace OmniBrush.Editor
                     EditorUtility.SetDirty(layer);
                 return;
             }
+            if (singlePlace)
+            {
+                PlaceSingle(hit);
+                return;
+            }
 
             ScatterPalette palette = layer.palette;
             Vector3 n = hit.normal;
@@ -757,17 +799,19 @@ namespace OmniBrush.Editor
                     bool ok = curvatureConcave ? relative >= curvatureMinDepth : relative <= -curvatureMinDepth;
                     if (!ok) { rejCurvature++; continue; }
                 }
-                if (minDistance > 0f && layer.HasInstanceWithin(surface.point, minDistance)) { rejDistance++; continue; }
-
                 int entryIndex = palette.PickWeightedIndex(Random.value);
                 if (entryIndex < 0) { rejWeight++; continue; }
                 ScatterPalette.Entry entry = palette.entries[entryIndex];
+                float scale = Random.Range(entry.uniformScale.x, entry.uniformScale.y);
+                float candidateFootprint = entry.footprintRadius * scale;
+                if ((minDistance > 0f || candidateFootprint > 0f) &&
+                    layer.OverlapsExisting(surface.point, candidateFootprint, minDistance, palette))
+                { rejDistance++; continue; }
 
                 Quaternion align = Quaternion.Slerp(Quaternion.identity,
                     Quaternion.FromToRotation(Vector3.up, surface.normal), entry.alignToNormal);
                 float yaw = entry.randomYaw ? Random.Range(0f, 360f) : 0f;
                 Quaternion rotation = align * Quaternion.Euler(0f, yaw, 0f);
-                float scale = Random.Range(entry.uniformScale.x, entry.uniformScale.y);
                 Vector3 position = surface.point + rotation * Vector3.up * entry.verticalOffset;
 
                 layer.AddInstance(new ScatterInstance
@@ -790,7 +834,7 @@ namespace OmniBrush.Editor
                 if (rejNoise > 0) reasons.Add($"{rejNoise} masked by noise");
                 if (rejLayer > 0) reasons.Add($"{rejLayer} not on terrain layer '{(layerFilterLayer ? layerFilterLayer.name : "?")}'");
                 if (rejCurvature > 0) reasons.Add($"{rejCurvature} failed curvature ({(curvatureConcave ? "hollows" : "bumps")})");
-                if (rejDistance > 0) reasons.Add($"{rejDistance} too close to existing (Min Distance {minDistance:0.#})");
+                if (rejDistance > 0) reasons.Add($"{rejDistance} too close to existing (footprints / Min Distance {minDistance:0.#})");
                 if (rejFalloff > 0) reasons.Add($"{rejFalloff} rejected by Edge Falloff ({falloff:0.##})");
                 if (rejRay > 0) reasons.Add($"{rejRay} missed the surface (Surface Layers mask?)");
                 if (rejWeight > 0) reasons.Add($"{rejWeight} found no palette entry with weight > 0");
