@@ -75,18 +75,25 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       Limits: per-sample terrain lookup (seams at tile borders untested),
       spline stores local points (move the object moves the path — ops don't
       auto-reapply).
-- [ ] S10 Physics drop, erosion brush, node-driven brushes, biome presets.
+- [x] S10a Node-brush core (2026-07-07) — ProceduralBrush asset: layer stack
+      (Constant / fbm Noise with octaves+ridged, blend Add/Sub/Mul/Min/Max),
+      deterministic per world position. "Proc" op in the Sculpt tab paints
+      the stack as height through the falloff, Ctrl digs, dirty-rect undo.
+      E2E: constant +2m exact/additive/invertible, noise bounded+varied.
+      Visual node-graph UI = later skin over this same data model.
+      Terrain only for now (mesh via normal displacement later).
+- [ ] S10b Physics drop (editor Physics.Simulate settle for scattered props),
+      erosion brush, biome presets.
 
 ## Status (2026-07-06, end of day — field-tested by Simonpaolo on his map)
 Done & E2E-verified: S1, S3, S4, S5, S6 (terrain splat + mesh vertex color),
 S7 (terrain details, scatter-mode aware). All tabs work: Scatter | Sculpt |
 Texture | Grass. Every real-usage failure became a fix (see Hardening).
 
-Next (S8 + S2 core + S9 done 2026-07-07):
-1. Non-destructive layers (the MicroVerse-style differentiator) or S10 picks
-   (physics drop is the best value/effort: bake-settle scattered props).
-2. S7b instanced mesh grass / S2b leftovers / erosion brush / node-driven
-   brushes / biome presets.
+Next (S8 + S2 core + S9 + S10a node-brush done 2026-07-07):
+1. Physics drop (S10b) or non-destructive layers (the MicroVerse-style
+   differentiator, multi-session).
+2. S7b instanced mesh grass / S2b leftovers / erosion brush / biome presets.
 Also pending: Asset Store packaging pass (samples, docs, demo scene, name).
 
 ## Hardening from field testing (all fixed & committed 2026-07-06)

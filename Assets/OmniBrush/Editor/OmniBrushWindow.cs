@@ -53,6 +53,8 @@ namespace OmniBrush.Editor
 
         // sculpt
         [SerializeField] private SculptOp sculptOp = SculptOp.Raise;
+        [SerializeField] private bool procOp;
+        [SerializeField] private ProceduralBrush proceduralBrush;
         [SerializeField] private float sculptStrength = 0.5f;
         [SerializeField] private float sculptHardness = 0.5f;
 
@@ -332,14 +334,37 @@ namespace OmniBrush.Editor
         private bool DrawSculptGUI()
         {
             // Raise/Lower share one entry: Ctrl inverts while painting
-            int opIndex = sculptOp == SculptOp.Smooth ? 1
+            int opIndex = procOp ? 4
+                : sculptOp == SculptOp.Smooth ? 1
                 : sculptOp == SculptOp.Flatten ? 2
                 : sculptOp == SculptOp.Stamp ? 3 : 0;
-            opIndex = GUILayout.Toolbar(opIndex, new[] { "Raise/Lower", "Smooth", "Flatten", "Stamp" });
-            sculptOp = opIndex == 1 ? SculptOp.Smooth
-                : opIndex == 2 ? SculptOp.Flatten
-                : opIndex == 3 ? SculptOp.Stamp : SculptOp.Raise;
+            opIndex = GUILayout.Toolbar(opIndex, new[] { "Raise/Lower", "Smooth", "Flatten", "Stamp", "Proc" });
+            procOp = opIndex == 4;
+            if (!procOp)
+                sculptOp = opIndex == 1 ? SculptOp.Smooth
+                    : opIndex == 2 ? SculptOp.Flatten
+                    : opIndex == 3 ? SculptOp.Stamp : SculptOp.Raise;
             sculptStrength = EditorGUILayout.Slider("Strength", sculptStrength, 0f, 1f);
+            if (procOp)
+            {
+                proceduralBrush = (ProceduralBrush)EditorGUILayout.ObjectField("Procedural Brush", proceduralBrush, typeof(ProceduralBrush), false);
+                if (proceduralBrush == null && GUILayout.Button("New Procedural Brush Asset"))
+                {
+                    string path = EditorUtility.SaveFilePanelInProject("Create Procedural Brush", "ProceduralBrush", "asset", "");
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        var asset = CreateInstance<ProceduralBrush>();
+                        AssetDatabase.CreateAsset(asset, path);
+                        AssetDatabase.SaveAssets();
+                        proceduralBrush = asset;
+                    }
+                }
+                sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+                EditorGUILayout.HelpBox(
+                    "Paints the brush asset's layer stack (noise/constant, add/multiply/min/max) as height. Edit layers in the asset inspector. Terrain only for now. Ctrl inverts (digs).",
+                    MessageType.None);
+                return proceduralBrush != null;
+            }
             if (sculptOp == SculptOp.Stamp)
             {
                 stampTexture = (Texture2D)EditorGUILayout.ObjectField("Stamp Heightmap", stampTexture, typeof(Texture2D), false);
@@ -681,6 +706,11 @@ namespace OmniBrush.Editor
                     surfaceValid = isTerrain;
                     invalidMessage = "Not a Unity Terrain";
                 }
+                else if (mode == Mode.Sculpt && procOp)
+                {
+                    surfaceValid = isTerrain;
+                    invalidMessage = "Not a Unity Terrain";
+                }
                 else if (mode == Mode.Sculpt || mode == Mode.Texture)
                 {
                     surfaceValid = isTerrain || hit.collider.GetComponent<MeshFilter>() != null;
@@ -757,7 +787,7 @@ namespace OmniBrush.Editor
                         {
                             GrassStamp(hit, modifier);
                         }
-                        else if (sculptOp != SculptOp.Stamp) // stamps are click-only
+                        else if (procOp || sculptOp != SculptOp.Stamp) // stamps are click-only
                         {
                             SculptStamp(hit, modifier);
                         }
@@ -823,6 +853,20 @@ namespace OmniBrush.Editor
 
         private void SculptStamp(RaycastHit hit, bool invert)
         {
+            if (procOp)
+            {
+                if (proceduralBrush == null || !(hit.collider is TerrainCollider)) return;
+                Terrain terrain = hit.collider.GetComponent<Terrain>();
+                if (terrain == null || terrain.terrainData == null) return;
+                if (!sculptStrokeStarted)
+                {
+                    SculptUndo.BeginStroke(SculptUndo.StrokeKind.Heights);
+                    sculptStrokeStarted = true;
+                }
+                ProceduralOps.Stamp(terrain, proceduralBrush, hit.point, radius, sculptStrength, sculptHardness, invert);
+                return;
+            }
+
             IPaintableSurface surface = TerrainPaintableSurface.TryFrom(hit.collider);
             if (surface == null)
             {
