@@ -11,7 +11,7 @@ namespace OmniBrush.Editor
     /// </summary>
     public class OmniBrushWindow : EditorWindow
     {
-        private enum Mode { Scatter, Sculpt, Texture, Grass }
+        private enum Mode { Scatter, Sculpt, Texture, Grass, Spline }
 
         [MenuItem("Tools/OmniBrush/Brush")]
         public static void Open() => GetWindow<OmniBrushWindow>("OmniBrush");
@@ -62,6 +62,15 @@ namespace OmniBrush.Editor
         [SerializeField] private TerrainLayer terrainLayer;
         [SerializeField] private Color meshVertexColor = new Color(0.85f, 0.2f, 0.15f);
 
+        // spline ops
+        [SerializeField] private OmniSpline splineTarget;
+        [SerializeField] private float splineWidth = 6f;
+        [SerializeField] private float splineFeather = 4f;
+        [SerializeField] private float splineScatterSpacing = 5f;
+        [SerializeField] private int splineScatterSide = 3; // 0 center, 1 left, 2 right, 3 both
+        [SerializeField] private float splineScatterOffset = 4f;
+        [SerializeField] private float splineScatterJitter = 1f;
+
         // grass / detail paint
         [SerializeField] private Texture2D grassTexture;
         [SerializeField] private GameObject grassPrefab;
@@ -107,7 +116,7 @@ namespace OmniBrush.Editor
 
         private void OnGUI()
         {
-            var newMode = (Mode)GUILayout.Toolbar((int)mode, new[] { "Scatter", "Sculpt", "Texture", "Grass" }, GUILayout.Height(24));
+            var newMode = (Mode)GUILayout.Toolbar((int)mode, new[] { "Scatter", "Sculpt", "Texture", "Grass", "Spline" }, GUILayout.Height(24));
             if (newMode != mode)
             {
                 mode = newMode;
@@ -115,16 +124,22 @@ namespace OmniBrush.Editor
             }
             EditorGUILayout.Space();
 
-            radius = EditorGUILayout.Slider("Radius", radius, 0.1f, 50f);
-            int concatenated = InternalEditorUtility.LayerMaskToConcatenatedLayersMask(surfaceMask);
-            concatenated = EditorGUILayout.MaskField("Surface Layers", concatenated, InternalEditorUtility.layers);
-            surfaceMask = InternalEditorUtility.ConcatenatedLayersMaskToLayerMask(concatenated);
-            EditorGUILayout.Space();
+            if (mode != Mode.Spline)
+            {
+                radius = EditorGUILayout.Slider("Radius", radius, 0.1f, 50f);
+                int concatenated = InternalEditorUtility.LayerMaskToConcatenatedLayersMask(surfaceMask);
+                concatenated = EditorGUILayout.MaskField("Surface Layers", concatenated, InternalEditorUtility.layers);
+                surfaceMask = InternalEditorUtility.ConcatenatedLayersMaskToLayerMask(concatenated);
+                EditorGUILayout.Space();
+            }
 
             bool canPaint = mode == Mode.Sculpt ? DrawSculptGUI()
                 : mode == Mode.Texture ? DrawTextureGUI()
                 : mode == Mode.Grass ? DrawGrassGUI()
+                : mode == Mode.Spline ? DrawSplineGUI()
                 : DrawScatterGUI();
+
+            if (mode == Mode.Spline) return; // spline ops are button-driven, no brush
 
             EditorGUILayout.Space();
             using (new EditorGUI.DisabledScope(!canPaint))
@@ -442,6 +457,157 @@ namespace OmniBrush.Editor
             layer = go.GetComponent<ScatterLayer>();
         }
 
+        // --------------------------------------------------------------- spline
+
+        private bool DrawSplineGUI()
+        {
+            splineTarget = (OmniSpline)EditorGUILayout.ObjectField("Spline", splineTarget, typeof(OmniSpline), true);
+            if (GUILayout.Button("Create Spline At View Pivot"))
+            {
+                Vector3 pivot = SceneView.lastActiveSceneView != null ? SceneView.lastActiveSceneView.pivot : Vector3.zero;
+                var go = new GameObject("OmniSpline", typeof(OmniSpline));
+                go.transform.position = pivot;
+                Undo.RegisterCreatedObjectUndo(go, "Create Spline");
+                splineTarget = go.GetComponent<OmniSpline>();
+                Selection.activeGameObject = go;
+            }
+            if (splineTarget == null)
+            {
+                EditorGUILayout.HelpBox("Create or assign a spline, then select it in the scene to move/add points.", MessageType.Info);
+                return false;
+            }
+
+            EditorGUILayout.Space();
+            GUILayout.Label("Road / River Bed (terrain)", EditorStyles.boldLabel);
+            splineWidth = EditorGUILayout.Slider("Width", splineWidth, 0.5f, 30f);
+            splineFeather = EditorGUILayout.Slider("Feather", splineFeather, 0f, 20f);
+            if (GUILayout.Button("Flatten Terrain Along Spline")) FlattenAlongSpline();
+
+            terrainLayer = (TerrainLayer)EditorGUILayout.ObjectField("Terrain Layer", terrainLayer, typeof(TerrainLayer), false);
+            using (new EditorGUI.DisabledScope(terrainLayer == null))
+            {
+                if (GUILayout.Button("Paint Texture Along Spline")) TextureAlongSpline();
+            }
+
+            EditorGUILayout.Space();
+            GUILayout.Label("Scatter Along (uses Scatter tab layer + palette)", EditorStyles.boldLabel);
+            splineScatterSpacing = EditorGUILayout.Slider("Spacing", splineScatterSpacing, 0.5f, 50f);
+            splineScatterSide = GUILayout.Toolbar(splineScatterSide, new[] { "Center", "Left", "Right", "Both" });
+            if (splineScatterSide != 0)
+                splineScatterOffset = EditorGUILayout.Slider("Side Offset", splineScatterOffset, 0f, 30f);
+            splineScatterJitter = EditorGUILayout.Slider("Jitter", splineScatterJitter, 0f, 10f);
+            bool scatterReady = layer != null && layer.palette != null && layer.palette.entries.Count > 0;
+            if (!scatterReady)
+                EditorGUILayout.HelpBox("Set up Layer + Palette in the Scatter tab first.", MessageType.Warning);
+            using (new EditorGUI.DisabledScope(!scatterReady))
+            {
+                if (GUILayout.Button("Scatter Along Spline")) ScatterAlongSpline();
+            }
+
+            if (!string.IsNullOrEmpty(lastStampWarning))
+                EditorGUILayout.HelpBox(lastStampWarning, MessageType.Info);
+            EditorGUILayout.HelpBox(
+                "Each button applies once along the whole spline as a single undo step. Terrain ops need Unity Terrains under the path.",
+                MessageType.None);
+            return false;
+        }
+
+        private void FlattenAlongSpline()
+        {
+            var samples = splineTarget.SampleByDistance(Mathf.Max(0.5f, splineWidth * 0.25f));
+            int hit = 0;
+            SculptUndo.BeginStroke(SculptUndo.StrokeKind.Heights);
+            try
+            {
+                foreach (Vector3 sample in samples)
+                {
+                    Terrain terrain = SplineOps.FindTerrainAt(sample);
+                    if (terrain == null) continue;
+                    SplineOps.FlattenStamp(terrain, sample, splineWidth * 0.5f, splineFeather, sample.y);
+                    hit++;
+                }
+            }
+            finally { SculptUndo.EndStroke(); }
+            lastStampWarning = hit == 0
+                ? "No Unity Terrain under the spline — nothing flattened."
+                : $"Flattened terrain under {hit}/{samples.Count} spline samples.";
+            SceneView.RepaintAll();
+        }
+
+        private void TextureAlongSpline()
+        {
+            var samples = splineTarget.SampleByDistance(Mathf.Max(0.5f, splineWidth * 0.25f));
+            float reach = splineWidth * 0.5f + splineFeather;
+            float hardness = reach > 0f ? splineWidth * 0.5f / reach : 1f;
+            int hit = 0;
+            SculptUndo.BeginStroke(SculptUndo.StrokeKind.Alphamaps);
+            try
+            {
+                foreach (Vector3 sample in samples)
+                {
+                    Terrain terrain = SplineOps.FindTerrainAt(sample);
+                    if (terrain == null) continue;
+                    new TerrainPaintableSurface(terrain).ApplyTexturePaint(sample, reach, 1f, hardness, terrainLayer);
+                    hit++;
+                }
+            }
+            finally { SculptUndo.EndStroke(); }
+            lastStampWarning = hit == 0
+                ? "No Unity Terrain under the spline — nothing painted."
+                : $"Painted texture under {hit}/{samples.Count} spline samples.";
+            SceneView.RepaintAll();
+        }
+
+        private void ScatterAlongSpline()
+        {
+            ScatterPalette palette = layer.palette;
+            var samples = splineTarget.SampleByDistance(Mathf.Max(0.5f, splineScatterSpacing));
+            float[] sides = splineScatterSide == 0 ? new[] { 0f }
+                : splineScatterSide == 1 ? new[] { splineScatterOffset }
+                : splineScatterSide == 2 ? new[] { -splineScatterOffset }
+                : new[] { splineScatterOffset, -splineScatterOffset };
+
+            Undo.RegisterCompleteObjectUndo(layer, "OmniBrush Spline Scatter");
+            int placed = 0;
+            for (int i = 0; i < samples.Count; i++)
+            {
+                Vector3 tangent = (samples[Mathf.Min(i + 1, samples.Count - 1)] - samples[Mathf.Max(i - 1, 0)]).normalized;
+                Vector3 sideDir = Vector3.Cross(Vector3.up, tangent).normalized;
+                foreach (float side in sides)
+                {
+                    Vector2 jitter = Random.insideUnitCircle * splineScatterJitter;
+                    Vector3 candidate = samples[i] + sideDir * side + new Vector3(jitter.x, 0f, jitter.y);
+                    if (!Physics.Raycast(candidate + Vector3.up * 30f, Vector3.down, out RaycastHit surface, 200f, surfaceMask, QueryTriggerInteraction.Ignore))
+                        continue;
+
+                    int entryIndex = palette.PickWeightedIndex(Random.value);
+                    if (entryIndex < 0) continue;
+                    ScatterPalette.Entry entry = palette.entries[entryIndex];
+                    float scale = Random.Range(entry.uniformScale.x, entry.uniformScale.y);
+                    float footprint = entry.footprintRadius * scale;
+                    if ((minDistance > 0f || footprint > 0f) &&
+                        layer.OverlapsExisting(surface.point, footprint, minDistance, palette))
+                        continue;
+
+                    Quaternion align = Quaternion.Slerp(Quaternion.identity,
+                        Quaternion.FromToRotation(Vector3.up, surface.normal), entry.alignToNormal);
+                    float yaw = entry.randomYaw ? Random.Range(0f, 360f) : 0f;
+                    Quaternion rotation = align * Quaternion.Euler(0f, yaw, 0f);
+                    layer.AddInstance(new ScatterInstance
+                    {
+                        entryIndex = entryIndex,
+                        position = surface.point + rotation * Vector3.up * entry.verticalOffset,
+                        rotation = rotation,
+                        scale = new Vector3(scale, scale, scale),
+                    });
+                    placed++;
+                }
+            }
+            EditorUtility.SetDirty(layer);
+            lastStampWarning = $"Scattered {placed} instance(s) along the spline.";
+            SceneView.RepaintAll();
+        }
+
         private void QuickAddToPalette()
         {
             GameObject prefabAsset = quickAddCandidate;
@@ -484,7 +650,7 @@ namespace OmniBrush.Editor
 
         private void OnSceneGUI(SceneView sceneView)
         {
-            if (!paintMode) return;
+            if (!paintMode || mode == Mode.Spline) return;
             if (mode == Mode.Scatter && (layer == null || layer.palette == null)) return;
             if (mode == Mode.Grass && grassPrefab == null && grassTexture == null) return;
 

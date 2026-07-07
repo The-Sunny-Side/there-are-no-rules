@@ -97,6 +97,16 @@ namespace OmniBrush.Editor
             });
         }
 
+        /// <summary>Record a CPU-side heights edit (e.g. spline carving) into the current stroke.</summary>
+        public static void RecordHeights(TerrainData data, int x, int y, float[,] before, float[,] after)
+        {
+            if (currentStroke == null) return;
+            currentStroke.Add(new StampRecord
+            {
+                data = data, kind = StrokeKind.Heights, x = x, y = y, before = before, after = after,
+            });
+        }
+
         private static void RecordDetails(TerrainData data, int layer, int x, int y, int[,] before, int[,] after)
         {
             if (currentStroke == null) return;
