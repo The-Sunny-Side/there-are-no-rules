@@ -22,9 +22,14 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
 - [x] S1 Scatter MVP — palette SO, layer (data + instanced render + frustum
       cull), brush window (paint / Ctrl-erase, slope/height/layer filters,
       stroke spacing, min distance, edge falloff), per-stroke undo, bake, LOD0.
-- [ ] S2 Scatter v2 — incremental batch update (no full rebuild per stamp),
-      lighter undo (delta, not full snapshot), EditorPrefs persistence,
-      precision single-place mode, binary instance storage (scene bloat).
+- [x] S2 Scatter v2 (core, 2026-07-07) — incremental batch append
+      (MatrixBlock shared by submesh batches, appendable open block per
+      entry/part, full-capacity last chunk): 2500 appends in 2ms, structure
+      identical to full rebuild (E2E). Per-entry footprintRadius (scaled,
+      pairwise sum; legacy entries deserialize to 0 = old behavior). Single
+      Place click mode (filters bypassed, footprints apply, Ctrl-drag erase
+      kept; E2E blocked@3.5m free@4.5m with 2m+2m footprints).
+      Deferred to S2b: lighter stroke undo, EditorPrefs, binary storage.
 - [x] S3 Terrain sculpt — raise/lower/smooth/flatten via PaintContext (GPU,
       multi-tile), dirty-rect undo (SculptUndo proxy versioning), window got
       Scatter/Sculpt tabs, IPaintableSurface introduced. E2E-verified via MCP
@@ -67,11 +72,10 @@ Done & E2E-verified: S1, S3, S4, S5, S6 (terrain splat + mesh vertex color),
 S7 (terrain details, scatter-mode aware). All tabs work: Scatter | Sculpt |
 Texture | Grass. Every real-usage failure became a fix (see Hardening).
 
-Next, suggested order (S8 done 2026-07-07):
-1. S2 scatter v2 — incremental batches (paint lags >50k), per-entry
-   footprint radius (user asked once, deferred), precision single-place
-   mode, lighter stroke undo, EditorPrefs persistence.
-2. S9 splines → then S10 / non-destructive layers / S7b instanced mesh grass.
+Next, suggested order (S8 + S2 core done 2026-07-07):
+1. S9 splines (roads/rivers: carve + texture + scatter along the curve).
+2. Non-destructive layers / S10 (physics drop, erosion brush, node-driven
+   brushes, biome presets) / S7b instanced mesh grass / S2b leftovers.
 
 ## Hardening from field testing (all fixed & committed 2026-07-06)
 - Instances invisible until bake → every palette material had GPU Instancing

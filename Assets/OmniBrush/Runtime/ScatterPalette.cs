@@ -16,6 +16,8 @@ namespace OmniBrush
             public bool randomYaw = true;
             [Range(0f, 1f)] public float alignToNormal = 1f;
             public float verticalOffset;
+            [Min(0f), Tooltip("Clear space around this prefab's pivot, scaled with the instance. Two placements keep footprintA + footprintB apart. 0 = only the brush's global Min Distance applies.")]
+            public float footprintRadius = 0.5f;
         }
 
         public List<Entry> entries = new List<Entry>();
@@ -34,6 +36,7 @@ namespace OmniBrush
                     e.uniformScale = new Vector2(0.8f, 1.2f);
                     e.randomYaw = true;
                     e.alignToNormal = 1f;
+                    e.footprintRadius = 0.5f;
                 }
             }
         }
