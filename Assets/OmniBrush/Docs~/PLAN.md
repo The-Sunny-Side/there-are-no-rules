@@ -64,7 +64,17 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       layer weight 1.0 painted / 0.0 other; curvature −0.78 bump / +1.69 pit
       / 0.0 flat. TODO later: same filters on Grass/Sculpt tabs.
       Test gotcha: fresh colliders need Physics.SyncTransforms() in E2E.
-- [ ] S9 Splines (roads/rivers: carve + texture + scatter along).
+- [x] S9 Splines (2026-07-07) — OmniSpline component (Catmull-Rom, world
+      handles + add/remove points via custom editor) + Spline tab: Flatten
+      Terrain Along (CPU exact-target carve, flat width + smoothstep feather,
+      dirty-rect undo via SculptUndo.RecordHeights), Paint Texture Along
+      (reuses splat pipeline), Scatter Along (spacing, Center/Left/Right/Both
+      side offsets, jitter, footprints honored; uses Scatter tab layer +
+      palette). Each op = one undo step. E2E: 41 samples/80m at exact 2m
+      spacing; road carved to 5.00m on-path, 0.00 off-path.
+      Limits: per-sample terrain lookup (seams at tile borders untested),
+      spline stores local points (move the object moves the path — ops don't
+      auto-reapply).
 - [ ] S10 Physics drop, erosion brush, node-driven brushes, biome presets.
 
 ## Status (2026-07-06, end of day — field-tested by Simonpaolo on his map)
@@ -72,10 +82,12 @@ Done & E2E-verified: S1, S3, S4, S5, S6 (terrain splat + mesh vertex color),
 S7 (terrain details, scatter-mode aware). All tabs work: Scatter | Sculpt |
 Texture | Grass. Every real-usage failure became a fix (see Hardening).
 
-Next, suggested order (S8 + S2 core done 2026-07-07):
-1. S9 splines (roads/rivers: carve + texture + scatter along the curve).
-2. Non-destructive layers / S10 (physics drop, erosion brush, node-driven
-   brushes, biome presets) / S7b instanced mesh grass / S2b leftovers.
+Next (S8 + S2 core + S9 done 2026-07-07):
+1. Non-destructive layers (the MicroVerse-style differentiator) or S10 picks
+   (physics drop is the best value/effort: bake-settle scattered props).
+2. S7b instanced mesh grass / S2b leftovers / erosion brush / node-driven
+   brushes / biome presets.
+Also pending: Asset Store packaging pass (samples, docs, demo scene, name).
 
 ## Hardening from field testing (all fixed & committed 2026-07-06)
 - Instances invisible until bake → every palette material had GPU Instancing
