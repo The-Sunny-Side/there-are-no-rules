@@ -154,10 +154,23 @@ public class VehicleSelectorManager : MonoBehaviour
 
             if (i < actualParts.Length)
             {
-                if (stepIndex == 2) {
+                if (stepIndex == 2)
+                {
                     VehicleWeaponEntry weaponEntry = actualParts[i] as VehicleWeaponEntry;
                     bool[] isInteractable = { weaponEntry.front, weaponEntry.left, weaponEntry.back, weaponEntry.right };
                     elementsBoxes[i].GetComponent<Button>().interactable = isInteractable[selectedWeaponType];
+                    Image icon = elementsBoxes[i].transform.Find("Icon").GetComponent<Image>();
+                    Color color = icon.color;
+
+                    if (!isInteractable[selectedWeaponType]){
+                        elementsBoxes[i].GetComponent<Image>().color = GameConfig.UiConfig.weaponBoxDisabledColor;
+                        
+                        color.a = 0.5f;
+                    }else{
+                        color.a = 1f;
+                    }
+                    icon.color = color;
+
                 }
 
                 elementsBoxes[i].transform.Find("Icon").GetComponent<Image>().sprite = actualParts[i].icon;
