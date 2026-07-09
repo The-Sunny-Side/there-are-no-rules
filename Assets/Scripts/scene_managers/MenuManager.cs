@@ -1,5 +1,7 @@
+using NUnit.Framework;
 using PurrNet;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
@@ -10,9 +12,10 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private PauseManager pauseManager;
     [SerializeField] private GameObject finishedGamePanel;
     [SerializeField] private FadeAnimator InGamePanel;
-    [SerializeField] private TextMeshProUGUI leaderboardContent;
     [SerializeField] private GameObject leaderboardRemainingBox;
     [SerializeField] private GameObject finalPosition;
+    [SerializeField] private RectTransform leaderboardContent;
+    [SerializeField] private List<TextMeshProUGUI> leaderboardEntries;
 
     private TextMeshProUGUI leaderboardRemainingCount;
     private string[] positionSuffixesIt = new string[] { "°", "°", "°", "°", "°", "°", "°", "°" };
@@ -24,6 +27,7 @@ public class MenuManager : MonoBehaviour
     {
         PlayerHudManager.Instance?.InitPlaySceneHud();
     }
+
 
     public void GoToHomeScreen()
     {
@@ -66,6 +70,7 @@ public class MenuManager : MonoBehaviour
         finalPosition.SetActive(true);
 
         finishedGamePanel.SetActive(true);
+        leaderboardContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 65.65f * totalPlayers);
         leaderboardRemainingCount = leaderboardRemainingBox.transform.Find("RemainingNumber")?.GetComponent<TextMeshProUGUI>();
 
         var sb = new System.Text.StringBuilder();
@@ -88,6 +93,10 @@ public class MenuManager : MonoBehaviour
             {
                 label = GetPlayerDisplayName(finishHumanIds[i]);
             }
+            if(i < leaderboardEntries.Count && leaderboardEntries[i] != null)
+            {
+                leaderboardEntries[i].text = leaderboardEntries[i].text.Replace("---", label);
+            }
             sb.AppendLine($"{i + 1}.  {label}");
         }
         int remaining = totalPlayers - finishHumanIds.Length;
@@ -96,12 +105,6 @@ public class MenuManager : MonoBehaviour
         else
         {
             leaderboardRemainingBox.SetActive(false);
-        }
-        if (leaderboardContent != null)
-        {
-            leaderboardContent.text = sb.ToString();
-            Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(leaderboardContent.rectTransform);
         }
     }
 
