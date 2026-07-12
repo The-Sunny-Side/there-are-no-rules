@@ -381,7 +381,7 @@ namespace OmniBrush.Editor
                 }
                 sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
                 EditorGUILayout.HelpBox(
-                    "Paints the brush asset's layer stack (noise/constant, add/multiply/min/max) as height. Edit layers in the asset inspector. Terrain only for now. Ctrl inverts (digs).",
+                    "Paints the brush asset's layer stack (noise/constant, add/multiply/min/max) as height on terrains, or as displacement along the click normal on meshes. Edit layers in the asset inspector. Ctrl inverts (digs).",
                     MessageType.None);
                 return proceduralBrush != null;
             }
@@ -726,11 +726,6 @@ namespace OmniBrush.Editor
                     surfaceValid = isTerrain;
                     invalidMessage = "Not a Unity Terrain";
                 }
-                else if (mode == Mode.Sculpt && procOp)
-                {
-                    surfaceValid = isTerrain;
-                    invalidMessage = "Not a Unity Terrain";
-                }
                 else if (mode == Mode.Sculpt || mode == Mode.Texture)
                 {
                     surfaceValid = isTerrain || hit.collider.GetComponent<MeshFilter>() != null;
@@ -875,15 +870,30 @@ namespace OmniBrush.Editor
         {
             if (procOp)
             {
-                if (proceduralBrush == null || !(hit.collider is TerrainCollider)) return;
-                Terrain terrain = hit.collider.GetComponent<Terrain>();
-                if (terrain == null || terrain.terrainData == null) return;
-                if (!sculptStrokeStarted)
+                if (proceduralBrush == null) return;
+                if (hit.collider is TerrainCollider)
                 {
-                    SculptUndo.BeginStroke(SculptUndo.StrokeKind.Heights);
-                    sculptStrokeStarted = true;
+                    Terrain terrain = hit.collider.GetComponent<Terrain>();
+                    if (terrain == null || terrain.terrainData == null) return;
+                    if (!sculptStrokeStarted)
+                    {
+                        SculptUndo.BeginStroke(SculptUndo.StrokeKind.Heights);
+                        sculptStrokeStarted = true;
+                    }
+                    ProceduralOps.Stamp(terrain, proceduralBrush, hit.point, radius, sculptStrength, sculptHardness, invert);
                 }
-                ProceduralOps.Stamp(terrain, proceduralBrush, hit.point, radius, sculptStrength, sculptHardness, invert);
+                else
+                {
+                    MeshPaintableSurface meshSurface = MeshPaintableSurface.TryFrom(hit.collider);
+                    if (meshSurface == null) return;
+                    touchedMeshes.Add(meshSurface.Filter);
+                    if (!sculptStrokeStarted)
+                    {
+                        SculptUndo.BeginStroke(SculptUndo.StrokeKind.Heights);
+                        sculptStrokeStarted = true;
+                    }
+                    meshSurface.ApplyProcedural(proceduralBrush, hit.point, hit.normal, radius, sculptStrength, sculptHardness, invert);
+                }
                 return;
             }
 

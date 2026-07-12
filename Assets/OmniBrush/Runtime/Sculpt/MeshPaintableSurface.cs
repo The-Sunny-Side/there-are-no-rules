@@ -171,6 +171,63 @@ namespace OmniBrush
         }
 
         /// <summary>
+        /// Displace vertices along the brush axis by a ProceduralBrush stack
+        /// evaluated at each vertex's world XZ — the mesh analog of the
+        /// terrain "Proc" op. Deterministic per position.
+        /// </summary>
+        public bool ApplyProcedural(ProceduralBrush brush, Vector3 center, Vector3 brushNormal,
+            float radius, float strength, float hardness, bool invert)
+        {
+            if (brush == null) return false;
+            Mesh mesh = EnsureDeformableMesh(out MeshDeformation _);
+            if (mesh == null) return false;
+
+            Vector3[] verts = mesh.vertices;
+            Matrix4x4 l2w = filter.transform.localToWorldMatrix;
+            Matrix4x4 w2l = filter.transform.worldToLocalMatrix;
+            Vector3 n = brushNormal.sqrMagnitude > 0.001f ? brushNormal.normalized : Vector3.up;
+
+            float sqrRadius = radius * radius;
+            var indices = new List<int>();
+            var laterals = new List<float>();
+            for (int i = 0; i < verts.Length; i++)
+            {
+                Vector3 rel = l2w.MultiplyPoint3x4(verts[i]) - center;
+                float axial = Vector3.Dot(rel, n);
+                if (Mathf.Abs(axial) > radius) continue;
+                float lateralSqr = (rel - n * axial).sqrMagnitude;
+                if (lateralSqr > sqrRadius) continue;
+                indices.Add(i);
+                laterals.Add(Mathf.Sqrt(lateralSqr));
+            }
+            if (indices.Count == 0) return false;
+
+            var before = new Vector3[indices.Count];
+            var after = new Vector3[indices.Count];
+            float sign = invert ? -1f : 1f;
+            float clampedStrength = Mathf.Clamp01(strength);
+            for (int k = 0; k < indices.Count; k++)
+            {
+                int i = indices[k];
+                before[k] = verts[i];
+                float weight = Falloff(laterals[k] / radius, hardness) * clampedStrength;
+                if (weight > 0f)
+                {
+                    Vector3 wPos = l2w.MultiplyPoint3x4(verts[i]);
+                    wPos += n * (brush.Evaluate(wPos.x, wPos.z) * weight * sign);
+                    verts[i] = w2l.MultiplyPoint3x4(wPos);
+                }
+                after[k] = verts[i];
+            }
+
+            mesh.vertices = verts;
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            recordHook?.Invoke(mesh, indices.ToArray(), before, after);
+            return true;
+        }
+
+        /// <summary>
         /// Paint vertex colors (the mesh analog of terrain splat). The material
         /// must read COLOR0 to show anything — see the editor's helper button.
         /// </summary>
