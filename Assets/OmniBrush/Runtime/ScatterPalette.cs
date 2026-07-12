@@ -10,11 +10,17 @@ namespace OmniBrush
         [Serializable]
         public class Entry
         {
+            [Tooltip("Prefab painted by this entry.")]
             public GameObject prefab;
-            [Min(0f)] public float weight = 1f;
+            [Min(0f), Tooltip("Relative pick probability. 1 and 1 = 50/50; 2 and 1 = twice as often. 0 = temporarily disabled.")]
+            public float weight = 1f;
+            [Tooltip("Random uniform scale range per instance (min X, max Y).")]
             public Vector2 uniformScale = new Vector2(0.8f, 1.2f);
+            [Tooltip("Rotate each instance randomly around its up axis.")]
             public bool randomYaw = true;
-            [Range(0f, 1f)] public float alignToNormal = 1f;
+            [Range(0f, 1f), Tooltip("0 = stays world-upright, 1 = fully tilts to match the surface slope.")]
+            public float alignToNormal = 1f;
+            [Tooltip("Shift along the instance's up axis in meters. Negative sinks it into the ground (rocks).")]
             public float verticalOffset;
             [Min(0f), Tooltip("Clear space around this prefab's pivot, scaled with the instance. Two placements keep footprintA + footprintB apart. 0 = only the brush's global Min Distance applies.")]
             public float footprintRadius = 0.5f;
