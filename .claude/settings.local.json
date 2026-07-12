@@ -50,7 +50,8 @@
       "PowerShell($gh = \"$env:ProgramFiles\\\\GitHub CLI\\\\gh.exe\"; if \\(Test-Path $gh\\) { & $gh --version | Select-Object -First 1; & $gh auth status 2>&1 | Select-Object -First 5 } else { Write-Output \"gh non trovato in $gh\" })",
       "PowerShell(& \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" auth status 2>&1)",
       "PowerShell($gh = \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\"; $existing = & $gh pr view pistacchiocode/zeppelin-animato --json url,state 2>&1; if \\($LASTEXITCODE -eq 0\\) { Write-Output \"ESISTE:$existing\" } else { Write-Output \"NESSUNA_PR\" })",
-      "Bash(git commit -m 'feat: riorganizza prefab ambiente e aggiunge particelle motore *)"
+      "Bash(git commit -m 'feat: riorganizza prefab ambiente e aggiunge particelle motore *)",
+      "PowerShell(& \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" pr view pistacchiocode/zeppelin-animato --json url,state,title)"
     ]
   }
 }

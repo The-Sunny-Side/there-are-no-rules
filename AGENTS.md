@@ -2,7 +2,6 @@
 - Project name: there-are-no-rules
 - Unity version: Unity 6000.2.10f1
 - Active scene:
-  - Name: ShaderScene
   - Tags:
     - Untagged, Respawn, Finish, EditorOnly, MainCamera, Player, GameController, Deformable, Ground, HUD, PlayerSphere, Weapon, Vehicle, EnemyTarget
   - Layers:
