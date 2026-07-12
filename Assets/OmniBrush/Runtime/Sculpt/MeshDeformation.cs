@@ -10,7 +10,9 @@ namespace OmniBrush
     [DisallowMultipleComponent]
     public class MeshDeformation : MonoBehaviour
     {
+        [Tooltip("The untouched shared mesh asset — restored by the Revert button.")]
         public Mesh originalMesh;
+        [Tooltip("The scene-local clone being sculpted.")]
         public Mesh deformedMesh;
 
         /// <summary>
