@@ -113,9 +113,11 @@ and run code inside the editor:
 
 ### User-created assets
 `Editor/OmniBrushAssets.cs` — palettes/brushes created from the window go to
-`Assets/OmniBrushData/<Palettes|Brushes>` (auto-created, unique names,
-pinged). Keep user content OUT of `Assets/OmniBrush` so tool updates never
-overwrite it. Any new asset-creating button must go through this helper.
+`Assets/OmniBrush/Data/<Palettes|Brushes>` (auto-created, unique names,
+pinged). Any new asset-creating button must go through this helper.
+**Packaging rule:** EXCLUDE `Data/` when exporting the Asset Store package —
+imports only add/overwrite files, so user content in Data/ survives tool
+updates, but our own working assets must not ship.
 
 ## How to add a feature (checklist)
 1. Runtime logic in `Runtime/` (asmdef `OmniBrush.Runtime`) — keep it
