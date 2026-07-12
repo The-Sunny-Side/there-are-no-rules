@@ -43,7 +43,14 @@
       "Bash(git commit -m 'feat: zeppelin animato con LOD e modelli ambiente *)",
       "Bash(git merge *)",
       "Bash(echo \"---EXIT:$?---\")",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(gh pr *)",
+      "PowerShell($g = \\(Get-Command gh -ErrorAction SilentlyContinue\\).Source; if \\($g\\) { Write-Output \"FOUND:$g\"; gh pr view pistacchiocode/zeppelin-animato 2>&1 | Select-Object -First 5 } else { Write-Output \"NOTFOUND\" })",
+      "PowerShell(winget install --id GitHub.cli --silent --accept-source-agreements --accept-package-agreements 2>&1)",
+      "PowerShell($gh = \"$env:ProgramFiles\\\\GitHub CLI\\\\gh.exe\"; if \\(Test-Path $gh\\) { & $gh --version | Select-Object -First 1; & $gh auth status 2>&1 | Select-Object -First 5 } else { Write-Output \"gh non trovato in $gh\" })",
+      "PowerShell(& \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" auth status 2>&1)",
+      "PowerShell($gh = \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\"; $existing = & $gh pr view pistacchiocode/zeppelin-animato --json url,state 2>&1; if \\($LASTEXITCODE -eq 0\\) { Write-Output \"ESISTE:$existing\" } else { Write-Output \"NESSUNA_PR\" })",
+      "Bash(git commit -m 'feat: riorganizza prefab ambiente e aggiunge particelle motore *)"
     ]
   }
 }
