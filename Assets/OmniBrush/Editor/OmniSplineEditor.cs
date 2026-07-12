@@ -33,7 +33,7 @@ namespace OmniBrush.Editor
                 }
             }
             EditorGUILayout.HelpBox(
-                "Move points with the scene handles. Apply road/river ops from Tools > OmniBrush > Brush, Spline tab.",
+                "Move points with the scene handles. SHIFT+CLICK in the scene appends a point where you click. Apply road/river ops from Tools > OmniBrush > Brush, Spline tab.",
                 MessageType.None);
         }
 
@@ -46,6 +46,42 @@ namespace OmniBrush.Editor
                 Handles.color = new Color(1f, 0.55f, 0f);
                 Handles.DrawAAPolyLine(3f, samples.ToArray());
             }
+
+            Event e = Event.current;
+            if (e.shift)
+            {
+                // Shift held: click appends a point at the surface under the cursor
+                int controlId = GUIUtility.GetControlID(FocusType.Passive);
+                HandleUtility.AddDefaultControl(controlId);
+                Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+                bool valid = Physics.Raycast(ray, out RaycastHit hit, 100000f);
+                Vector3 point = valid ? hit.point : Vector3.zero;
+                if (!valid)
+                {
+                    var plane = new Plane(Vector3.up, spline.GetWorldPoint(spline.PointCount - 1));
+                    if (plane.Raycast(ray, out float distance))
+                    {
+                        point = ray.GetPoint(distance);
+                        valid = true;
+                    }
+                }
+                if (valid)
+                {
+                    Handles.color = Color.green;
+                    Handles.DrawWireDisc(point, Vector3.up, 0.5f);
+                    Handles.DrawDottedLine(spline.GetWorldPoint(spline.PointCount - 1), point, 4f);
+                    if (e.type == EventType.MouseDown && e.button == 0)
+                    {
+                        Undo.RecordObject(spline, "Add Spline Point");
+                        spline.localPoints.Add(spline.transform.InverseTransformPoint(point));
+                        EditorUtility.SetDirty(spline);
+                        e.Use();
+                    }
+                    HandleUtility.Repaint();
+                }
+                return; // no position handles while adding
+            }
+
             for (int i = 0; i < spline.PointCount; i++)
             {
                 EditorGUI.BeginChangeCheck();

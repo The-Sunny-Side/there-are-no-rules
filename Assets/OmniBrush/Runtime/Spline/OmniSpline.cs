@@ -6,6 +6,7 @@ namespace OmniBrush
     /// <summary>Catmull-Rom spline for road/river style operations along a path.</summary>
     public class OmniSpline : MonoBehaviour
     {
+        [Tooltip("Control points in local space. Select the object to edit them with scene handles; Shift+Click in the scene appends a point.")]
         public List<Vector3> localPoints = new List<Vector3>
         {
             new Vector3(0f, 0f, 0f),
@@ -71,6 +72,19 @@ namespace OmniBrush
                 carry += segment;
             }
             return result;
+        }
+
+        // Always visible in the Scene view (gizmos are editor-only), selected or not.
+        private void OnDrawGizmos()
+        {
+            if (localPoints.Count < 2) return;
+            Gizmos.color = new Color(1f, 0.55f, 0f, 0.9f);
+            List<Vector3> samples = SampleByDistance(1f);
+            for (int i = 1; i < samples.Count; i++)
+                Gizmos.DrawLine(samples[i - 1], samples[i]);
+            Gizmos.color = new Color(1f, 0.85f, 0.2f);
+            for (int i = 0; i < localPoints.Count; i++)
+                Gizmos.DrawSphere(GetWorldPoint(i), 0.25f);
         }
     }
 }
