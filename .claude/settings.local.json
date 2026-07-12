@@ -40,7 +40,10 @@
       "Bash(git config *)",
       "Bash(git switch *)",
       "Bash(git add *)",
-      "Bash(git commit -m 'feat: zeppelin animato con LOD e modelli ambiente *)"
+      "Bash(git commit -m 'feat: zeppelin animato con LOD e modelli ambiente *)",
+      "Bash(git merge *)",
+      "Bash(echo \"---EXIT:$?---\")",
+      "Bash(git commit *)"
     ]
   }
 }
