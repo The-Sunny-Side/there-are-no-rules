@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 738fdffa35318a4409d212b6acedf6e9
+timeCreated: 1525355859
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 118135
+  packageName: GameObject Brush
+  packageVersion: 3.3
+  assetPath: Assets/GameObjectBrush/Scripts/Editor/GameObjectBrushEditor.cs
+  uploadId: 277920

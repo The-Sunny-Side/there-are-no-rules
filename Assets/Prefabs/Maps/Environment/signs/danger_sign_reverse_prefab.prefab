@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2948e5a69ed1cc5488ba77a8e0aaf3dc, type: 3}
       propertyPath: m_Name
-      value: danger_sign_reverse
+      value: danger_sign_reverse_prefab
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -72,7 +72,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2298046987032055524}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 14da2dfae90dc9d4cb312d2f487c452c, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

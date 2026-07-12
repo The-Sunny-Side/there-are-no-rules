@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: f5a1ab4eb76cb9741b511a120b2701a2
+timeCreated: 1525521996
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 118135
+  packageName: GameObject Brush
+  packageVersion: 3.3
+  assetPath: Assets/GameObjectBrush/Scripts/Editor/AddObjectPopup.cs
+  uploadId: 277920

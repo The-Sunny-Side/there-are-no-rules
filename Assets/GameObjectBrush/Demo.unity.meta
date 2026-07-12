@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 214e4b320f4ddc443a888a00056faec5
+timeCreated: 1525536122
+licenseType: Store
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 118135
+  packageName: GameObject Brush
+  packageVersion: 3.3
+  assetPath: Assets/GameObjectBrush/Demo.unity
+  uploadId: 277920

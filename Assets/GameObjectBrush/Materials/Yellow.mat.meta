@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 45093d1d13162fb4e8d2e9e00a5dce62
+timeCreated: 1529174940
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 118135
+  packageName: GameObject Brush
+  packageVersion: 3.3
+  assetPath: Assets/GameObjectBrush/Materials/Yellow.mat
+  uploadId: 277920
