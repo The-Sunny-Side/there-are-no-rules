@@ -214,7 +214,7 @@ namespace OmniBrush.Editor
             if (layer.palette == null)
             {
                 if (GUILayout.Button(new GUIContent("Create Palette Asset",
-                    "Creates the palette in Assets/OmniBrushData/Palettes and assigns it to the layer.")))
+                    "Creates the palette in Assets/OmniBrush/Data/Palettes and assigns it to the layer.")))
                 {
                     var newPalette = OmniBrushAssets.CreateAsset<ScatterPalette>("Palettes", "ScatterPalette");
                     Undo.RecordObject(layer, "OmniBrush Palette");
@@ -415,7 +415,7 @@ namespace OmniBrush.Editor
                     "Layer-stack asset (noise/constant, blend modes) evaluated per world position. Edit layers in its inspector."),
                     proceduralBrush, typeof(ProceduralBrush), false);
                 if (proceduralBrush == null && GUILayout.Button(new GUIContent("New Procedural Brush Asset",
-                    "Creates the brush in Assets/OmniBrushData/Brushes and selects it here.")))
+                    "Creates the brush in Assets/OmniBrush/Data/Brushes and selects it here.")))
                 {
                     proceduralBrush = OmniBrushAssets.CreateAsset<ProceduralBrush>("Brushes", "ProceduralBrush");
                 }
