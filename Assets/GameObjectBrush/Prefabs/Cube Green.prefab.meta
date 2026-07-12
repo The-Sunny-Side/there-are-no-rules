@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: d8d6ace14daff924c9a1b1b00b2cb388
+timeCreated: 1525536111
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 118135
+  packageName: GameObject Brush
+  packageVersion: 3.3
+  assetPath: Assets/GameObjectBrush/Prefabs/Cube Green.prefab
+  uploadId: 277920
