@@ -75,13 +75,17 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       Limits: per-sample terrain lookup (seams at tile borders untested),
       spline stores local points (move the object moves the path — ops don't
       auto-reapply).
+      v2 (07-12): flatten/texture ops work on MESHES too (raycast-below →
+      cylinder flatten / vertex color; E2E: plane pulled to 1.00 on-path,
+      0.00 off); always-visible gizmos; Shift+Click appends points.
 - [x] S10a Node-brush core (2026-07-07) — ProceduralBrush asset: layer stack
       (Constant / fbm Noise with octaves+ridged, blend Add/Sub/Mul/Min/Max),
       deterministic per world position. "Proc" op in the Sculpt tab paints
       the stack as height through the falloff, Ctrl digs, dirty-rect undo.
       E2E: constant +2m exact/additive/invertible, noise bounded+varied.
       Visual node-graph UI = later skin over this same data model.
-      Terrain only for now (mesh via normal displacement later).
+      v2 (07-12): works on MESHES too — displacement along the click normal
+      (E2E: sphere pole 0.5→0.7 exact, invert back to 0.5).
 - [x] S10b Physics drop (2026-07-07) — "Drop & Settle" in the Scatter tab:
       temp rigidbodies (convex mesh collider from prefab, box fallback) fall,
       roll and pile against scene colliders and each other via editor
@@ -100,6 +104,10 @@ Next (S8 + S2 + S9 + S10a + S10b done 2026-07-07):
    arc — start with the terrain op-stack data model).
 2. S7b instanced mesh grass / S2b leftovers / S10c erosion + biome presets.
 Also pending: Asset Store packaging pass (samples, docs, demo scene, name).
+
+Docs (07-12): CONTRIBUTING.md is the stable contributor/agent reference
+(architecture map, undo system, verify loop, feature checklist). Every UI
+control has a tooltip; keep that bar for new controls.
 
 ## Hardening from field testing (all fixed & committed 2026-07-06)
 - Instances invisible until bake → every palette material had GPU Instancing
