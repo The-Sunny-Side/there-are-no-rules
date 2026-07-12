@@ -19,6 +19,10 @@ namespace OmniBrush
         public Texture2D stampTexture; // optional heightmap shape; falloff brush if null
         public float stampHeight;    // world meters above terrain base, Stamp only
         public bool stampAdditive;   // false = max blend (idempotent), true = add
+        public float bedNoiseAmp;    // Flatten: Perlin wobble of the target plane, meters
+        public float bedNoiseScale;  // meters
+        public float edgeNoiseAmp;   // Flatten: Perlin wobble of the brush border, meters
+        public float edgeNoiseScale; // meters
     }
 
     /// <summary>A surface whose shape can be modified by sculpt brushes.</summary>

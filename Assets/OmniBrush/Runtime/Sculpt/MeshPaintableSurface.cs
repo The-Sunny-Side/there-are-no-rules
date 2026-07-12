@@ -146,8 +146,24 @@ namespace OmniBrush
                     }
                     case SculptOp.Flatten:
                     {
+                        float flattenWeight = weight;
+                        if (args.edgeNoiseAmp > 0f)
+                        {
+                            // wobble the corridor border: recompute falloff with a noisy radius
+                            float scale = Mathf.Max(0.5f, args.edgeNoiseScale);
+                            float edge = (Mathf.PerlinNoise(wPos.x / scale + 10000f, wPos.z / scale + 20000f) * 2f - 1f) * args.edgeNoiseAmp;
+                            float radius = Mathf.Max(0.25f, args.radius + edge);
+                            flattenWeight = Falloff(laterals[k] / radius, args.hardness) * strength;
+                            if (flattenWeight <= 0f) { after[k] = verts[i]; continue; }
+                        }
                         float dist = Vector3.Dot(wPos - args.flattenPoint, n);
-                        wPos -= n * (dist * weight);
+                        float bedOffset = 0f;
+                        if (args.bedNoiseAmp > 0f)
+                        {
+                            float scale = Mathf.Max(0.5f, args.bedNoiseScale);
+                            bedOffset = (Mathf.PerlinNoise(wPos.x / scale + 10000f, wPos.z / scale + 10000f) * 2f - 1f) * args.bedNoiseAmp;
+                        }
+                        wPos -= n * ((dist - bedOffset) * flattenWeight);
                         break;
                     }
                     case SculptOp.Stamp:
