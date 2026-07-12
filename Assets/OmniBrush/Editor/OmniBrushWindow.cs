@@ -213,18 +213,13 @@ namespace OmniBrush.Editor
             }
             if (layer.palette == null)
             {
-                if (GUILayout.Button("Create Palette Asset"))
+                if (GUILayout.Button(new GUIContent("Create Palette Asset",
+                    "Creates the palette in Assets/OmniBrushData/Palettes and assigns it to the layer.")))
                 {
-                    string path = EditorUtility.SaveFilePanelInProject("Create Scatter Palette", "ScatterPalette", "asset", "");
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        var newPalette = CreateInstance<ScatterPalette>();
-                        AssetDatabase.CreateAsset(newPalette, path);
-                        AssetDatabase.SaveAssets();
-                        Undo.RecordObject(layer, "OmniBrush Palette");
-                        layer.palette = newPalette;
-                        EditorUtility.SetDirty(layer);
-                    }
+                    var newPalette = OmniBrushAssets.CreateAsset<ScatterPalette>("Palettes", "ScatterPalette");
+                    Undo.RecordObject(layer, "OmniBrush Palette");
+                    layer.palette = newPalette;
+                    EditorUtility.SetDirty(layer);
                 }
             }
             else
@@ -419,16 +414,10 @@ namespace OmniBrush.Editor
                 proceduralBrush = (ProceduralBrush)EditorGUILayout.ObjectField(new GUIContent("Procedural Brush",
                     "Layer-stack asset (noise/constant, blend modes) evaluated per world position. Edit layers in its inspector."),
                     proceduralBrush, typeof(ProceduralBrush), false);
-                if (proceduralBrush == null && GUILayout.Button("New Procedural Brush Asset"))
+                if (proceduralBrush == null && GUILayout.Button(new GUIContent("New Procedural Brush Asset",
+                    "Creates the brush in Assets/OmniBrushData/Brushes and selects it here.")))
                 {
-                    string path = EditorUtility.SaveFilePanelInProject("Create Procedural Brush", "ProceduralBrush", "asset", "");
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        var asset = CreateInstance<ProceduralBrush>();
-                        AssetDatabase.CreateAsset(asset, path);
-                        AssetDatabase.SaveAssets();
-                        proceduralBrush = asset;
-                    }
+                    proceduralBrush = OmniBrushAssets.CreateAsset<ProceduralBrush>("Brushes", "ProceduralBrush");
                 }
                 sculptHardness = EditorGUILayout.Slider(new GUIContent("Hardness",
                     "Inner fraction of the brush at full effect before the falloff begins."), sculptHardness, 0f, 1f);

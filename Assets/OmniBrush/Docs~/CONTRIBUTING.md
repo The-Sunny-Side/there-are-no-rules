@@ -111,6 +111,12 @@ and run code inside the editor:
   stamps count every rejection reason into `lastStampWarning` when a stamp
   places 0. Spline tab is button-driven (no brush).
 
+### User-created assets
+`Editor/OmniBrushAssets.cs` — palettes/brushes created from the window go to
+`Assets/OmniBrushData/<Palettes|Brushes>` (auto-created, unique names,
+pinged). Keep user content OUT of `Assets/OmniBrush` so tool updates never
+overwrite it. Any new asset-creating button must go through this helper.
+
 ## How to add a feature (checklist)
 1. Runtime logic in `Runtime/` (asmdef `OmniBrush.Runtime`) — keep it
    editor-free so it can go runtime later; editor-only glue in `Editor/`.
