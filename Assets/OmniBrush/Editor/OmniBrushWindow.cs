@@ -68,6 +68,10 @@ namespace OmniBrush.Editor
         [SerializeField] private OmniSpline splineTarget;
         [SerializeField] private float splineWidth = 6f;
         [SerializeField] private float splineFeather = 4f;
+        [SerializeField] private float splineBedNoise;
+        [SerializeField] private float splineBedNoiseScale = 8f;
+        [SerializeField] private float splineEdgeNoise;
+        [SerializeField] private float splineEdgeNoiseScale = 12f;
         [SerializeField] private float splineScatterSpacing = 5f;
         [SerializeField] private int splineScatterSide = 3; // 0 center, 1 left, 2 right, 3 both
         [SerializeField] private float splineScatterOffset = 4f;
@@ -139,7 +143,7 @@ namespace OmniBrush.Editor
 
             if (mode != Mode.Spline)
             {
-                radius = EditorGUILayout.Slider(new GUIContent("Radius", "Brush radius in world meters."), radius, 0.1f, 50f);
+                radius = EditorGUILayout.Slider(new GUIContent("Radius", "Brush radius in world meters."), radius, 0.1f, 150f);
                 int concatenated = InternalEditorUtility.LayerMaskToConcatenatedLayersMask(surfaceMask);
                 concatenated = EditorGUILayout.MaskField(new GUIContent("Surface Layers",
                     "Physics layers the brush can hit. Colliders on other layers are ignored."), concatenated, InternalEditorUtility.layers);
@@ -596,9 +600,19 @@ namespace OmniBrush.Editor
             EditorGUILayout.Space();
             GUILayout.Label("Road / River Bed (terrain)", EditorStyles.boldLabel);
             splineWidth = EditorGUILayout.Slider(new GUIContent("Width",
-                "Full-effect corridor width in meters (the flat road bed)."), splineWidth, 0.5f, 30f);
+                "Full-effect corridor width in meters (the flat road bed)."), splineWidth, 0.5f, 100f);
             splineFeather = EditorGUILayout.Slider(new GUIContent("Feather",
-                "Blend margin outside the width, easing into the surroundings."), splineFeather, 0f, 20f);
+                "Blend margin outside the width, easing into the surroundings."), splineFeather, 0f, 60f);
+            splineBedNoise = EditorGUILayout.Slider(new GUIContent("Bed Noise (m)",
+                "Perlin height wobble added to the flattened bed — riverbeds, dirt roads. 0 = perfectly flat."), splineBedNoise, 0f, 10f);
+            if (splineBedNoise > 0f)
+                splineBedNoiseScale = EditorGUILayout.Slider(new GUIContent("Bed Noise Scale (m)",
+                    "Feature size of the bed wobble — small = ripples, large = gentle undulation."), splineBedNoiseScale, 1f, 100f);
+            splineEdgeNoise = EditorGUILayout.Slider(new GUIContent("Edge Noise (m)",
+                "Perlin wobble of the corridor borders so the edges aren't straight lines."), splineEdgeNoise, 0f, 15f);
+            if (splineEdgeNoise > 0f)
+                splineEdgeNoiseScale = EditorGUILayout.Slider(new GUIContent("Edge Noise Scale (m)",
+                    "Feature size of the border wobble along the path."), splineEdgeNoiseScale, 1f, 100f);
             if (GUILayout.Button(new GUIContent("Flatten Terrain Along Spline",
                 "Level the ground to the spline's height along the whole path — terrains and meshes. One undo step.")))
                 FlattenAlongSpline();
@@ -616,7 +630,7 @@ namespace OmniBrush.Editor
             EditorGUILayout.Space();
             GUILayout.Label("Scatter Along (uses Scatter tab layer + palette)", EditorStyles.boldLabel);
             splineScatterSpacing = EditorGUILayout.Slider(new GUIContent("Spacing",
-                "Distance between placements along the path, in meters."), splineScatterSpacing, 0.5f, 50f);
+                "Distance between placements along the path, in meters."), splineScatterSpacing, 0.5f, 100f);
             splineScatterSide = GUILayout.Toolbar(splineScatterSide, new[]
             {
                 new GUIContent("Center", "Place on the path itself."),
@@ -626,9 +640,9 @@ namespace OmniBrush.Editor
             });
             if (splineScatterSide != 0)
                 splineScatterOffset = EditorGUILayout.Slider(new GUIContent("Side Offset",
-                    "Lateral distance from the path center, in meters."), splineScatterOffset, 0f, 30f);
+                    "Lateral distance from the path center, in meters."), splineScatterOffset, 0f, 100f);
             splineScatterJitter = EditorGUILayout.Slider(new GUIContent("Jitter",
-                "Random offset added to each placement for a natural look."), splineScatterJitter, 0f, 10f);
+                "Random offset added to each placement for a natural look."), splineScatterJitter, 0f, 30f);
             bool scatterReady = layer != null && layer.palette != null && layer.palette.entries.Count > 0;
             if (!scatterReady)
                 EditorGUILayout.HelpBox("Set up Layer + Palette in the Scatter tab first.", MessageType.Warning);
@@ -662,7 +676,8 @@ namespace OmniBrush.Editor
                     Terrain terrain = SplineOps.FindTerrainAt(sample);
                     if (terrain != null)
                     {
-                        SplineOps.FlattenStamp(terrain, sample, splineWidth * 0.5f, splineFeather, sample.y);
+                        SplineOps.FlattenStamp(terrain, sample, splineWidth * 0.5f, splineFeather, sample.y,
+                            splineBedNoise, splineBedNoiseScale, splineEdgeNoise, splineEdgeNoiseScale);
                         hit++;
                         continue;
                     }
@@ -674,11 +689,15 @@ namespace OmniBrush.Editor
                         op = SculptOp.Flatten,
                         center = sample,
                         brushNormal = Vector3.up,
-                        radius = reach,
+                        radius = reach + splineEdgeNoise,
                         strength = 1f,
                         hardness = hardness,
                         flattenPoint = sample,
                         flattenNormal = Vector3.up,
+                        bedNoiseAmp = splineBedNoise,
+                        bedNoiseScale = splineBedNoiseScale,
+                        edgeNoiseAmp = splineEdgeNoise,
+                        edgeNoiseScale = splineEdgeNoiseScale,
                     });
                     hit++;
                 }
