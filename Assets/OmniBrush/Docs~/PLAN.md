@@ -78,6 +78,11 @@ Env: Unity 6000.2.10f1, URP 17.2, branch `PaintableSurface`.
       v2 (07-12): flatten/texture ops work on MESHES too (raycast-below →
       cylinder flatten / vertex color; E2E: plane pulled to 1.00 on-path,
       0.00 off); always-visible gizmos; Shift+Click appends points.
+      v3 (07-12): Bed Noise (Perlin wobble of the flattened target — E2E
+      3.25–6.25 around a 5m target with ±2) and Edge Noise (wobbles the
+      corridor border — E2E control edge constant 4.94 vs noisy spread
+      0.08–5.00), both on terrain and mesh flatten; wider slider caps
+      (width 100, feather 60, offset/spacing 100, brush radius 150).
 - [x] S10a Node-brush core (2026-07-07) — ProceduralBrush asset: layer stack
       (Constant / fbm Noise with octaves+ridged, blend Add/Sub/Mul/Min/Max),
       deterministic per world position. "Proc" op in the Sculpt tab paints
