@@ -20,15 +20,21 @@ namespace OmniBrush
         [Serializable]
         public class Layer
         {
+            [Tooltip("Untick to bypass this layer without deleting it.")]
             public bool enabled = true;
+            [Tooltip("Constant = fixed value; Noise = Perlin fbm pattern.")]
             public LayerType type = LayerType.Noise;
+            [Tooltip("How this layer combines with the result of the layers above it.")]
             public BlendMode blend = BlendMode.Add;
             [Tooltip("Output height in meters (Constant) or noise amplitude (Noise).")]
             public float amplitude = 5f;
-            [Min(0.1f)] public float noiseScale = 40f;
-            [Range(1, 6)] public int octaves = 3;
-            [Tooltip("abs() the noise for sharp ridges.")]
+            [Min(0.1f), Tooltip("Feature size of the noise in meters — bigger = broader hills.")]
+            public float noiseScale = 40f;
+            [Range(1, 6), Tooltip("Detail levels stacked on the noise; more octaves = rougher surface.")]
+            public int octaves = 3;
+            [Tooltip("Fold the noise into sharp ridge lines (mountain crests).")]
             public bool ridged;
+            [Tooltip("Shifts the noise pattern in world XZ — change it to get a different pattern.")]
             public Vector2 offset;
         }
 

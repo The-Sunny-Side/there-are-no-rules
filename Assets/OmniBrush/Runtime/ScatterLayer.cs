@@ -23,8 +23,11 @@ namespace OmniBrush
     [DisallowMultipleComponent]
     public class ScatterLayer : MonoBehaviour
     {
+        [Tooltip("Palette asset defining what this layer paints and renders.")]
         public ScatterPalette palette;
+        [Tooltip("Shadow casting mode for all instances of this layer.")]
         public ShadowCastingMode castShadows = ShadowCastingMode.On;
+        [Tooltip("Whether instances receive shadows.")]
         public bool receiveShadows = true;
 
         [SerializeField, HideInInspector] private List<ScatterInstance> instances = new List<ScatterInstance>();
