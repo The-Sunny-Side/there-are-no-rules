@@ -121,7 +121,15 @@ namespace OmniBrush.Editor
 
         private void OnGUI()
         {
-            var newMode = (Mode)GUILayout.Toolbar((int)mode, new[] { "Scatter", "Sculpt", "Texture", "Grass", "Spline" }, GUILayout.Height(24));
+            var tabs = new[]
+            {
+                new GUIContent("Scatter", "Paint prefabs as GPU-instanced data on any collider. Ctrl erases."),
+                new GUIContent("Sculpt", "Deform terrains and meshes: raise/lower, smooth, flatten, stamp, procedural."),
+                new GUIContent("Texture", "Splat TerrainLayers on terrains, vertex colors on meshes."),
+                new GUIContent("Grass", "Paint native terrain detail density (millions of blades)."),
+                new GUIContent("Spline", "Carve, texture and scatter along a path (roads, rivers)."),
+            };
+            var newMode = (Mode)GUILayout.Toolbar((int)mode, tabs, GUILayout.Height(24));
             if (newMode != mode)
             {
                 mode = newMode;
@@ -131,9 +139,10 @@ namespace OmniBrush.Editor
 
             if (mode != Mode.Spline)
             {
-                radius = EditorGUILayout.Slider("Radius", radius, 0.1f, 50f);
+                radius = EditorGUILayout.Slider(new GUIContent("Radius", "Brush radius in world meters."), radius, 0.1f, 50f);
                 int concatenated = InternalEditorUtility.LayerMaskToConcatenatedLayersMask(surfaceMask);
-                concatenated = EditorGUILayout.MaskField("Surface Layers", concatenated, InternalEditorUtility.layers);
+                concatenated = EditorGUILayout.MaskField(new GUIContent("Surface Layers",
+                    "Physics layers the brush can hit. Colliders on other layers are ignored."), concatenated, InternalEditorUtility.layers);
                 surfaceMask = InternalEditorUtility.ConcatenatedLayersMaskToLayerMask(concatenated);
                 EditorGUILayout.Space();
             }
@@ -166,7 +175,9 @@ namespace OmniBrush.Editor
         {
             if (layer == null) layer = FindFirstObjectByType<ScatterLayer>(); // recover from Missing/scene change
 
-            layer = (ScatterLayer)EditorGUILayout.ObjectField("Scatter Layer (scene)", layer, typeof(ScatterLayer), true);
+            layer = (ScatterLayer)EditorGUILayout.ObjectField(new GUIContent("Scatter Layer (scene)",
+                "Scene object holding the painted instances as pure data — no GameObjects, GPU-instanced rendering. Bake when you need colliders."),
+                layer, typeof(ScatterLayer), true);
             using (new EditorGUILayout.HorizontalScope())
             {
                 if (GUILayout.Button("Create Layer")) CreateLayer();
@@ -186,7 +197,9 @@ namespace OmniBrush.Editor
             }
 
             EditorGUI.BeginChangeCheck();
-            var palette = (ScatterPalette)EditorGUILayout.ObjectField("Palette (asset)", layer.palette, typeof(ScatterPalette), false);
+            var palette = (ScatterPalette)EditorGUILayout.ObjectField(new GUIContent("Palette (asset)",
+                "Asset listing what to paint: prefabs with pick weight, scale range, alignment, footprint."),
+                layer.palette, typeof(ScatterPalette), false);
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(layer, "OmniBrush Palette");
@@ -214,7 +227,9 @@ namespace OmniBrush.Editor
             {
                 using (new EditorGUILayout.HorizontalScope())
                 {
-                    quickAddCandidate = (GameObject)EditorGUILayout.ObjectField("Quick Add Prefab", quickAddCandidate, typeof(GameObject), true);
+                    quickAddCandidate = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Quick Add Prefab",
+                        "Drop a prefab (or a scene instance of one) and press Add to append it to the palette."),
+                        quickAddCandidate, typeof(GameObject), true);
                     using (new EditorGUI.DisabledScope(quickAddCandidate == null))
                     {
                         if (GUILayout.Button("Add", GUILayout.Width(44)))
@@ -233,62 +248,84 @@ namespace OmniBrush.Editor
             singlePlace = EditorGUILayout.Toggle(new GUIContent("Single Place (click)",
                 "Place exactly one instance per click at the cursor. Filters are bypassed; footprints/Min Distance still apply. Ctrl-drag still erases."), singlePlace);
             using (new EditorGUI.DisabledScope(singlePlace))
-                instancesPerStamp = EditorGUILayout.IntSlider("Instances / Stamp", instancesPerStamp, 1, 64);
-            strokeSpacing = EditorGUILayout.Slider("Stroke Spacing", strokeSpacing, 0.05f, 2f);
-            minDistance = EditorGUILayout.Slider("Min Distance", minDistance, 0f, 20f);
-            falloff = EditorGUILayout.Slider("Edge Falloff", falloff, 0f, 1f);
+                instancesPerStamp = EditorGUILayout.IntSlider(new GUIContent("Instances / Stamp",
+                    "Placement candidates tried per stamp. Rejected ones (filters, spacing) are reported below."), instancesPerStamp, 1, 64);
+            strokeSpacing = EditorGUILayout.Slider(new GUIContent("Stroke Spacing",
+                "Distance between stamps while dragging, as a fraction of Radius."), strokeSpacing, 0.05f, 2f);
+            minDistance = EditorGUILayout.Slider(new GUIContent("Min Distance",
+                "Global minimum distance between any two instances. Per-prefab Footprint Radius from the palette adds on top."), minDistance, 0f, 20f);
+            falloff = EditorGUILayout.Slider(new GUIContent("Edge Falloff",
+                "Rejects more candidates toward the brush edge, feathering the patch border."), falloff, 0f, 1f);
 
             EditorGUILayout.Space();
             GUILayout.Label("Filters", EditorStyles.boldLabel);
             using (new EditorGUILayout.HorizontalScope())
             {
-                EditorGUILayout.PrefixLabel("Slope (°)");
+                EditorGUILayout.PrefixLabel(new GUIContent("Slope (°)",
+                    "Accept candidates only where the surface slope is inside this range (0 = flat, 90 = wall)."));
                 slopeMin = EditorGUILayout.FloatField(Mathf.Round(slopeMin), GUILayout.Width(34));
                 EditorGUILayout.MinMaxSlider(ref slopeMin, ref slopeMax, 0f, 90f);
                 slopeMax = EditorGUILayout.FloatField(Mathf.Round(slopeMax), GUILayout.Width(34));
             }
             slopeMin = Mathf.Clamp(slopeMin, 0f, 90f);
             slopeMax = Mathf.Clamp(slopeMax, slopeMin, 90f);
-            filterHeight = EditorGUILayout.Toggle("Filter Height", filterHeight);
+            filterHeight = EditorGUILayout.Toggle(new GUIContent("Filter Height",
+                "Accept candidates only between Min Y and Max Y (world height)."), filterHeight);
             if (filterHeight)
             {
-                heightMin = EditorGUILayout.FloatField("Min Y", heightMin);
-                heightMax = EditorGUILayout.FloatField("Max Y", heightMax);
+                heightMin = EditorGUILayout.FloatField(new GUIContent("Min Y", "Lowest accepted world height."), heightMin);
+                heightMax = EditorGUILayout.FloatField(new GUIContent("Max Y", "Highest accepted world height."), heightMax);
             }
-            noiseFilter = EditorGUILayout.Toggle("Noise Mask", noiseFilter);
+            noiseFilter = EditorGUILayout.Toggle(new GUIContent("Noise Mask",
+                "Paint only inside procedural Perlin patches. Deterministic: repainting the area gives the same patches."), noiseFilter);
             if (noiseFilter)
             {
                 EditorGUI.indentLevel++;
-                noiseScale = EditorGUILayout.Slider("Patch Size (m)", noiseScale, 1f, 200f);
-                noiseThreshold = EditorGUILayout.Slider("Coverage", 1f - noiseThreshold, 0f, 1f);
+                noiseScale = EditorGUILayout.Slider(new GUIContent("Patch Size (m)",
+                    "Approximate size of the noise patches in meters."), noiseScale, 1f, 200f);
+                noiseThreshold = EditorGUILayout.Slider(new GUIContent("Coverage",
+                    "Fraction of the area the patches cover: low = sparse islands, high = almost everywhere."), 1f - noiseThreshold, 0f, 1f);
                 noiseThreshold = 1f - noiseThreshold;
                 EditorGUI.indentLevel--;
             }
-            layerFilter = EditorGUILayout.Toggle("Only On Terrain Layer", layerFilter);
+            layerFilter = EditorGUILayout.Toggle(new GUIContent("Only On Terrain Layer",
+                "Paint only where a given splat texture dominates the terrain. Non-terrain surfaces pass through."), layerFilter);
             if (layerFilter)
             {
                 EditorGUI.indentLevel++;
-                layerFilterLayer = (TerrainLayer)EditorGUILayout.ObjectField("Layer", layerFilterLayer, typeof(TerrainLayer), false);
-                layerFilterMin = EditorGUILayout.Slider("Min Weight", layerFilterMin, 0f, 1f);
+                layerFilterLayer = (TerrainLayer)EditorGUILayout.ObjectField(new GUIContent("Layer",
+                    "The TerrainLayer that must be present under each candidate."), layerFilterLayer, typeof(TerrainLayer), false);
+                layerFilterMin = EditorGUILayout.Slider(new GUIContent("Min Weight",
+                    "Minimum splat weight (0-1) of the layer for a candidate to pass."), layerFilterMin, 0f, 1f);
                 EditorGUI.indentLevel--;
             }
-            curvatureFilter = EditorGUILayout.Toggle("Curvature", curvatureFilter);
+            curvatureFilter = EditorGUILayout.Toggle(new GUIContent("Curvature",
+                "Paint only in hollows (pits, valleys) or on bumps (ridges, mounds), probing around each candidate."), curvatureFilter);
             if (curvatureFilter)
             {
                 EditorGUI.indentLevel++;
-                curvatureConcave = GUILayout.Toolbar(curvatureConcave ? 0 : 1, new[] { "Hollows", "Bumps" }) == 0;
-                curvatureSampleDist = EditorGUILayout.Slider("Sample Distance", curvatureSampleDist, 0.2f, 10f);
-                curvatureMinDepth = EditorGUILayout.Slider("Min Depth", curvatureMinDepth, 0f, 5f);
+                curvatureConcave = GUILayout.Toolbar(curvatureConcave ? 0 : 1, new[]
+                {
+                    new GUIContent("Hollows", "Keep candidates whose neighbors sit higher (pits, gullies)."),
+                    new GUIContent("Bumps", "Keep candidates whose neighbors sit lower (ridges, mounds)."),
+                }) == 0;
+                curvatureSampleDist = EditorGUILayout.Slider(new GUIContent("Sample Distance",
+                    "How far around each candidate the surface is probed, in meters."), curvatureSampleDist, 0.2f, 10f);
+                curvatureMinDepth = EditorGUILayout.Slider(new GUIContent("Min Depth",
+                    "Minimum height difference for a hollow/bump to qualify, in meters."), curvatureMinDepth, 0f, 5f);
                 EditorGUI.indentLevel--;
             }
 
             EditorGUILayout.Space();
             GUILayout.Label("Physics Drop", EditorStyles.boldLabel);
-            dropHeight = EditorGUILayout.Slider("Drop Height", dropHeight, 0f, 5f);
-            settleSeconds = EditorGUILayout.Slider("Max Sim Time (s)", settleSeconds, 0.5f, 10f);
+            dropHeight = EditorGUILayout.Slider(new GUIContent("Drop Height",
+                "Lift each instance this many meters before dropping it."), dropHeight, 0f, 5f);
+            settleSeconds = EditorGUILayout.Slider(new GUIContent("Max Sim Time (s)",
+                "Physics simulation budget. Ends early once every body is asleep."), settleSeconds, 0.5f, 10f);
             using (new EditorGUI.DisabledScope(layer.Count == 0))
             {
-                if (GUILayout.Button($"Drop & Settle {layer.Count} Instances"))
+                if (GUILayout.Button(new GUIContent($"Drop & Settle {layer.Count} Instances",
+                    "In-editor physics: instances fall, roll against scene colliders and each other, and their settled transforms are written back. One undo step.")))
                 {
                     if (layer.Count <= 2000 || EditorUtility.DisplayDialog("OmniBrush",
                             $"Simulate physics on {layer.Count} rigidbodies? This can take a while.", "Settle", "Cancel"))
@@ -358,16 +395,26 @@ namespace OmniBrush.Editor
                 : sculptOp == SculptOp.Smooth ? 1
                 : sculptOp == SculptOp.Flatten ? 2
                 : sculptOp == SculptOp.Stamp ? 3 : 0;
-            opIndex = GUILayout.Toolbar(opIndex, new[] { "Raise/Lower", "Smooth", "Flatten", "Stamp", "Proc" });
+            opIndex = GUILayout.Toolbar(opIndex, new[]
+            {
+                new GUIContent("Raise/Lower", "Push the surface up along its normal. Hold Ctrl to pull down."),
+                new GUIContent("Smooth", "Relax bumps and spikes toward the local plane."),
+                new GUIContent("Flatten", "Level the surface toward the point first clicked."),
+                new GUIContent("Stamp", "Press a heightmap shape once per click (mountains, craters)."),
+                new GUIContent("Proc", "Paint a procedural layer stack (noise, constants) as height."),
+            });
             procOp = opIndex == 4;
             if (!procOp)
                 sculptOp = opIndex == 1 ? SculptOp.Smooth
                     : opIndex == 2 ? SculptOp.Flatten
                     : opIndex == 3 ? SculptOp.Stamp : SculptOp.Raise;
-            sculptStrength = EditorGUILayout.Slider("Strength", sculptStrength, 0f, 1f);
+            sculptStrength = EditorGUILayout.Slider(new GUIContent("Strength",
+                "How much effect each stamp applies. Drag strokes stamp continuously."), sculptStrength, 0f, 1f);
             if (procOp)
             {
-                proceduralBrush = (ProceduralBrush)EditorGUILayout.ObjectField("Procedural Brush", proceduralBrush, typeof(ProceduralBrush), false);
+                proceduralBrush = (ProceduralBrush)EditorGUILayout.ObjectField(new GUIContent("Procedural Brush",
+                    "Layer-stack asset (noise/constant, blend modes) evaluated per world position. Edit layers in its inspector."),
+                    proceduralBrush, typeof(ProceduralBrush), false);
                 if (proceduralBrush == null && GUILayout.Button("New Procedural Brush Asset"))
                 {
                     string path = EditorUtility.SaveFilePanelInProject("Create Procedural Brush", "ProceduralBrush", "asset", "");
@@ -379,7 +426,8 @@ namespace OmniBrush.Editor
                         proceduralBrush = asset;
                     }
                 }
-                sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+                sculptHardness = EditorGUILayout.Slider(new GUIContent("Hardness",
+                    "Inner fraction of the brush at full effect before the falloff begins."), sculptHardness, 0f, 1f);
                 EditorGUILayout.HelpBox(
                     "Paints the brush asset's layer stack (noise/constant, add/multiply/min/max) as height on terrains, or as displacement along the click normal on meshes. Edit layers in the asset inspector. Ctrl inverts (digs).",
                     MessageType.None);
@@ -387,21 +435,29 @@ namespace OmniBrush.Editor
             }
             if (sculptOp == SculptOp.Stamp)
             {
-                stampTexture = (Texture2D)EditorGUILayout.ObjectField("Stamp Heightmap", stampTexture, typeof(Texture2D), false);
+                stampTexture = (Texture2D)EditorGUILayout.ObjectField(new GUIContent("Stamp Heightmap",
+                    "Grayscale texture used as the stamp shape (red channel). Empty = round procedural stamp."),
+                    stampTexture, typeof(Texture2D), false);
                 if (stampTexture == null)
-                    sculptHardness = EditorGUILayout.Slider("Hardness (round stamp)", sculptHardness, 0f, 1f);
-                stampHeight = EditorGUILayout.FloatField("Stamp Height (m)", stampHeight);
-                stampAdditive = EditorGUILayout.Toggle("Additive Blend", stampAdditive);
-                stampRandomRotation = EditorGUILayout.Toggle("Random Rotation", stampRandomRotation);
+                    sculptHardness = EditorGUILayout.Slider(new GUIContent("Hardness (round stamp)",
+                        "Falloff hardness of the procedural round stamp."), sculptHardness, 0f, 1f);
+                stampHeight = EditorGUILayout.FloatField(new GUIContent("Stamp Height (m)",
+                    "Peak height of the stamp in meters."), stampHeight);
+                stampAdditive = EditorGUILayout.Toggle(new GUIContent("Additive Blend",
+                    "Add on top of the existing ground instead of raising it up to the shape (max, idempotent)."), stampAdditive);
+                stampRandomRotation = EditorGUILayout.Toggle(new GUIContent("Random Rotation",
+                    "Rotate each stamp randomly for natural variety."), stampRandomRotation);
                 if (!stampRandomRotation)
-                    stampRotation = EditorGUILayout.Slider("Rotation", stampRotation, 0f, 360f);
+                    stampRotation = EditorGUILayout.Slider(new GUIContent("Rotation",
+                        "Fixed stamp rotation in degrees."), stampRotation, 0f, 360f);
                 EditorGUILayout.HelpBox(
                     "Click to stamp (no drag). Works on terrains and meshes. On meshes the stamp displaces along the click normal; custom stamp textures need Read/Write enabled there.",
                     MessageType.None);
             }
             else
             {
-                sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+                sculptHardness = EditorGUILayout.Slider(new GUIContent("Hardness",
+                    "Inner fraction of the brush at full effect before the falloff begins."), sculptHardness, 0f, 1f);
                 EditorGUILayout.HelpBox(
                     "Works on terrains and meshes (a collider is required to paint; MeshCollider re-cooks at stroke end). Ctrl inverts Raise/Lower. Flatten targets the point first clicked.",
                     MessageType.None);
@@ -412,12 +468,18 @@ namespace OmniBrush.Editor
         private bool DrawTextureGUI()
         {
             GUILayout.Label("On Terrains — splat", EditorStyles.boldLabel);
-            terrainLayer = (TerrainLayer)EditorGUILayout.ObjectField("Terrain Layer", terrainLayer, typeof(TerrainLayer), false);
+            terrainLayer = (TerrainLayer)EditorGUILayout.ObjectField(new GUIContent("Terrain Layer",
+                "Splat layer painted on terrains. Auto-added to the terrain when missing."),
+                terrainLayer, typeof(TerrainLayer), false);
             GUILayout.Label("On Meshes — vertex color", EditorStyles.boldLabel);
-            meshVertexColor = EditorGUILayout.ColorField("Vertex Color", meshVertexColor);
+            meshVertexColor = EditorGUILayout.ColorField(new GUIContent("Vertex Color",
+                "Color painted into the mesh's vertex colors. The material must read COLOR0 to show it — see the button below."),
+                meshVertexColor);
 
-            sculptStrength = EditorGUILayout.Slider("Opacity", sculptStrength, 0f, 1f);
-            sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+            sculptStrength = EditorGUILayout.Slider(new GUIContent("Opacity",
+                "Blend amount toward the target per stamp."), sculptStrength, 0f, 1f);
+            sculptHardness = EditorGUILayout.Slider(new GUIContent("Hardness",
+                "Inner fraction of the brush at full effect before the falloff begins."), sculptHardness, 0f, 1f);
 
             if (terrainLayer == null)
                 EditorGUILayout.HelpBox("No Terrain Layer assigned — terrains will be skipped.", MessageType.Info);
@@ -470,11 +532,18 @@ namespace OmniBrush.Editor
 
         private bool DrawGrassGUI()
         {
-            grassPrefab = (GameObject)EditorGUILayout.ObjectField("Grass Mesh Prefab", grassPrefab, typeof(GameObject), false);
-            grassTexture = (Texture2D)EditorGUILayout.ObjectField("Grass Texture", grassTexture, typeof(Texture2D), false);
-            grassDensity = EditorGUILayout.IntSlider("Density", grassDensity, 1, 15);
-            sculptStrength = EditorGUILayout.Slider("Strength", sculptStrength, 0f, 1f);
-            sculptHardness = EditorGUILayout.Slider("Hardness", sculptHardness, 0f, 1f);
+            grassPrefab = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Grass Mesh Prefab",
+                "Simple mesh rendered as a terrain detail: MeshFilter on the root, no LODGroup. Wins over the texture. Trees belong in Scatter."),
+                grassPrefab, typeof(GameObject), false);
+            grassTexture = (Texture2D)EditorGUILayout.ObjectField(new GUIContent("Grass Texture",
+                "Billboard texture rendered as grass blades by the terrain."),
+                grassTexture, typeof(Texture2D), false);
+            grassDensity = EditorGUILayout.IntSlider(new GUIContent("Density",
+                "Target grass density under the brush. Auto-scaled to the terrain's detail scatter mode."), grassDensity, 1, 15);
+            sculptStrength = EditorGUILayout.Slider(new GUIContent("Strength",
+                "How fast density builds toward the target per stamp."), sculptStrength, 0f, 1f);
+            sculptHardness = EditorGUILayout.Slider(new GUIContent("Hardness",
+                "Inner fraction of the brush at full effect before the falloff begins."), sculptHardness, 0f, 1f);
             if (grassPrefab == null && grassTexture == null)
             {
                 EditorGUILayout.HelpBox("Assign a grass mesh prefab or a billboard texture.", MessageType.Warning);
@@ -506,7 +575,9 @@ namespace OmniBrush.Editor
 
         private bool DrawSplineGUI()
         {
-            splineTarget = (OmniSpline)EditorGUILayout.ObjectField("Spline", splineTarget, typeof(OmniSpline), true);
+            splineTarget = (OmniSpline)EditorGUILayout.ObjectField(new GUIContent("Spline",
+                "Scene spline to operate along. Select it in the scene to move points; Shift+Click there appends points."),
+                splineTarget, typeof(OmniSpline), true);
             if (GUILayout.Button("Create Spline At View Pivot"))
             {
                 Vector3 pivot = SceneView.lastActiveSceneView != null ? SceneView.lastActiveSceneView.pivot : Vector3.zero;
@@ -524,29 +595,48 @@ namespace OmniBrush.Editor
 
             EditorGUILayout.Space();
             GUILayout.Label("Road / River Bed (terrain)", EditorStyles.boldLabel);
-            splineWidth = EditorGUILayout.Slider("Width", splineWidth, 0.5f, 30f);
-            splineFeather = EditorGUILayout.Slider("Feather", splineFeather, 0f, 20f);
-            if (GUILayout.Button("Flatten Terrain Along Spline")) FlattenAlongSpline();
+            splineWidth = EditorGUILayout.Slider(new GUIContent("Width",
+                "Full-effect corridor width in meters (the flat road bed)."), splineWidth, 0.5f, 30f);
+            splineFeather = EditorGUILayout.Slider(new GUIContent("Feather",
+                "Blend margin outside the width, easing into the surroundings."), splineFeather, 0f, 20f);
+            if (GUILayout.Button(new GUIContent("Flatten Terrain Along Spline",
+                "Level the ground to the spline's height along the whole path — terrains and meshes. One undo step.")))
+                FlattenAlongSpline();
 
-            terrainLayer = (TerrainLayer)EditorGUILayout.ObjectField("Terrain Layer", terrainLayer, typeof(TerrainLayer), false);
-            using (new EditorGUI.DisabledScope(terrainLayer == null))
-            {
-                if (GUILayout.Button("Paint Texture Along Spline")) TextureAlongSpline();
-            }
+            terrainLayer = (TerrainLayer)EditorGUILayout.ObjectField(
+                new GUIContent("Terrain Layer", "Splat painted on terrains along the path."),
+                terrainLayer, typeof(TerrainLayer), false);
+            meshVertexColor = EditorGUILayout.ColorField(
+                new GUIContent("Mesh Vertex Color", "Vertex color painted on meshes along the path (material must read COLOR0)."),
+                meshVertexColor);
+            if (GUILayout.Button(new GUIContent("Paint Texture Along Spline",
+                "Terrains get the Terrain Layer splat, meshes get the vertex color — one undo step.")))
+                TextureAlongSpline();
 
             EditorGUILayout.Space();
             GUILayout.Label("Scatter Along (uses Scatter tab layer + palette)", EditorStyles.boldLabel);
-            splineScatterSpacing = EditorGUILayout.Slider("Spacing", splineScatterSpacing, 0.5f, 50f);
-            splineScatterSide = GUILayout.Toolbar(splineScatterSide, new[] { "Center", "Left", "Right", "Both" });
+            splineScatterSpacing = EditorGUILayout.Slider(new GUIContent("Spacing",
+                "Distance between placements along the path, in meters."), splineScatterSpacing, 0.5f, 50f);
+            splineScatterSide = GUILayout.Toolbar(splineScatterSide, new[]
+            {
+                new GUIContent("Center", "Place on the path itself."),
+                new GUIContent("Left", "Place on the left side only."),
+                new GUIContent("Right", "Place on the right side only."),
+                new GUIContent("Both", "Place on both sides (guard rails, tree lines)."),
+            });
             if (splineScatterSide != 0)
-                splineScatterOffset = EditorGUILayout.Slider("Side Offset", splineScatterOffset, 0f, 30f);
-            splineScatterJitter = EditorGUILayout.Slider("Jitter", splineScatterJitter, 0f, 10f);
+                splineScatterOffset = EditorGUILayout.Slider(new GUIContent("Side Offset",
+                    "Lateral distance from the path center, in meters."), splineScatterOffset, 0f, 30f);
+            splineScatterJitter = EditorGUILayout.Slider(new GUIContent("Jitter",
+                "Random offset added to each placement for a natural look."), splineScatterJitter, 0f, 10f);
             bool scatterReady = layer != null && layer.palette != null && layer.palette.entries.Count > 0;
             if (!scatterReady)
                 EditorGUILayout.HelpBox("Set up Layer + Palette in the Scatter tab first.", MessageType.Warning);
             using (new EditorGUI.DisabledScope(!scatterReady))
             {
-                if (GUILayout.Button("Scatter Along Spline")) ScatterAlongSpline();
+                if (GUILayout.Button(new GUIContent("Scatter Along Spline",
+                    "Place palette prefabs along the path with the settings above. Footprints and Min Distance apply. One undo step.")))
+                    ScatterAlongSpline();
             }
 
             if (!string.IsNullOrEmpty(lastStampWarning))
@@ -560,23 +650,52 @@ namespace OmniBrush.Editor
         private void FlattenAlongSpline()
         {
             var samples = splineTarget.SampleByDistance(Mathf.Max(0.5f, splineWidth * 0.25f));
+            float reach = splineWidth * 0.5f + splineFeather;
+            float hardness = reach > 0f ? splineWidth * 0.5f / reach : 1f;
             int hit = 0;
+            var meshes = new System.Collections.Generic.HashSet<MeshFilter>();
             SculptUndo.BeginStroke(SculptUndo.StrokeKind.Heights);
             try
             {
                 foreach (Vector3 sample in samples)
                 {
                     Terrain terrain = SplineOps.FindTerrainAt(sample);
-                    if (terrain == null) continue;
-                    SplineOps.FlattenStamp(terrain, sample, splineWidth * 0.5f, splineFeather, sample.y);
+                    if (terrain != null)
+                    {
+                        SplineOps.FlattenStamp(terrain, sample, splineWidth * 0.5f, splineFeather, sample.y);
+                        hit++;
+                        continue;
+                    }
+                    MeshPaintableSurface meshSurface = RaycastMeshBelow(sample);
+                    if (meshSurface == null) continue;
+                    meshes.Add(meshSurface.Filter);
+                    meshSurface.ApplyStamp(new SculptStampArgs
+                    {
+                        op = SculptOp.Flatten,
+                        center = sample,
+                        brushNormal = Vector3.up,
+                        radius = reach,
+                        strength = 1f,
+                        hardness = hardness,
+                        flattenPoint = sample,
+                        flattenNormal = Vector3.up,
+                    });
                     hit++;
                 }
             }
             finally { SculptUndo.EndStroke(); }
+            foreach (MeshFilter mf in meshes) MeshPaintableSurface.RefreshCollider(mf);
             lastStampWarning = hit == 0
-                ? "No Unity Terrain under the spline — nothing flattened."
-                : $"Flattened terrain under {hit}/{samples.Count} spline samples.";
+                ? "Nothing under the spline (terrain or mesh with collider) — nothing flattened."
+                : $"Flattened ground under {hit}/{samples.Count} spline samples.";
             SceneView.RepaintAll();
+        }
+
+        private MeshPaintableSurface RaycastMeshBelow(Vector3 position)
+        {
+            if (!Physics.Raycast(position + Vector3.up * 50f, Vector3.down, out RaycastHit hit, 300f, surfaceMask, QueryTriggerInteraction.Ignore))
+                return null;
+            return MeshPaintableSurface.TryFrom(hit.collider);
         }
 
         private void TextureAlongSpline()
@@ -591,15 +710,23 @@ namespace OmniBrush.Editor
                 foreach (Vector3 sample in samples)
                 {
                     Terrain terrain = SplineOps.FindTerrainAt(sample);
-                    if (terrain == null) continue;
-                    new TerrainPaintableSurface(terrain).ApplyTexturePaint(sample, reach, 1f, hardness, terrainLayer);
+                    if (terrain != null)
+                    {
+                        if (terrainLayer == null) continue;
+                        new TerrainPaintableSurface(terrain).ApplyTexturePaint(sample, reach, 1f, hardness, terrainLayer);
+                        hit++;
+                        continue;
+                    }
+                    MeshPaintableSurface meshSurface = RaycastMeshBelow(sample);
+                    if (meshSurface == null) continue;
+                    meshSurface.ApplyVertexColor(sample, Vector3.up, reach, 1f, hardness, meshVertexColor);
                     hit++;
                 }
             }
             finally { SculptUndo.EndStroke(); }
             lastStampWarning = hit == 0
-                ? "No Unity Terrain under the spline — nothing painted."
-                : $"Painted texture under {hit}/{samples.Count} spline samples.";
+                ? "Nothing paintable under the spline — terrains need a Terrain Layer, meshes get vertex color."
+                : $"Painted along {hit}/{samples.Count} spline samples.";
             SceneView.RepaintAll();
         }
 
