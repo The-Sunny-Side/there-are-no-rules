@@ -15229,8 +15229,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 26.6
+  m_fontSizeBase: 26.6
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -23150,7 +23150,9 @@ MonoBehaviour:
   InGamePanel: {fileID: 1564431404}
   leaderboardRemainingBox: {fileID: 1187129133}
   finalPosition: {fileID: 1969273355}
-  leaderboardContent: {fileID: 754902862}
+  leaderboardContent: {fileID: 754902861}
+  leaderboardEntries: []
+  leaderboardEntryHeight: 48.425
 --- !u!4 &1118415734
 Transform:
   m_ObjectHideFlags: 0
@@ -40667,8 +40669,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: [{fileID: 5038520589004829415, guid: e93adaae4dd5271439cd2fb9a439b9a8, type: 3}]
-    m_AddedGameObjects: [{targetCorrespondingSourceObject: {fileID: 7252397255479227387, guid: e93adaae4dd5271439cd2fb9a439b9a8, type: 3}, insertIndex: -1, addedObject: {fileID: 1537078389}}]
+    m_RemovedGameObjects:
+    - {fileID: 5038520589004829415, guid: e93adaae4dd5271439cd2fb9a439b9a8, type: 3}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 7252397255479227387, guid: e93adaae4dd5271439cd2fb9a439b9a8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1537078389}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e93adaae4dd5271439cd2fb9a439b9a8, type: 3}
 --- !u!4 &1933470435 stripped
