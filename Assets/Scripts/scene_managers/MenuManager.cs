@@ -16,6 +16,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject finalPosition;
     [SerializeField] private RectTransform leaderboardContent;
     [SerializeField] private List<TextMeshProUGUI> leaderboardEntries;
+    [SerializeField] private float leaderboardEntryHeight = 55f;
 
     private TextMeshProUGUI leaderboardRemainingCount;
     private string[] positionSuffixesIt = new string[] { "°", "°", "°", "°", "°", "°", "°", "°" };
@@ -70,12 +71,18 @@ public class MenuManager : MonoBehaviour
         finalPosition.SetActive(true);
 
         finishedGamePanel.SetActive(true);
-        leaderboardContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 65.65f * totalPlayers);
+        leaderboardContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, leaderboardEntryHeight * totalPlayers);
         leaderboardRemainingCount = leaderboardRemainingBox.transform.Find("RemainingNumber")?.GetComponent<TextMeshProUGUI>();
 
         var sb = new System.Text.StringBuilder();
-        for (int i = 0; i < finishHumanIds.Length; i++)
+        for (int i = 0; i < totalPlayers; i++)
         {
+            if(i >= finishHumanIds.Length)
+            {
+                sb.AppendLine($"{i + 1}.  ---");
+                continue;
+            }
+            
             bool isBot = finishIsBot != null && i < finishIsBot.Length && finishIsBot[i];
             bool isMe = !isBot && localPlayerId.HasValue && finishHumanIds[i] == localPlayerId.Value;
             
@@ -99,6 +106,9 @@ public class MenuManager : MonoBehaviour
             }
             sb.AppendLine($"{i + 1}.  {label}");
         }
+
+        leaderboardContent.GetComponent<TextMeshProUGUI>()?.SetText(sb.ToString());
+
         int remaining = totalPlayers - finishHumanIds.Length;
         if (remaining > 0)
             leaderboardRemainingCount.text = $"{remaining}";

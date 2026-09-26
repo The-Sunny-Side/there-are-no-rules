@@ -4705,8 +4705,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 26.6
+  m_fontSizeBase: 26.6
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -7585,8 +7585,9 @@ MonoBehaviour:
   InGamePanel: {fileID: 1564431404}
   leaderboardRemainingBox: {fileID: 1187129133}
   finalPosition: {fileID: 1969273355}
-  leaderboardContent: {fileID: 0}
+  leaderboardContent: {fileID: 754902861}
   leaderboardEntries: []
+  leaderboardEntryHeight: 48.425
 --- !u!4 &1118415734
 Transform:
   m_ObjectHideFlags: 0
