@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6752a474015fe6448a2b7e0767fd0b1a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 15600000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 83490
+  packageName: Terrain Toolkit 2017
+  packageVersion: 20210314170000
+  assetPath: Assets/com/heparo/terrain/toolkit/demonstration/terrains/Demo_Terrain.asset
+  uploadId: 428233

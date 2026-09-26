@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 416f252c39d159d4e823d362d6e2def4
+timeCreated: 1510168172
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 83490
+  packageName: Terrain Toolkit 2017
+  packageVersion: 20210314170000
+  assetPath: Assets/com/heparo/terrain/toolkit/editor/TerrainToolkitEditor.cs
+  uploadId: 428233

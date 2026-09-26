@@ -119,6 +119,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &55415063
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 55415064}
+  m_Layer: 0
+  m_Name: vehicles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &55415064
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 55415063}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1383380730}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &100328379
 GameObject:
   m_ObjectHideFlags: 0
@@ -18402,6 +18433,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: structures
       objectReference: {fileID: 0}
+    - target: {fileID: 7831181338763202627, guid: 3d43e34fc7996ad4699354d626202d64, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -408.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954514406661134557, guid: 3d43e34fc7996ad4699354d626202d64, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 556.55914
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954514406661134557, guid: 3d43e34fc7996ad4699354d626202d64, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -408.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954514406661134557, guid: 3d43e34fc7996ad4699354d626202d64, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 27.765656
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 5948532215106700884, guid: 3d43e34fc7996ad4699354d626202d64, type: 3}
@@ -18410,6 +18457,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8828162764662793910, guid: 3d43e34fc7996ad4699354d626202d64, type: 3}
       insertIndex: -1
       addedObject: {fileID: 509935097}
+    - targetCorrespondingSourceObject: {fileID: 8828162764662793910, guid: 3d43e34fc7996ad4699354d626202d64, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 55415064}
     - targetCorrespondingSourceObject: {fileID: 92736778801799511, guid: 3d43e34fc7996ad4699354d626202d64, type: 3}
       insertIndex: 219
       addedObject: {fileID: 1207114590}
