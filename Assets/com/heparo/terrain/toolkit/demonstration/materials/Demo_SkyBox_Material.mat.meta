@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 2b7fecfc9c9646e4f8255f0ad4681d03
+timeCreated: 1510168186
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: -1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 83490
+  packageName: Terrain Toolkit 2017
+  packageVersion: 20210314170000
+  assetPath: Assets/com/heparo/terrain/toolkit/demonstration/materials/Demo_SkyBox_Material.mat
+  uploadId: 428233
